@@ -85,7 +85,8 @@ Community script inspiration:
 └── 06-wazuh-thehive-integration/
     ├── README.md
     ├── scripts/
-    |   └── custom-w2thehive.py
+    |   ├── custom-w2thehive.py
+    |   └── custom-w2thehive
     ├── commands.sh
     ├── troubleshooting.md
     └── interview_qna.md
@@ -112,10 +113,12 @@ This installs the official TheHive API client.
 
 Use the provided Python script (TheHive 5.5 compatible).
 
-Make executable:
+Setting up permissions, ownership and executable:
 
 ```bash
-chmod +x /var/ossec/integrations/custom-w2thive.py
+sudo chmod 755 /var/ossec/integrations/custom-w2thive.py
+sudo chown root:wazuh /var/ossec/integrations/custom-w2thive.py
+sudo chmod +x /var/ossec/integrations/custom-w2thive.py
 ```
 
 ---
@@ -130,10 +133,12 @@ chmod +x /var/ossec/integrations/custom-w2thive.py
 
 This ensures Wazuh executes the Python integration correctly.
 
-Make executable:
+Setting up permissions, ownership and executable:
 
 ```bash
-chmod +x /var/ossec/integrations/custom-w2thive
+sudo chmod 755 /var/ossec/integrations/custom-w2thive
+sudo chown root:wazuh /var/ossec/integrations/custom-w2thive
+sudo chmod +x /var/ossec/integrations/custom-w2thive
 ```
 
 ---
