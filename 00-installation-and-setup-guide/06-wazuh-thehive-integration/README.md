@@ -91,7 +91,6 @@ Community script inspiration:
     ├── commands.sh
     ├── troubleshooting.md
     └── interview_qna.md
-
 ```
 
 ---
