@@ -1,235 +1,175 @@
-# 🐝 TheHive 5.5 – Incident Response Platform (Docker Deployment on AWS EC2)
+#!/bin/bash
+
+############################################################
+# AWS EC2 Infrastructure Setup - Validation Commands
+# SOC-SOAR Ecosystem Foundation
+############################################################
+
+###############################
+# Connect to EC2 (Run locally)
+###############################
+
+chmod 400 your-key.pem
+ssh -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
+
+#############################
+# 1️⃣ Initial System Check
+#############################
+
+whoami
+hostname
+uname -a
+lsb_release -a
+
+#############################
+# 2️⃣ Network Interface Check
+#############################
+
+ip a
+ip addr show
+ip route
+ip route show
+cat /etc/netplan/*.yaml
+
+#############################
+# 3️⃣ Gateway Connectivity Test
+#############################
+
+ping -c 3 10.0.1.1
+
+#############################
+# 4️⃣ External IP Connectivity Test
+#############################
+
+ping -c 3 8.8.8.8
+ping -c 3 1.1.1.1
+
+#############################
+# 5️⃣ DNS Resolution Test
+#############################
+
+cat /etc/resolv.conf
+nslookup google.com
+dig google.com
+curl -I https://google.com
+
+#############################
+# 6️⃣ Update System (ONLY After Network Validation)
+#############################
+
+sudo apt update
+sudo apt upgrade -y
+
+#################################################
+# 7️⃣ Install Basic Utilities for all ec2 machine 
+#################################################
+
+sudo apt install -y \
+  curl wget git unzip zip \
+  net-tools dnsutils jq \
+  ca-certificates gnupg lsb-release \
+  software-properties-common \
+  build-essential \
+  htop nano vim \
+  ufw
+
+#############################
+# 8️⃣ Firewall Status Check
+#############################
+
+sudo ufw status
+sudo iptables -L -n -v
+
+#############################
+# 9️⃣ Open Required Ports (If Using UFW)
+#############################
+
+sudo ufw allow 22/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 5601/tcp
+sudo ufw allow 9200/tcp
+sudo ufw allow 1514/tcp
+sudo ufw allow 1515/tcp
+sudo ufw allow 9000/tcp
+sudo ufw enable
+
+#############################
+# 🔟 Time Synchronization Check (Timezone / NTP Setup)
+#############################
+
+timedatectl
+
+# Example timezone (change if needed)
+sudo timedatectl set-timezone Asia/Baku
 
-<p align="center">
+# Enable NTP sync
+sudo timedatectl set-ntp yes
 
-  <img src="https://docs.strangebee.com/assets/images/StrangeBee_Landscape.svg" width="400"/>
-  <img src="https://docs.strangebee.com/thehive/images/overview/thehive.svg" width="400"/>
-</p>
+# Verify
+timedatectl
 
----
+# -------------------------------
+# Hostname Setup (Example: thehive)
+# -------------------------------
+hostnamectl
 
-# 🛡️ SOC-SOAR Ecosystem – Case Management Core
+sudo hostnamectl set-hostname "thehive"
 
-TheHive is a powerful **Security Incident Response Platform** designed for SOC teams, CSIRTs, CERTs, and DFIR professionals.
+# Update /etc/hosts for local resolution
+sudo nano /etc/hosts
+# Change:
+127.0.1.1 old-hostname
+# To:
+127.0.1.1 thehive
 
-In this project, TheHive 5.5 was deployed on AWS EC2 using Docker as part of a full SOC ecosystem integration with:
+# Verify
+hostnamectl
+hostname -f
 
-- Wazuh (SIEM/XDR)
-- MISP (Threat Intelligence)
-- Cortex (Analyzers & Responders)
-- AWS Cloud Monitoring
-- Automation workflows
+# -------------------------------
+# Create SOC Base Directory Layout (Optional but recommended)
+# -------------------------------
+mkdir -p ~/soc-ecosystem/{logs,scripts,configs,reports,evidence,installers,backups}
+ls -la ~/soc-ecosystem
 
----
 
-# 🎯 Objective
+#############################
+# 1️⃣1️⃣ Verify Outbound HTTPS
+#############################
 
-Deploy TheHive 5.5 in a production-ready Docker environment on AWS EC2 to enable:
+curl -v https://api.github.com
+curl -v https://google.com
 
-- Incident case management
-- Alert triage workflows
-- Observable enrichment
-- Analyst collaboration
-- Integration with SIEM & Threat Intelligence platforms
+#############################
+# 1️⃣2️⃣ Check Open Ports
+#############################
 
----
+sudo ss -tulnp
+sudo netstat -tulnp
 
-# 🖥️ Infrastructure Requirements
+#############################
+# 1️⃣3️⃣ Disk & Resource Check
+#############################
 
-### ☁️ AWS EC2 Configuration
+df -h
+free -m
+top
 
-| Component | Specification |
-|------------|---------------|
-| Instance Type | t2.xlarge |
-| vCPU | 4 |
-| RAM | 16 GB |
-| Storage | Minimum 50 GB |
-| OS | Ubuntu 24.04 LTS |
+#############################
+# 1️⃣4️⃣ Test AWS Metadata Service
+#############################
 
-📌 Why 16GB RAM?  
-TheHive depends on Elasticsearch and Cassandra. Both are memory-intensive. Less RAM may cause container crashes or unstable indexing.
+curl http://169.254.169.254/latest/meta-data/
+curl http://169.254.169.254/latest/meta-data/instance-id
+curl http://169.254.169.254/latest/meta-data/public-ipv4
 
----
+#############################
+# 1️⃣5️⃣ Final Validation Summary
+#############################
 
-# 🔐 Security Group Requirements
+echo "EC2 Network Validation Completed"
+echo "Ready for SOC-SOAR Tool Installation"
 
-| Port | Purpose |
-|------|---------|
-| 22 | SSH |
-| 9000 | TheHive Web UI |
-| 443 (optional) | Reverse Proxy / SSL |
-| 9200 | Elasticsearch (Do NOT expose publicly) |
-
-🚨 IMPORTANT:
-- Never expose Elasticsearch to the public internet.
-- Restrict port 9000 to your IP if not using reverse proxy.
-- Docker must be installed prior (see installation guide below).
-
----
-
-# 🧠 What is TheHive?
-
-TheHive is a 4-in-1 Security Incident Response platform that provides:
-
-- Case Management
-- Alert Triage
-- Observable Enrichment
-- Collaboration Engine
-
-It integrates seamlessly with:
-
-- MISP (Threat Intelligence)
-- Cortex (Automated analyzers)
-- SIEM tools (like Wazuh)
-- Email ingestion pipelines
-
----
-
-# 🏗️ Architecture Overview
-
-<p align="center">
-  <img src="https://docs.strangebee.com/thehive/images/overview/thehive-application-stack.png" width="600"/>
-</p>
-
-Core Components:
-
-- Apache Cassandra (Database)
-- Elasticsearch (Indexing Engine)
-- TheHive Application Layer
-- File Storage (Local/NFS/S3-compatible)
-
-Docker deployment handles orchestration of these services internally.
-
----
-
-# 🔄 Time & Host Configuration (MANDATORY BEFORE INSTALLATION)
-
-📌 Refer to:
-
-[time and hostname setup guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide/01-aws-ec2-infrastructure-setup#-post-launch-server-standardization)
-
----
-
-# 🐳 Docker Requirement
-
-Docker must be installed before proceeding.
-
-📌 Refer to:
-
-[Docker Installation Guide](./00-installation-and-setup-guide/02-docker-installation)
-
----
-
-# 🚀 Installation Method Used
-
-Docker Official Deployment (StrangeBee GitHub Repository)
-
-Directory used:
-```
-
-/opt/TheHive/
-
-```
-
----
-
-# 🌐 Access TheHive
-
-```
-http://<EC2-PUBLIC-IP>:9000
-```
-
-Default Credentials:
-
-- Username: admin
-- Password: secret
-
-⚠️ Change default password immediately after login.
-
----
-
-# 📊 Key Features
-
-- Real-time alert triage
-- Case lifecycle management
-- Observable enrichment
-- MISP integration
-- Cortex automation
-- KPI dashboards
-- Collaboration workflows
-
-Explore official documentation:
-
-- [Overview](https://docs.strangebee.com/thehive/overview/)
-- [Analyst Corner](https://docs.strangebee.com/?_gl=1#analyst)
-- [Installation Methods](https://docs.strangebee.com/thehive/installation/installation-methods/)
-- [System Requirements](https://docs.strangebee.com/thehive/installation/system-requirements/)
-- [Official Website](https://strangebee.com/thehive/)
-- [Features](https://strangebee.com/thehive-features/)
-- [Use Cases](https://strangebee.com/use-cases-thehive/)
-
----
-
-# 🎯 Real-World SOC Relevance
-
-TheHive transforms alerts into structured cases and allows:
-
-- Evidence documentation
-- Task assignment
-- Timeline tracking
-- Observable correlation
-- Integration with threat intelligence feeds
-- Automated DFIR workflows
-
-It bridges the gap between detection (SIEM) and response (IR).
-
----
-
-# 🏁 Result
-
-Successfully deployed TheHive 5.5 on AWS EC2 using Docker as part of a unified SOC ecosystem.
-
-Enabled:
-
-- Centralized case management
-- SOC workflow automation
-- Threat intelligence integration
-- Scalable IR operations
-
----
-
-# 📂 Repository Structure
-
-```
-
-04-thehive-installation/
-│
-├── README.md
-├── commands.sh
-├── interview_qna.md
-├── architecture-notes.txt
-├── troubleshooting.md
-
-```
-
----
-
-# 🐝 Why TheHive Matters
-
-In a mature SOC environment:
-
-Detection without structured response leads to chaos.
-
-TheHive introduces:
-
-✔ Standardized case workflow  
-✔ Collaborative investigation  
-✔ Automation-ready architecture  
-✔ SOC scalability  
-
-It is a critical backbone for modern DFIR and SOAR operations.
-
----
-
-End of README.
-
+############################################################
+# END OF FILE
+############################################################
