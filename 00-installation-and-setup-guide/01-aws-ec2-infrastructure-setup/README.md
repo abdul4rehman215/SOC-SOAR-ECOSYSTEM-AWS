@@ -1,404 +1,332 @@
-# 🛡️ AWS EC2 Infrastructure Setup Guide  
-### SOC-SOAR Ecosystem Deployment Foundation
+# ☁️ Project 01 — AWS EC2 Foundation Setup (SOC / SOAR Ecosystem)
+
+> **Goal:** Launch an EC2 instance where **network works + internet works**, then apply baseline system setup (timezone/NTP/hostname) so the machine is ready for SOC/SOAR deployments.
 
 ---
 
 ## 📌 Project Overview
 
-This guide documents the complete AWS EC2 infrastructure setup process required before deploying the SOC-SOAR ecosystem (Wazuh, TheHive, Cortex, MISP, Suricata, Zeek, etc.).
+This project documents the **repeatable AWS foundation setup** I used before installing any SOC stack tools (Wazuh, TheHive, MISP, Cortex, Suricata, Zeek, n8n, etc.).
 
-The objective is to build a clean, controlled, production-style network foundation instead of relying blindly on AWS default networking.
+The key principle is:
 
-⚠️ 80% of cloud deployment failures originate from improper network configuration.  
-This guide eliminates those risks.
-
----
-
-## 🎯 Objective
-
-- Create a clean VPC architecture
-- Configure public subnet with internet connectivity
-- Properly attach Internet Gateway
-- Configure route tables correctly
-- Ensure Security Groups and NACLs allow required traffic
-- Launch EC2 instance with validated network connectivity
-- Perform mandatory connectivity validation tests before installing any SOC tools
+✅ **Do not install anything until network + internet + DNS are verified.**  
+Most failures in SOC lab deployments are caused by **VPC/subnet/route table/security group** misconfiguration.
 
 ---
 
-## 🧱 Architecture Overview
+## 🎯 Objectives
 
-```
+By the end of this setup, I was able to:
 
-Internet
-│
-Internet Gateway (IGW)
-│
-Public Route Table (0.0.0.0/0 → IGW)
-│
-Public Subnet (10.0.1.0/24)
-│
-EC2 Instance (Ubuntu 24.04 LTS)
-
-````
+- Build a clean VPC network (instead of blindly using the default)
+- Launch an EC2 in the correct subnet with a public IP
+- Confirm routing + internet + DNS are working
+- Apply host baseline setup (timezone, NTP, hostname)
+- Establish a stable starting point for SOC tool installations
 
 ---
 
-## ☁️ AWS Environment Details
+## ✅ Prerequisites
 
-| Component | Configuration |
-|------------|---------------|
-| Region | us-east-1 (example) |
-| VPC CIDR | 10.0.0.0/16 |
-| Public Subnet | 10.0.1.0/24 |
-| Instance Type | t3.small (minimum) |
+### AWS Account Requirements
+- AWS account with **Billing enabled**
+- Region selected (example: `us-east-1`)
+- Permissions to create/manage:
+  - VPC, Subnets, IGW, Route Tables
+  - Security Groups
+  - EC2 instances
+  - Key pairs
+  - IAM roles (optional but recommended)
+
+### Local Requirements
+- SSH client (Linux/macOS terminal or Windows PowerShell)
+- Your public IP address for SSH allowlist rule
+
+---
+
+## 🧪 Lab Environment
+
+| Component | Value |
+|---|---|
+| Cloud | AWS |
+| Service | EC2 |
 | OS | Ubuntu 24.04 LTS |
-| Storage | 30 GB |
-| Public IP | Enabled |
-| DNS Resolution | Enabled |
-| DNS Hostnames | Enabled |
+| Instance (min) | t3.small |
+| Storage | 30 GB (minimum) |
+| Access | SSH key-based |
+| First rule | Network must work before installs |
 
 ---
 
-## 🧱 PHASE 0 – AWS Account Preparation (Mandatory)
+# 🧱 PHASE 0 — BEFORE YOU TOUCH EC2 (Mandatory)
 
-Before launching EC2:
-
-- AWS account created
+✅ Confirm:
 - Billing enabled
-- Region selected (example: us-east-1)
-- Key Pair created (.pem file downloaded securely)
-- IAM user configured (avoid root usage)
+- Correct region selected
+- You will use a **new VPC** for clarity and control
 
 ---
 
-## 🌐 PHASE 1 – Network Configuration (Critical Phase)
+# 🌐 PHASE 1 — NETWORK (80% ISSUES ARE HERE)
 
-### 1️⃣ Create Custom VPC
+## 1️⃣ Create a VPC (Do not rely blindly on default)
 
-Do NOT rely blindly on default VPC.
-
-**Settings:**
+**VPC Settings**
 
 | Setting | Value |
-|----------|-------|
-| CIDR Block | 10.0.0.0/16 |
-| DNS Resolution | Enabled |
-| DNS Hostnames | Enabled |
+|---|---|
+| VPC CIDR | `10.0.0.0/16` |
+| DNS Resolution | ✅ Enabled |
+| DNS Hostnames | ✅ Enabled |
 
-📌 Why this matters:
-- AWS metadata services depend on DNS
-- CloudTrail logging and integrations depend on proper DNS configuration
-- Internal service resolution depends on this
+📌 **Why this matters:**  
+AWS metadata, internal DNS, and name resolution depend on DNS settings.
 
 ---
 
-### 2️⃣ Create Subnets
+## 2️⃣ Create Subnets
 
-#### Public Subnet
-
-| Setting | Value |
-|----------|-------|
-| CIDR | 10.0.1.0/24 |
-| Auto-assign Public IPv4 | Enabled |
-
-(Optional) Private Subnet:
+### Public Subnet
 
 | Setting | Value |
-|----------|-------|
-| CIDR | 10.0.2.0/24 |
+|---|---|
+| CIDR | `10.0.1.0/24` |
+| Auto-assign public IPv4 | ✅ YES |
+
+### (Optional) Private Subnet
+
+| Setting | Value |
+|---|---|
+| CIDR | `10.0.2.0/24` |
 
 ---
 
-### 3️⃣ Create and Attach Internet Gateway (IGW)
+## 3️⃣ Internet Gateway (IGW)
 
-- Create Internet Gateway
+- Create an **Internet Gateway**
 - Attach it to the VPC
 
-🚨 If IGW is not attached → EC2 will NOT have internet access even with a public IP.
+🚨 If IGW is missing → **NO internet**, even with a public IP.
 
 ---
 
-### 4️⃣ Route Table Configuration (Most Common Failure Point)
+## 4️⃣ Route Table (Most common failure point)
 
-Create Public Route Table.
-
-Routes MUST include:
+### Public Route Table routes MUST include:
 
 | Destination | Target |
-|--------------|---------|
-| 10.0.0.0/16 | Local |
-| 0.0.0.0/0 | Internet Gateway (igw-xxxx) |
+|---|---|
+| `10.0.0.0/16` | Local |
+| `0.0.0.0/0` | Internet Gateway (igw-xxxx) |
 
-✔ Associate this route table with the Public Subnet.
+✅ Associate this route table to your **public subnet**.
 
-❌ If 0.0.0.0/0 has no target → no internet  
-❌ If it points to NAT Gateway → wrong for public subnet  
-
----
-
-### 5️⃣ Network ACL (Keep Simple Initially)
-
-Use default NACL OR ensure:
-
-#### Inbound Rules:
-- Allow ALL traffic from 0.0.0.0/0
-
-#### Outbound Rules:
-- Allow ALL traffic to 0.0.0.0/0
-
-📌 Important:
-Network ACLs are stateless. Return traffic must be explicitly allowed.
+❌ If `0.0.0.0/0` points to nothing → no internet  
+❌ If `0.0.0.0/0` points to NAT → wrong for public subnet
 
 ---
 
-### 6️⃣ Security Group (Stateful – Keep Minimal & Secure)
+## 5️⃣ Network ACL (Keep it simple)
 
-Inbound Rules:
+Use default NACL or ensure:
+
+### Inbound
+- Allow ALL traffic from `0.0.0.0/0`
+
+### Outbound
+- Allow ALL traffic to `0.0.0.0/0`
+
+📌 NACL is **stateless** → return traffic must be allowed.
+
+---
+
+## 6️⃣ Security Group (Stateful — keep minimal)
+
+### Inbound rules (minimum)
 
 | Type | Port | Source |
-|------|------|--------|
-| SSH | 22 | Your Public IP |
-| HTTPS | 443 | Your IP or 0.0.0.0/0 (if dashboard exposure required) |
+|---|---:|---|
+| SSH | 22 | Your IP only |
+| HTTPS | 443 | Your IP / (0.0.0.0/0 only if needed later) |
 
-Outbound Rules:
+### Outbound rules
+- Allow ALL traffic to `0.0.0.0/0`
 
-- Allow ALL traffic → 0.0.0.0/0
-
-📌 Security Groups are stateful. Return traffic is automatically allowed.
+✅ Best practice: start with **SSH only** and open other ports later per tool.
 
 ---
 
-## 🖥️ PHASE 2 – EC2 Instance Launch
+# 🖥️ PHASE 2 — EC2 INSTANCE (Do this exactly)
 
-### Launch Configuration
+## 1️⃣ Launch EC2
 
 | Setting | Value |
-|----------|-------|
+|---|---|
 | AMI | Ubuntu 24.04 LTS |
-| Instance Type | t3.small (minimum) |
-| Subnet | Public Subnet |
-| Public IP | Enabled |
-| Storage | 30 GB |
-| Security Group | Created above |
+| Instance type | t3.small (minimum) |
+| Subnet | Public subnet |
+| Public IP | ✅ Enabled |
+| Storage | 30 GB (minimum) |
+| Key Pair | Create/select (required for SSH) |
+
+✅ Optional but recommended:
+- Allocate an **Elastic IP** if you want stable public IP (otherwise IP may change after stop/start)
 
 ---
 
-## 🔍 Mandatory Network Validation (DO NOT SKIP)
+## 2️⃣ First network test (DO NOT SKIP)
 
-Immediately after SSH login:
+Run these on EC2 immediately after connecting:
 
 ```bash
 ip a
 ip route
 ````
 
-You MUST see:
+You must see:
 
-* Network interface (usually `ens5`)
-* Private IP like `10.0.1.x`
-* Default route via `10.0.1.1`
+* Interface: `ens5` (or similar)
+* Private IP like: `10.0.1.x`
+* Default route via: `10.0.1.1`
 
-### Test Internal Gateway:
+### Connectivity tests
 
 ```bash
 ping -c 3 10.0.1.1
-```
-
-### Test External IP Connectivity:
-
-```bash
 ping -c 3 8.8.8.8
-```
-
-### Test DNS Resolution:
-
-```bash
 curl -I https://google.com
 ```
 
+Interpretation:
+
+* ❌ If **8.8.8.8 fails** → routing/network problem
+* ❌ If **8.8.8.8 works** but **google.com fails** → DNS issue
+
+✅ Rule:
+
+> **Do not install anything until this works.**
+
 ---
 
-## 📅🕛 Post-Launch Server Standardization
+# ⏱️ Baseline Machine Setup (Timezone + NTP + Hostname)
 
-### 1️⃣ Check Current Time
-```
+## Display current time/date/timezone
 
+```bash
 timedatectl
-
 ```
 
-### 2️⃣ Set Timezone
-```
+## Change timezone (example)
 
+```bash
 sudo timedatectl set-timezone Asia/Baku
-
 ```
 
-(Replace with your preferred timezone)
+## Enable NTP time sync
 
-### 3️⃣ Enable NTP
-```
-
+```bash
 sudo timedatectl set-ntp yes
-
 ```
 
 ---
 
-# 🏷️ Set Hostname
+## Set hostname (example: thehive)
 
+```bash
+sudo hostnamectl set-hostname "thehive"
 ```
 
-sudo hostnamectl set-hostname thehive
+### Update `/etc/hosts` (important)
 
+```bash
+sudo nano /etc/hosts
 ```
 
-Update `/etc/hosts`:
+Update this line:
 
-Change:
+FROM:
 
 ```
-
 127.0.1.1 old-hostname
-
 ```
 
-To:
+TO:
 
 ```
-
 127.0.1.1 thehive
-
 ```
 
-Verify:
-```
+Save and exit (`Ctrl+O`, Enter, `Ctrl+X`).
 
+### Verify hostname
+
+```bash
 hostnamectl
-
 ```
 
 ---
 
-### Interpretation:
+# 🚨 Most Common Failures (From Practical Experience)
 
-| Result                         | Meaning                      |
-| ------------------------------ | ---------------------------- |
-| 8.8.8.8 fails                  | Routing / IGW issue          |
-| 8.8.8.8 works but google fails | DNS issue                    |
-| apt update fails               | Outbound blocked             |
-| SSH works but curl fails       | Route table misconfiguration |
-
-🚨 DO NOT INSTALL ANY SOC TOOL until all tests pass.
-
----
-
-## 🚨 Most Common Real-World Failures
-
-| Problem                     | Root Cause                   |
-| --------------------------- | ---------------------------- |
-| No internet                 | Missing IGW or bad route     |
-| apt update fails            | DNS misconfigured            |
-| Docker GPG error            | Interrupted key import       |
-| Wazuh dashboard not loading | Port 443 not allowed         |
-| No CloudTrail logs          | IAM role missing             |
-| aws-s3 wodle silent         | Wrong bucket name            |
-| Cannot access EC2           | Security group misconfigured |
+| Problem              | Root Cause                                |
+| -------------------- | ----------------------------------------- |
+| No internet          | Missing IGW / bad route table association |
+| `apt update` fails   | DNS broken / outbound blocked             |
+| Docker GPG error     | Interrupted key import / wrong repo steps |
+| Wazuh dashboard down | Ports not allowed / service not running   |
+| No CloudTrail events | IAM role not attached / wrong region      |
+| aws-s3 wodle silent  | Wrong bucket name / IAM permission issue  |
 
 ---
 
-## 💻 Recommended Hardware (For Full SOC Stack)
+# ✅ Verification Checklist (Before Installing SOC Tools)
 
-| Deployment Size      | Recommended                           |
-| -------------------- | ------------------------------------- |
-| Minimal Testing      | t3.small (2GB RAM)                    |
-| Multi-tool SOC Stack | t3.large (8GB RAM)                    |
-| Production-like Lab  | t3.xlarge (16GB RAM)                  |
-| Storage              | Minimum 50–100GB recommended for logs, I used 30 GB storage across all instances |
+Before moving to Wazuh/TheHive/MISP:
 
----
-
-## 📁 Repository Structure
-
-```
-00-installation-and-setup-guide/
-└── 01-aws-ec2-infrastructure-setup/
-    ├── README.md
-    ├── commands.sh
-    ├── troubleshooting.md
-    └── architecture-notes.txt
-```
-
----
-
-## 🏁 Final Advice
-
-* Never rush networking
-* Always validate route tables
-* Never expose SSH to 0.0.0.0/0
-* Always verify connectivity before installing software
-* Document your network architecture
+* [ ] `ping 8.8.8.8` works
+* [ ] `curl -I https://google.com` works
+* [ ] `timedatectl` shows correct timezone
+* [ ] NTP enabled
+* [ ] `hostnamectl` shows correct hostname
+* [ ] Security Group inbound rules are minimal (SSH restricted)
 
 ---
 
 ## 🧠 What I Learned
 
-* Cloud networking is the foundation of SOC deployments
-* Most failures originate from routing and IGW misconfiguration
-* DNS resolution is critical for SIEM integrations
-* Controlled VPC architecture improves security posture
-* Validation before installation saves hours of troubleshooting
-
----
-
-## 🌍 Why This Matters
-
-A SOC ecosystem relies on:
-
-* External threat intelligence APIs
-* Log ingestion pipelines
-* Dashboard accessibility
-* Agent communication
-* CloudTrail integration
-
-If networking is misconfigured, detection engineering fails before it begins.
-
----
-
-## 🏢 Real-World Relevance
-
-This mirrors real cloud security engineering tasks:
-
-* VPC design
-* Internet gateway routing
-* Secure SSH configuration
-* Controlled exposure of services
-* Cloud infrastructure validation
-
-These are core responsibilities of:
-
-* Cloud Security Engineers
-* SOC Engineers
-* DevSecOps Engineers
-* Security Architects
+* Most SOC lab failures come from **network misconfigurations**, not tool installs
+* Route tables + IGW + subnet association are the true “internet switch”
+* Correct hostname + time sync prevents weird service issues later
+* A clean baseline makes deployments faster and troubleshooting easier
 
 ---
 
 ## ✅ Result
 
-Successfully deployed a stable AWS EC2 environment with verified internet, DNS, and routing functionality ready for SOC-SOAR tool deployment.
+* AWS network built cleanly (VPC/subnet/IGW/routes)
+* EC2 launched with verified internet + DNS
+* Host baseline applied (timezone, NTP, hostname)
+* Instance ready for SOC ecosystem tool installations
+
+---
+
+## 🌍 Why This Matters
+
+SOC platforms expose dashboards and APIs.
+If the baseline isn’t correct, deployments become unstable and insecure.
+
+This project sets the foundation for **everything else** in the SOC/SOAR portfolio.
 
 ---
 
 ## 🏁 Conclusion
 
-This infrastructure foundation enables reliable deployment of Wazuh, TheHive, MISP, Cortex, Suricata, Zeek, and automation workflows.
+This EC2 foundation setup ensures:
+✅ stable networking
+✅ correct DNS + internet access
+✅ clean system identity (hostname/time sync)
 
-A properly designed VPC eliminates 80% of deployment issues and provides a secure baseline for advanced detection engineering.
-
----
-
-Next Step → Install Core SOC Tools.
+Next step: install SOC tools, guide is in separate project folders (Wazuh, TheHive, MISP, Cortex, Suricata, Zeek, etc.).
 
 ---
