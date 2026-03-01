@@ -329,9 +329,9 @@ This project sets the foundation for **everything else** in the SOC/SOAR portfol
 ## 🏁 Conclusion
 
 This EC2 foundation setup ensures:
-✅ stable networking
-✅ correct DNS + internet access
-✅ clean system identity (hostname/time sync)
+- ✅ stable networking
+- ✅ correct DNS + internet access
+- ✅ clean system identity (hostname/time sync)
 
 Next step: install SOC tools, guide is in separate project folders (Wazuh, TheHive, MISP, Cortex, Suricata, Zeek, etc.).
 
