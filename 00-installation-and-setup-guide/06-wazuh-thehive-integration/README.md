@@ -81,6 +81,7 @@ Community script inspiration:
 
 # 📁 Repository Structure
 
+```
 00-installation-and-setup-guide/
 └── 06-wazuh-thehive-integration/
     ├── README.md
@@ -90,6 +91,8 @@ Community script inspiration:
     ├── commands.sh
     ├── troubleshooting.md
     └── interview_qna.md
+
+```
 
 ---
 
