@@ -1,229 +1,206 @@
 ====================================================================
-DOCKER INSTALLATION – ARCHITECTURE NOTES
-SOC-SOAR ECOSYSTEM CONTAINER RUNTIME FOUNDATION
+DOCKER INSTALLATION ARCHITECTURE NOTES
+PROJECT 02 — STANDARD DOCKER BASELINE (UBUNTU / AWS EC2)
 ====================================================================
 
-1. PURPOSE OF DOCKER IN SOC ECOSYSTEM
+1. PURPOSE OF THIS INSTALLATION BASELINE
 --------------------------------------------------------------------
+Docker is used as a standardized deployment layer for multiple SOC/SOAR
+components in this portfolio. Installing Docker correctly once ensures
+that future deployments (TheHive, Cortex, n8n, etc.) are:
 
-Docker is used as the primary container runtime to deploy:
+- repeatable
+- isolated from OS dependency conflicts
+- easy to rebuild or redeploy
+- consistent across cloud and local environments
 
-- TheHive (Case Management Platform)
-- Cortex (Analyzer & Responder Engine)
-- MISP (Threat Intelligence Platform)
-- n8n (Automation & AI Workflows)
-- Supporting services (Redis, PostgreSQL, Elasticsearch where required)
-
-Docker allows:
-
-- Isolation of services
-- Version control of tools
-- Easy upgrades
-- Reproducible deployments
-- Simplified dependency management
+This guide uses Docker’s official APT repository method rather than
+Ubuntu’s default packages to ensure better compatibility and freshness.
 
 
-2. WHY USE OFFICIAL DOCKER REPOSITORY
+2. WHY OFFICIAL DOCKER REPO (NOT DEFAULT UBUNTU PACKAGES)
 --------------------------------------------------------------------
+Official Docker repository provides:
 
-Ubuntu default repositories may:
+- up-to-date Docker Engine (docker-ce)
+- docker-compose-plugin (modern compose)
+- docker-buildx-plugin
+- containerd maintained with Docker ecosystem
 
-- Provide outdated Docker versions
-- Lack modern Compose plugin
-- Cause compatibility issues with newer container stacks
-
-Using official Docker repository ensures:
-
-- Latest stable Docker CE
-- Proper containerd version
-- Verified GPG-signed packages
-- Long-term compatibility
+Using default Ubuntu packages can result in:
+- outdated versions
+- missing compose plugin compatibility
+- inconsistent behavior across machines
 
 
-3. DOCKER ARCHITECTURE OVERVIEW
+3. INSTALLATION TRUST MODEL (GPG + APT KEYRINGS)
 --------------------------------------------------------------------
+Docker repository packages are signed. Ubuntu APT verifies trust using:
 
-Docker Engine Components:
+- Docker GPG key stored at:
+  /etc/apt/keyrings/docker.gpg
 
-- dockerd (Docker daemon)
-- containerd (Container runtime)
-- runc (Low-level container runtime)
-- Docker CLI
-- Docker Compose plugin
+- Docker repository entry stored at:
+  /etc/apt/sources.list.d/docker.list
 
-Flow:
+Repository line includes:
+- signed-by=/etc/apt/keyrings/docker.gpg
+This enforces that only packages signed with Docker’s key are trusted.
 
-User → Docker CLI → Docker Daemon → containerd → runc → Container
+Critical requirements:
+- docker.gpg must exist
+- docker.gpg must be readable by APT:
+  chmod a+r /etc/apt/keyrings/docker.gpg
+
+If this fails, APT errors occur:
+- NO_PUBKEY
+- repository is not signed
+- signature verification failed
 
 
-4. USER PERMISSION MODEL
+4. REPOSITORY SELECTION LOGIC
 --------------------------------------------------------------------
+Repository configuration uses system detection to ensure correctness:
 
-By default, Docker requires root privileges.
+- Architecture:
+  dpkg --print-architecture
+  Examples: amd64, arm64
 
-Instead of running:
+- Ubuntu Codename:
+  lsb_release -cs
+  Examples: jammy (22.04), noble (24.04)
 
-    sudo docker ...
-
-We add user to docker group:
-
-    sudo usermod -aG docker $USER
-
-This allows:
-
-- Non-root container management
-- Automation script execution
-- Cleaner deployment process
+Repository points to:
+https://download.docker.com/linux/ubuntu <codename> stable
 
 
-5. STORAGE ARCHITECTURE
+5. SERVICE ARCHITECTURE (DOCKER DAEMON)
 --------------------------------------------------------------------
+Docker components installed:
 
-Default Docker storage driver (Ubuntu):
+- docker-ce       (Docker Engine)
+- docker-ce-cli   (CLI client)
+- containerd.io   (runtime)
+- docker-buildx-plugin
+- docker-compose-plugin
 
-    overlay2
+Service:
+- docker.service
 
-Location:
-
-    /var/lib/docker/
-
-This directory stores:
-
-- Images
-- Containers
-- Volumes
-- Networks
-
-Important:
-
-Docker storage can grow rapidly during SOC deployments,
-especially when:
-
-- Running MISP
-- Running TheHive
-- Running Elasticsearch
-- Pulling large images
-
-Minimum recommended disk space:
-
-- 50GB for testing
-- 100GB+ for full SOC stack
+Expected behavior:
+- Docker daemon starts at boot:
+  systemctl enable docker
+- Docker daemon must be running before containers work:
+  systemctl start docker
 
 
-6. NETWORK ARCHITECTURE
+6. PERMISSION MODEL (DOCKER SOCKET + GROUP)
 --------------------------------------------------------------------
+Docker uses a Unix socket:
+- /var/run/docker.sock
 
-Docker creates default bridge network:
+By default, this socket is owned by:
+- root:docker
 
-    docker0
+Users must be in "docker" group to run Docker without sudo:
+- usermod -aG docker $USER
 
-Each container gets:
+Session refresh required:
+- newgrp docker
+or logout/login
 
-- Virtual interface
-- Internal IP
-- Isolated namespace
-
-External access happens through:
-
-- Port mapping (host:container)
-- Example:
-    0.0.0.0:9000 → container:9000
-
-Security implication:
-
-Exposed ports must be restricted via:
-
-- AWS Security Groups
-- Firewall rules
+Common permission failure:
+- "permission denied while trying to connect to the Docker daemon socket"
 
 
-7. SECURITY CONSIDERATIONS
+7. NETWORK DEPENDENCIES (WHY INTERNET + DNS MATTER)
 --------------------------------------------------------------------
+Docker installation and usage requires:
 
-Docker daemon runs as root.
+- Internet access (apt repo, packages)
+- DNS resolution (download domains, registry domains)
+- HTTPS connectivity (TLS handshake)
 
-Security best practices:
+During installation:
+- curl downloads GPG key via HTTPS
+- apt updates repo metadata via HTTPS
 
-- Do not expose Docker socket publicly
-- Do not run containers as privileged unless required
-- Restrict dashboard ports (9000, 5601, 8080)
-- Regularly update Docker engine
-- Avoid untrusted images
+During runtime:
+- docker pull uses Docker registry endpoints:
+  registry-1.docker.io
+
+If DNS fails:
+- apt update fails
+- curl fails
+- docker pull fails
+- docker run hello-world fails
 
 
-8. SERVICE MANAGEMENT
+8. VALIDATION REQUIREMENTS (END-TO-END TEST)
 --------------------------------------------------------------------
+Validation is done with:
 
-Docker service:
+docker run hello-world
 
-    systemctl status docker
+This verifies:
+- docker daemon is running
+- docker can pull images from registry
+- container runtime works
+- local system supports container execution
 
-Must be:
-
-- Active (running)
-- Enabled (auto-start on reboot)
-
-If not enabled:
-
-Containers will not auto-start after reboot.
+Expected output includes:
+"Hello from Docker!"
 
 
-9. RESOURCE MANAGEMENT
+9. COMMON ARCHITECTURE / INSTALLATION FAILURES
 --------------------------------------------------------------------
+1) NO_PUBKEY error
+   - GPG key missing or unreadable
+   - signed-by path incorrect
+   - permissions incorrect on docker.gpg
 
-Docker containers share host kernel.
+2) repository not signed
+   - repo file malformed
+   - GPG key not properly imported
 
-Resource limitations can be enforced using:
+3) Cannot connect to Docker daemon
+   - docker service not running
+   - docker socket not available
+   - permissions issue
 
-- --memory flag
-- --cpus flag
+4) permission denied on docker.sock
+   - user not in docker group
+   - session not refreshed
 
-Example:
-
-    docker run --memory=1g --cpus=1 nginx
-
-For SOC stack:
-
-Minimum recommended:
-
-- 8GB RAM
-- 4 vCPUs
-- 100GB disk
+5) hello-world fails to pull image
+   - DNS issue
+   - outbound blocked
+   - AWS networking misconfigured
 
 
-10. COMMON DEPLOYMENT ISSUES
+10. SECURITY NOTES (BASIC AWARENESS)
 --------------------------------------------------------------------
+- Docker group membership is equivalent to root-level access.
+  Anyone in docker group can potentially escalate privileges.
 
-- GPG key import failure
-- DNS resolution failure
-- Outbound port blocked
-- Disk exhaustion
-- Permission denied (docker group missing)
-- Service not enabled
+In portfolio/lab environments:
+- Acceptable tradeoff for usability
+- Still recommended:
+  - restrict SSH inbound access
+  - apply least-privilege security groups
+  - avoid exposing Docker API remotely
 
 
-11. SCALABILITY STRATEGY
+11. FINAL STATUS (PROJECT 02 OUTCOME)
 --------------------------------------------------------------------
-
-Future architectural improvements:
-
-- Separate containers per service
-- Use docker-compose.yml for orchestration
-- Use external volumes for persistent storage
-- Consider reverse proxy (NGINX) for dashboard routing
-- Consider private registry for internal images
-
-
-12. FINAL STATUS
---------------------------------------------------------------------
-
-Docker Engine installed using official repository
-Compose plugin verified
-Daemon enabled and running
-Test container executed successfully
-User added to docker group
-
-System is ready for containerized SOC platform deployment.
+- Docker installed via official APT repository
+- GPG key stored in /etc/apt/keyrings/docker.gpg
+- Docker repo configured in /etc/apt/sources.list.d/docker.list
+- Docker service enabled and running
+- docker compose plugin installed and verified
+- User added to docker group
+- Validation completed via:
+  docker run hello-world
 
 ====================================================================
 END OF DOCKER ARCHITECTURE NOTES
