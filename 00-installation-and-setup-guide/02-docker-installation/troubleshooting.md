@@ -1,57 +1,144 @@
-# 🐳 Docker Installation – Troubleshooting Guide  
-### SOC-SOAR Ecosystem Container Runtime Issues
+# 🛠️ Troubleshooting Guide — Project 02: Docker Installation Guide (Ubuntu / AWS EC2)
+
+> This guide covers common Docker installation and runtime issues on Ubuntu (especially on AWS EC2).  
+> Focus is on **GPG key issues, repository issues, daemon issues, permissions, and network/DNS problems**.
 
 ---
 
-## 📌 Overview
+## 📌 Quick Fix Flow (Use This First)
 
-This document outlines common issues encountered during Docker installation on Ubuntu 22.04 / 24.04 and their resolutions.
-
-Docker installation failures are typically caused by:
-
-- GPG key misconfiguration
-- Repository misconfiguration
-- DNS / network instability
-- Permission issues
-- Interrupted package installation
-
----
-
-# 🔐 1️⃣ NO_PUBKEY Error During apt update
-
-## ❌ Symptoms
-
+### 1) Check internet + DNS
 ```bash
-NO_PUBKEY XXXXXXXX
-The repository is not signed.
+ping -c 2 8.8.8.8
+curl -I https://google.com
 ````
 
----
-
-## 🔍 Root Cause
-
-* Docker GPG key not imported correctly
-* Incorrect permissions on `/etc/apt/keyrings/docker.gpg`
-* Repository pointing to wrong key location
-
----
-
-## 🛠️ Diagnostics
+### 2) Check Docker service status
 
 ```bash
-ls -l /etc/apt/keyrings/docker.gpg
-cat /etc/apt/sources.list.d/docker.list
+sudo systemctl status docker --no-pager
+```
+
+### 3) Check if user is in docker group
+
+```bash
+id -nG $USER
+getent group docker
+```
+
+### 4) Test Docker quickly
+
+```bash
+docker --version
+docker compose version
+docker run hello-world
 ```
 
 ---
 
-## ✅ Fix
+# 🔑 GPG KEY / REPOSITORY ISSUES
 
-Re-import key properly:
+---
+
+## 1) ❌ `apt update` shows `NO_PUBKEY` (Docker repo not trusted)
+
+### Symptoms
+
+* During `sudo apt update`, errors like:
+
+  * `NO_PUBKEY ...`
+  * `The following signatures couldn't be verified`
+  * `repository is not signed`
+
+### Root Causes
+
+* GPG key not saved to correct location
+* Key permissions incorrect (APT can’t read it)
+* Repository file references wrong keyring path
+
+### Fix (Reinstall key properly)
+
+```bash
+sudo mkdir -p /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+| sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+ls -l /etc/apt/keyrings/docker.gpg
+```
+
+Then re-add repository:
+
+```bash
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null <<EOF
+deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) stable
+EOF
+```
+
+Update again:
+
+```bash
+sudo apt clean
+sudo apt update
+```
+
+---
+
+## 2) ❌ `repository is not signed` / APT refuses Docker repo
+
+### Symptoms
+
+* APT blocks repo and refuses packages
+
+### Root Causes
+
+* Wrong repo line format
+* Keyring path mismatch
+* Broken repo file content
+
+### Fix (Inspect the repo file)
+
+```bash
+cat /etc/apt/sources.list.d/docker.list
+```
+
+It should look like:
+
+```text
+deb [arch=<arch> signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu <codename> stable
+```
+
+Check codename:
+
+```bash
+lsb_release -cs
+```
+
+Then:
+
+```bash
+sudo apt update
+```
+
+---
+
+## 3) ❌ `GPG error` / `docker.gpg` exists but still fails
+
+### Root Causes
+
+* File permissions wrong
+* Corrupted key file due to interrupted download
+
+### Fix
+
+Recreate the key file:
 
 ```bash
 sudo rm -f /etc/apt/keyrings/docker.gpg
-sudo mkdir -p /etc/apt/keyrings
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
 | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -62,373 +149,224 @@ sudo apt update
 
 ---
 
-# 🌐 2️⃣ apt update Fails (Temporary Failure Resolving)
+# 🐳 DOCKER INSTALLATION / SERVICE ISSUES
 
-## ❌ Symptoms
+---
+
+## 4) ❌ Docker installed but daemon not running
+
+### Symptoms
+
+* `docker ps` fails
+* error: `Cannot connect to the Docker daemon`
+
+### Fix
+
+Start and enable Docker:
 
 ```bash
-Temporary failure resolving 'download.docker.com'
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo systemctl status docker --no-pager
+```
+
+Check logs if failing:
+
+```bash
+sudo journalctl -u docker --no-pager -n 200
 ```
 
 ---
 
-## 🔍 Root Cause
+## 5) ❌ `Cannot connect to the Docker daemon` even though service is running
 
-* DNS not working
-* Internet gateway missing
-* Route table misconfigured
-* Outbound traffic blocked
+### Root Causes
 
----
+* Permissions issue accessing `/var/run/docker.sock`
+* User not in docker group
+* Session not refreshed
 
-## 🛠️ Diagnostics
+### Fix
 
-```bash
-ping 8.8.8.8
-curl https://google.com
-cat /etc/resolv.conf
-```
-
----
-
-## ✅ Fix
-
-Verify:
-
-* Internet Gateway attached
-* Route table contains `0.0.0.0/0 → IGW`
-* DNS resolution enabled in VPC
-* Security group outbound rule allows `0.0.0.0/0`
-
----
-
-# 🔒 3️⃣ Permission Denied When Running Docker
-
-## ❌ Symptoms
+Check socket permissions:
 
 ```bash
-Got permission denied while trying to connect to the Docker daemon socket
+ls -l /var/run/docker.sock
 ```
 
+Add user to docker group:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Apply group changes:
+
+```bash
+newgrp docker
+```
+
+Test:
+
+```bash
+docker ps
+docker run hello-world
+```
+
+If still failing, log out and log back in.
+
 ---
 
-## 🔍 Root Cause
+## 6) ❌ `permission denied` when running docker commands
 
-* User not added to docker group
-* Session not reloaded
+### Symptoms
 
----
+* `permission denied while trying to connect to the Docker daemon socket`
 
-## 🛠️ Fix
+### Fix
 
 ```bash
 sudo usermod -aG docker $USER
 newgrp docker
+id -nG $USER
 ```
 
-If still failing:
-
-Logout and log back in.
-
-Verify group:
+Ensure docker group exists:
 
 ```bash
-groups
-```
-
-You should see `docker` listed.
-
----
-
-# 🛑 4️⃣ Docker Service Not Starting
-
-## ❌ Symptoms
-
-```bash
-docker: command not found
-or
-Failed to start docker.service
+getent group docker
 ```
 
 ---
 
-## 🔍 Root Cause
-
-* Installation interrupted
-* containerd not installed
-* Service not enabled
+# 🌐 NETWORK / DNS / AWS EC2 SPECIFIC ISSUES
 
 ---
 
-## 🛠️ Diagnostics
+## 7) ❌ Docker GPG download fails / curl fails
+
+### Symptoms
+
+* `curl: (6) Could not resolve host`
+* `curl: (7) Failed to connect`
+* timeouts
+
+### Root Causes
+
+* No internet (IGW/route table issue)
+* DNS not working (VPC DNS disabled)
+* Outbound restricted (SG/NACL)
+
+### Fix (EC2 network validation)
 
 ```bash
-sudo systemctl status docker
-sudo journalctl -xeu docker.service
+ip route
+ping -c 2 8.8.8.8
+curl -I https://google.com
 ```
 
+If 8.8.8.8 fails → check VPC + route table + IGW.
+If 8.8.8.8 works but google fails → DNS issue (enable VPC DNS).
+
 ---
 
-## ✅ Fix
+## 8) ❌ `docker run hello-world` fails due to image pull issues
 
-Restart service:
+### Symptoms
+
+* Cannot pull from registry
+* DNS resolution issues
+* TLS handshake errors
+
+### Fix
+
+Check connectivity to Docker registry:
 
 ```bash
-sudo systemctl daemon-reload
+curl -I https://registry-1.docker.io
+```
+
+Try a different network test:
+
+```bash
+ping -c 2 1.1.1.1
+```
+
+Restart Docker:
+
+```bash
 sudo systemctl restart docker
-sudo systemctl enable docker
 ```
 
-If still failing:
+Retry:
 
 ```bash
-sudo apt install --reinstall docker-ce docker-ce-cli containerd.io
+docker run hello-world
 ```
 
 ---
 
-# 📦 5️⃣ Docker Compose Command Not Found
-
-## ❌ Symptoms
-
-```bash
-docker-compose: command not found
-```
+# 🧩 COMPOSE ISSUES
 
 ---
 
-## 🔍 Root Cause
+## 9) ❌ `docker compose` not found
 
-Modern Docker uses:
+### Symptoms
+
+* `docker: 'compose' is not a docker command`
+
+### Root Causes
+
+* Compose plugin not installed
+* Older Docker packages
+
+### Fix
+
+Install the compose plugin:
 
 ```bash
-docker compose
+sudo apt update
+sudo apt install -y docker-compose-plugin
 ```
 
-NOT:
-
-```bash
-docker-compose
-```
-
----
-
-## ✅ Fix
-
-Verify plugin installed:
+Verify:
 
 ```bash
 docker compose version
 ```
 
-If missing:
+---
+
+# ✅ FINAL DIAGNOSTIC COMMANDS (COPY/PASTE)
+
+Run these and inspect outputs:
 
 ```bash
-sudo apt install docker-compose-plugin
-```
-
----
-
-# 🐳 6️⃣ hello-world Container Fails
-
-## ❌ Symptoms
-
-```bash
-Cannot connect to the Docker daemon
-```
-
----
-
-## 🔍 Root Cause
-
-* Docker daemon not running
-* Network issue preventing image pull
-* Permission issue
-
----
-
-## 🛠️ Diagnostics
-
-```bash
-sudo systemctl status docker
-docker info
-```
-
----
-
-## ✅ Fix
-
-Start daemon:
-
-```bash
-sudo systemctl start docker
-```
-
-If image pull fails:
-
-Check internet:
-
-```bash
-ping 8.8.8.8
-curl https://registry-1.docker.io
-```
-
----
-
-# 🔄 7️⃣ Interrupted Docker GPG Key Import
-
-## ❌ Symptoms
-
-* apt update hangs
-* repository not signed error persists
-
----
-
-## 🔍 Root Cause
-
-Key import was interrupted mid-process.
-
----
-
-## ✅ Fix
-
-Remove and re-add key:
-
-```bash
-sudo rm -f /etc/apt/keyrings/docker.gpg
-sudo apt clean
+ping -c 2 8.8.8.8
+curl -I https://google.com
 sudo apt update
-```
-
-Re-import key properly.
-
----
-
-# 🗄️ 8️⃣ Disk Space Issues During Installation
-
-## ❌ Symptoms
-
-```bash
-No space left on device
+ls -l /etc/apt/keyrings/docker.gpg
+cat /etc/apt/sources.list.d/docker.list
+sudo systemctl status docker --no-pager
+docker --version
+docker compose version
+id -nG $USER
+ls -l /var/run/docker.sock
+docker run hello-world
 ```
 
 ---
 
-## 🛠️ Diagnostics
+## ✅ Final Notes
 
-```bash
-df -h
-```
+* Most Docker install failures come from:
 
----
+  * DNS/network issues on EC2
+  * GPG key not readable by APT
+  * repository file not correctly configured
+  * user permissions not applied (docker group)
 
-## ✅ Fix
-
-Clean apt cache:
-
-```bash
-sudo apt clean
-sudo apt autoremove -y
-```
-
-If still low:
-
-Resize EBS volume from AWS console.
-
----
-
-# 🔥 9️⃣ Port Conflicts After Installation
-
-## ❌ Symptoms
-
-Containers fail to start due to port binding errors.
-
----
-
-## 🛠️ Diagnostics
-
-```bash
-sudo ss -tulnp
-```
-
----
-
-## ✅ Fix
-
-Stop conflicting service:
-
-```bash
-sudo systemctl stop service-name
-```
-
-Or change container port mapping.
-
----
-
-# 🧠 10️⃣ Docker Consumes High Memory
-
-## 🔍 Explanation
-
-Docker uses:
-
-* containerd
-* overlay2 storage
-* background daemon
-
-On low RAM systems (<2GB) performance may degrade.
-
----
-
-## ✅ Recommendation
-
-Minimum recommended for SOC stack:
-
-* 8GB RAM
-* 100GB disk
-
----
-
-# 🏁 Troubleshooting Strategy
-
-Always check in this order:
-
-1️⃣ Internet connectivity
-2️⃣ DNS resolution
-3️⃣ GPG key validation
-4️⃣ Repository configuration
-5️⃣ Docker service status
-6️⃣ User group membership
-7️⃣ Disk space
-8️⃣ Port conflicts
-
----
-
-## ✅ Final Validation Checklist
-
-✔ docker --version works
-✔ docker compose version works
-✔ docker run hello-world successful
-✔ docker info shows no errors
-✔ docker service active and enabled
-
----
-
-## 🧠 Key Takeaway
-
-Stable Docker installation is critical for:
-
-* TheHive deployment
-* Cortex analyzers
-* MISP container stack
-* n8n automation workflows
-* Microservice SOC architecture
-
-Improper Docker installation leads to cascading failures across the SOC ecosystem.
-
----
-
-## 📌 Status
-
-Docker environment validated and ready for containerized SOC tool deployment.
+Once Docker is stable, SOC/SOAR tools can be deployed reliably with fewer dependency issues.
 
 ---
