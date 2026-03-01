@@ -129,7 +129,7 @@ Installed:
 ## 📂 Repository Structure
 
 ```text
-00-installation-setup/
+00-installation-and-setup-guide/
 └── project02-docker-installation-guide/
     ├── README.md
     ├── commands.sh
