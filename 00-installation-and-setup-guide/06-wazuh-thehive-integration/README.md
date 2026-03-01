@@ -1,4 +1,4 @@
-# 🔗 Wazuh ↔ TheHive Integration (AWS SOC Deployment
+# 🔗 Wazuh ↔ TheHive Integration (AWS SOC Deployment)
 
 <div align="center">
 
