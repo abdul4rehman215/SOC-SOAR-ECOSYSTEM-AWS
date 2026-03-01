@@ -362,11 +362,11 @@ Alerts remain isolated.
 
 With TheHive:
 
-✔ Structured investigations  
-✔ Collaboration  
-✔ Audit trails  
-✔ Case documentation  
-✔ Automation-ready IR  
+- ✔ Structured investigations  
+- ✔ Collaboration  
+- ✔ Audit trails  
+- ✔ Case documentation  
+- ✔ Automation-ready IR  
 
 ---
 
