@@ -3,6 +3,7 @@
 ###########################################################
 # Wazuh → TheHive Integration Setup Script
 # AWS SOC Deployment
+# commands to run in wazuh server
 ###########################################################
 
 echo "Installing TheHive Python client..."
