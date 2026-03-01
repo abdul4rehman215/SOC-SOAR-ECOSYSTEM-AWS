@@ -20,17 +20,17 @@ sudo apt upgrade -y
 
 sudo apt install -y curl unzip gnupg apt-transport-https lsb-release software-properties-common
 
+# -------------------------------
+# (Optional) Pre-checks
+# -------------------------------
+whoami
+hostname
+uname -a
+cat /etc/os-release
 
-# ==============================
-# VERIFY NETWORK BEFORE INSTALL
-# ==============================
-
-ip a
-ip route
-
-ping -c 3 8.8.8.8
+# Verify internet + DNS before installing anything
+ping -c 2 8.8.8.8
 curl -I https://google.com
-
 
 # ==============================
 # DOWNLOAD WAZUH INSTALLER
