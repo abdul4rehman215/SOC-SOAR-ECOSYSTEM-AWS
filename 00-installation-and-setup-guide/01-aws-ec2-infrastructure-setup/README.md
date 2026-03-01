@@ -12,7 +12,7 @@
 
 ## 📌 Project Overview
 
-This project documents the **repeatable AWS foundation setup** I used before installing any SOC stack tools (Wazuh, TheHive, MISP, Cortex, Suricata, Zeek, n8n, etc.).
+This project documents the **AWS foundation setup** I used before installing any SOC stack tools (Wazuh, TheHive, MISP, Cortex, Suricata, Zeek, n8n, etc.).
 
 The key principle is:
 
