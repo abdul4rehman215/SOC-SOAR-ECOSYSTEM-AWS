@@ -217,6 +217,7 @@ Without TheHive:
 Alerts remain isolated.
 
 With TheHive:
+
 ✔ Structured investigations  
 ✔ Collaboration  
 ✔ Audit trails  
