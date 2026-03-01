@@ -26,8 +26,7 @@ Integrated with:
 
 - **Wazuh (SIEM/XDR)** → detection engine  
 - **MISP** → IOC enrichment  
-- **Cortex** → automated analysis  
-- **AWS Cloud Monitoring** → infrastructure telemetry  
+- **Cortex** → automated analysis & Responders
 - **n8n SOAR workflows** → automation & reporting  
 
 ---
@@ -147,12 +146,157 @@ After deployment:
 http://<EC2_PUBLIC_IP>:9000/
 ```
 
-Default credentials:
+---
 
-- Username: `admin`
-- Password: `secret`
+# 🔐 Initial Web UI Configuration (CRITICAL – Do Not Skip)
 
-⚠ Change the default password immediately.
+After accessing TheHive for the first time, perform these mandatory security and organizational setup steps.
+
+## 1️⃣ Change Default Admin Password (Immediate Security Action)
+
+Login using default credentials:
+
+```
+http://<EC2_PUBLIC_IP>:9000
+```
+
+Default:
+
+* Username: `admin`
+* Password: `secret`
+
+### 🔒 Change Password Immediately
+
+1. Click your profile icon (top-right corner)
+2. Select **Change Password**
+3. Set a strong password
+4. Save
+
+⚠ Never continue using default credentials in production.
+
+---
+
+## 2️⃣ Create Your Organization
+
+By default, TheHive uses a default organization.
+In real-world SOC environments, you must create your own organization.
+
+### Steps:
+
+1. From left sidebar → Click **Organizations**
+2. Click **➕ Add**
+3. Fill:
+
+| Field                    | Value                                       |
+| ------------------------ | ------------------------------------------- |
+| Name                     | Your organization name (e.g., abdulhiveorg) |
+| Description              | SOC Production Organization                 |
+| Tasks sharing rule       | manual                                      |
+| Observables sharing rule | manual                                      |
+
+4. Click **Confirm**
+
+Your organization is now created.
+
+---
+
+## 3️⃣ Create an Organization Admin User (CRITICAL)
+
+You should NOT work daily using the global super-admin account.
+
+Instead, create an **org-admin user** inside your organization.
+
+---
+
+### As Super Admin:
+
+1. Go to **Organizations**
+2. Click your newly created organization
+3. Open **Users** tab
+4. Click **➕ Add User**
+
+---
+
+### Fill the User Details
+
+| Field   | Value                                                   |
+| ------- | ------------------------------------------------------- |
+| Type    | Normal                                                  |
+| Login   | [your-email@example.com](mailto:your-email@example.com) |
+| Name    | Your Full Name                                          |
+| Profile | org-admin                                               |
+
+Profile must include:
+
+* manageUser
+* manageOrganisation
+* full case permissions
+
+Click **Confirm**
+
+---
+
+## 4️⃣ Set Password for New Org Admin
+
+After creating the user:
+
+1. Hover over the new user
+2. Click the options (⋮)
+3. Select **Set a new password**
+4. Define a secure password
+5. Confirm
+
+---
+
+## 5️⃣ Login Using Org Admin Account
+
+Logout from global admin.
+
+Login using:
+
+* Your new org-admin email
+* The password you set
+
+You are now operating within your organization context.
+
+---
+
+# 🧠 Why This Matters
+
+✔ Separates global administration from daily SOC work
+✔ Enables multi-organization architecture
+✔ Follows enterprise best practice
+✔ Supports role-based access control
+✔ Prepares for multi-tenant deployments
+
+In production:
+
+* Global admin → platform control only
+* Org admin → SOC management
+* Analysts → case investigation
+
+---
+
+# 📌 Final Working Structure
+
+| Role                | Purpose                   |
+| ------------------- | ------------------------- |
+| admin (super-admin) | Platform-level management |
+| org-admin           | Organization management   |
+| analyst             | Case investigation        |
+| service account     | API integrations          |
+
+---
+
+# 🔄 Flow Summary
+
+Deployment →
+Login →
+Change default password →
+Create organization →
+Create org-admin →
+Login as org-admin →
+Start SOC operations
 
 ---
 
@@ -242,9 +386,12 @@ With TheHive:
 # 🎯 Result
 
 - TheHive 5.5 deployed successfully on AWS EC2
-- Web UI accessible on port 9000
 - Containers validated via `docker ps`
-- Integrated into full SOC-SOAR ecosystem
+- Web UI accessible on port 9000
+* Default credentials secured
+* Custom SOC organization created
+* Dedicated org-admin account configured
+* Ready for structured SOC workflows
 
 ---
 
