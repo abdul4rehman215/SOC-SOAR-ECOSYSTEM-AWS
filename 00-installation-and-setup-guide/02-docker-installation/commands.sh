@@ -1,90 +1,81 @@
 #!/bin/bash
+# ==========================================
+# Project 02 — Docker Installation Guide
+# commands.sh (Sequential / Paste-ready)
+# OS: Ubuntu 22.04 / 24.04
+# ==========================================
 
-############################################################
-# Docker Installation Script - Ubuntu 24.04 LTS
-# SOC-SOAR Ecosystem Standard Container Runtime Setup
-############################################################
+# -------------------------------
+# 0) (Optional) Pre-checks
+# -------------------------------
+ping -c 2 8.8.8.8
+curl -I https://google.com
 
-#############################
-# 1️⃣ Update System
-#############################
-
+# -------------------------------
+# 1) Install prerequisites
+# -------------------------------
 sudo apt update
-
-#############################
-# 2️⃣ Install Prerequisites
-#############################
-
 sudo apt install -y ca-certificates curl gnupg lsb-release
 
-#############################
-# 3️⃣ Add Docker GPG Key
-#############################
-
+# -------------------------------
+# 2) Download Docker GPG Key (Keyrings method)
+# -------------------------------
 sudo mkdir -p /etc/apt/keyrings
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
 | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
+# Set correct permissions
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
+# Verify key exists
 ls -l /etc/apt/keyrings/docker.gpg
 
-#############################
-# 4️⃣ Add Docker Repository
-#############################
-
+# -------------------------------
+# 3) Add Docker Repository
+# -------------------------------
 sudo tee /etc/apt/sources.list.d/docker.list > /dev/null <<EOF
 deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
 https://download.docker.com/linux/ubuntu \
 $(lsb_release -cs) stable
 EOF
 
-#############################
-# 5️⃣ Update Package Index
-#############################
-
+# -------------------------------
+# 4) Update Package Index (Ensure repo trust)
+# -------------------------------
 sudo apt clean
 sudo apt update
 
-#############################
-# 6️⃣ Install Docker Engine & Plugins
-#############################
+# ✅ You should NOT see:
+# - NO_PUBKEY
+# - repository is not signed
 
-sudo apt install -y \
-docker-ce \
-docker-ce-cli \
-containerd.io \
-docker-buildx-plugin \
-docker-compose-plugin
+# -------------------------------
+# 5) Install Docker & Docker Compose Plugin
+# -------------------------------
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-#############################
-# 7️⃣ Enable & Start Docker
-#############################
-
+# -------------------------------
+# 6) Enable & Verify Docker
+# -------------------------------
 sudo systemctl enable docker
 sudo systemctl start docker
 
-#############################
-# 8️⃣ Add Current User to Docker Group
-#############################
-
+# Add user to docker group (so you can run docker without sudo)
 sudo usermod -aG docker $USER
+
+# Apply group change in current session
 newgrp docker
 
-#############################
-# 9️⃣ Verify Installation
-#############################
-
+# Verify versions
 docker --version
 docker compose version
 
-#############################
-# 🔟 Run Test Container
-#############################
-
+# Test container run
 docker run hello-world
 
-############################################################
-# END OF FILE
-############################################################
+# -------------------------------
+# ✅ Expected Final Output
+# -------------------------------
+# "Hello from Docker!"
+# "This message shows that your installation appears to be working correctly."
