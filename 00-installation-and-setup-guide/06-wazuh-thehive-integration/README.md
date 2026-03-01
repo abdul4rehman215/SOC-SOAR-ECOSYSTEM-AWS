@@ -79,6 +79,19 @@ Community script inspiration:
 
 ---
 
+# 📁 Repository Structure
+
+00-installation-and-setup-guide/
+└── 06-wazuh-thehive-integration/
+    ├── README.md
+    ├── scripts/
+    |   └── custom-w2thehive.py
+    ├── commands.sh
+    ├── troubleshooting.md
+    └── interview_qna.md
+
+---
+
 # ⚙️ Step 1 – Install TheHive Python Module (On Wazuh Server)
 
 ```bash
