@@ -1,4 +1,4 @@
-# 📄 Executive Summary — Project 03: Wazuh All-in-One Installation (AWS EC2)
+# 📄 Executive Summary — Wazuh All-in-One Installation (AWS EC2)
 
 ## Project Title
 **Wazuh SIEM/XDR All-in-One Deployment on AWS EC2 (Manager + Indexer + Dashboard)**
