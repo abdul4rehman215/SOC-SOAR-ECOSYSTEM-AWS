@@ -1,5 +1,11 @@
 # ☁️ Project 01 — AWS EC2 Foundation Setup (SOC / SOAR Ecosystem)
 
+<p align="center">
+
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/aws_logo.webp" width="300"/>
+
+</p>
+  
 > **Goal:** Launch an EC2 instance where **network works + internet works**, then apply baseline system setup (timezone/NTP/hostname) so the machine is ready for SOC/SOAR deployments.
 
 ---
