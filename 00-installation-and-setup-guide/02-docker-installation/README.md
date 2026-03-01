@@ -9,7 +9,6 @@ Docker is the foundational container runtime used throughout the SOC-SOAR ecosys
 
 - TheHive
 - Cortex
-- MISP
 - n8n
 - Supporting services
 - Optional microservices components
