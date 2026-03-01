@@ -1,4 +1,5 @@
-# ☁️ Project 01 — AWS EC2 Foundation Setup (SOC / SOAR Ecosystem)
+# ☁️ Project 01 — AWS EC2 Infrastructure Setup Guide  
+### SOC-SOAR Ecosystem Deployment Foundation
 
 <p align="center">
 
