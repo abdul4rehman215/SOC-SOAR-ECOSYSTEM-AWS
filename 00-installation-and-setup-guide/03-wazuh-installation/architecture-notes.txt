@@ -1,0 +1,280 @@
+====================================================================
+WAZUH SIEM/XDR – ARCHITECTURE NOTES
+AWS EC2 ALL-IN-ONE DEPLOYMENT
+SOC-SOAR ECOSYSTEM CORE ENGINE
+====================================================================
+
+1. PURPOSE OF WAZUH IN SOC ECOSYSTEM
+--------------------------------------------------------------------
+
+Wazuh serves as the central detection and correlation engine.
+
+It provides:
+
+- Log analysis
+- File integrity monitoring (FIM)
+- Vulnerability detection
+- Compliance monitoring
+- Threat intelligence matching
+- Cloud event monitoring
+- Active response capability
+
+In this SOC ecosystem, Wazuh acts as:
+
+    Detection Core
+    Log Processing Engine
+    Alert Generation System
+    IOC Matching Platform
+    Compliance & Vulnerability Scanner
+
+
+2. DEPLOYMENT MODEL USED
+--------------------------------------------------------------------
+
+Deployment Type: All-in-One
+
+Components running on same EC2 instance:
+
+- Wazuh Manager
+- Wazuh Indexer (OpenSearch-based)
+- Wazuh Dashboard
+- Filebeat
+
+Instance Type:
+
+- t2.large / t3.large
+- 8GB RAM
+- 2 vCPU
+- 100GB Storage
+
+Cluster mode: Disabled
+Single node configuration.
+
+
+3. CORE COMPONENTS EXPLAINED
+--------------------------------------------------------------------
+
+A. WAZUH MANAGER
+
+Role:
+- Receives logs from agents
+- Applies decoders
+- Matches rules
+- Generates alerts
+
+Ports:
+- 1514 TCP (agent data)
+- 1515 TCP (agent enrollment)
+- 55000 TCP (API)
+
+Internal modules:
+- Analysis engine
+- Rootcheck
+- Syscheck
+- Vulnerability detection
+- SCA compliance
+- Active response
+- Authd
+
+Configuration file:
+    /var/ossec/etc/ossec.conf
+
+
+B. WAZUH INDEXER
+
+Based on:
+    OpenSearch
+
+Role:
+- Stores raw events
+- Stores alerts
+- Enables full-text search
+- Provides analytics engine
+
+Ports:
+- 9200 TCP (REST API)
+- 9300-9400 TCP (cluster communication)
+
+Memory heavy component.
+Requires minimum 4GB heap allocation for stable operation.
+
+Heap configuration:
+    /etc/wazuh-indexer/jvm.options
+
+
+C. WAZUH DASHBOARD
+
+Role:
+- Web interface
+- Visual dashboards
+- Alert visualization
+- Agent management
+
+Port:
+    443 TCP
+
+Communicates with:
+    Wazuh API (55000)
+    Wazuh Indexer (9200)
+
+Self-signed certificate generated during installation.
+
+
+D. FILEBEAT
+
+Role:
+- Sends Wazuh manager logs to Indexer
+- Ensures structured log shipping
+
+Internal TLS secured communication.
+
+
+4. DATA FLOW ARCHITECTURE
+--------------------------------------------------------------------
+
+Agent → Wazuh Manager → Filebeat → Wazuh Indexer → Dashboard
+
+Step-by-step:
+
+1. Agent sends encrypted log via TCP 1514
+2. Manager decodes and applies rules
+3. Alert generated
+4. Filebeat forwards event to Indexer
+5. Indexer stores event
+6. Dashboard queries Indexer
+7. SOC analyst views alert
+
+Encryption:
+
+- Agent communication: AES encrypted
+- API communication: TLS
+- Indexer communication: TLS
+
+
+5. SECURITY ARCHITECTURE
+--------------------------------------------------------------------
+
+A. Agent Communication
+- Encrypted by default
+- Secure enrollment process
+- Passwordless auth disabled (as configured)
+
+B. Dashboard
+- HTTPS enabled
+- Self-signed certificate
+- Should restrict to admin IP
+
+C. API
+- Basic authentication
+- TLS encrypted
+
+D. Indexer
+- Should NOT be exposed publicly
+- Internal only port 9200
+
+
+6. PERFORMANCE CONSIDERATIONS
+--------------------------------------------------------------------
+
+Minimum:
+
+- 8GB RAM
+- 100GB disk
+
+Memory consumption:
+
+- Indexer is largest consumer
+- Vulnerability detection adds load
+- FIM large directories increase CPU
+
+Recommended:
+
+- Monitor using:
+    free -h
+    htop
+    df -h
+
+
+7. ENABLED SECURITY MODULES IN THIS DEPLOYMENT
+--------------------------------------------------------------------
+
+- JSON logging enabled
+- Full alert logging enabled
+- Rootcheck enabled
+- Syscollector enabled
+- SCA compliance enabled
+- Vulnerability detection enabled
+- File Integrity Monitoring enabled
+- IOC list matching enabled
+- AWS event list enabled
+
+
+8. INTEGRATION READINESS
+--------------------------------------------------------------------
+
+This Wazuh installation is prepared for:
+
+- MISP integration
+- TheHive case creation
+- Cortex analyzer triggering
+- VirusTotal enrichment
+- Suricata alerts ingestion
+- Zeek log ingestion
+- AWS CloudTrail ingestion
+- n8n automation
+
+Acts as detection hub.
+
+
+9. SCALABILITY FUTURE OPTIONS
+--------------------------------------------------------------------
+
+For large environments:
+
+- Separate indexer node
+- Separate dashboard node
+- Multi-node manager cluster
+- External load balancer
+
+Ports required for clustering:
+    1516 TCP
+    9300-9400 TCP
+
+
+10. RISKS IF MISCONFIGURED
+--------------------------------------------------------------------
+
+- Public exposure of 9200 → data leak
+- Weak security group rules → attack surface
+- Low memory → index corruption
+- No disk monitoring → crash
+
+Critical rule:
+Never expose indexer publicly.
+
+
+11. HEALTH CHECK COMMANDS
+--------------------------------------------------------------------
+
+systemctl status wazuh-manager
+systemctl status wazuh-indexer
+systemctl status wazuh-dashboard
+systemctl status filebeat
+
+ss -tulnp
+
+curl -k -u admin:PASSWORD https://localhost:9200
+
+
+12. FINAL ARCHITECTURE STATUS
+--------------------------------------------------------------------
+
+All-in-one Wazuh node deployed on AWS EC2.
+Cluster disabled.
+Security modules enabled.
+TLS enforced internally.
+SOC-ready detection engine operational.
+
+====================================================================
+END OF WAZUH ARCHITECTURE NOTES
+====================================================================
