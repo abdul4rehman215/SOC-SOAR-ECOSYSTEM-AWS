@@ -263,11 +263,11 @@ You are now operating within your organization context.
 
 # 🧠 Why This Matters
 
-✔ Separates global administration from daily SOC work
-✔ Enables multi-organization architecture
-✔ Follows enterprise best practice
-✔ Supports role-based access control
-✔ Prepares for multi-tenant deployments
+- ✔ Separates global administration from daily SOC work
+- ✔ Enables multi-organization architecture
+- ✔ Follows enterprise best practice
+- ✔ Supports role-based access control
+- ✔ Prepares for multi-tenant deployments
 
 In production:
 
