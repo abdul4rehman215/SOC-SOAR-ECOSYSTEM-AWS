@@ -7,7 +7,7 @@
 # t2.large / t3.large
 # 8GB RAM
 # 2 vCPU
-# 30GB disk
+# 100GB disk
 # Ubuntu 24.04 LTS
 # ==============================================================
 
@@ -20,17 +20,17 @@ sudo apt upgrade -y
 
 sudo apt install -y curl unzip gnupg apt-transport-https lsb-release software-properties-common
 
-# -------------------------------
-# (Optional) Pre-checks
-# -------------------------------
-whoami
-hostname
-uname -a
-cat /etc/os-release
 
-# Verify internet + DNS before installing anything
-ping -c 2 8.8.8.8
+# ==============================
+# VERIFY NETWORK BEFORE INSTALL
+# ==============================
+
+ip a
+ip route
+
+ping -c 3 8.8.8.8
 curl -I https://google.com
+
 
 # ==============================
 # DOWNLOAD WAZUH INSTALLER
