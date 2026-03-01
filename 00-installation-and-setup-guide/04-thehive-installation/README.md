@@ -1,7 +1,9 @@
 # 🐝 TheHive 5.5 – Incident Response Platform (Docker Deployment on AWS EC2)
 
 <p align="center">
-  <img src="https://docs.strangebee.com/thehive/images/overview/thehive.svg" width="220"/>
+
+  <img src="https://docs.strangebee.com/assets/images/StrangeBee_Landscape.svg" width="400"/>
+  <img src="https://docs.strangebee.com/thehive/images/overview/thehive.svg" width="400"/>
 </p>
 
 ---
@@ -104,6 +106,8 @@ Docker deployment handles orchestration of these services internally.
 
 📌 Refer to:
 
+[time and hostname setup guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide/01-aws-ec2-infrastructure-setup#-post-launch-server-standardization)
+
 ---
 
 # 🐳 Docker Requirement
@@ -156,13 +160,13 @@ Default Credentials:
 
 Explore official documentation:
 
-- Overview: https://docs.strangebee.com/thehive/overview/
-- Analyst Corner: https://docs.strangebee.com/?_gl=1#analyst
-- Installation Methods: https://docs.strangebee.com/thehive/installation/installation-methods/
-- System Requirements: https://docs.strangebee.com/thehive/installation/system-requirements/
-- Official Website: https://strangebee.com/thehive/
-- Features: https://strangebee.com/thehive-features/
-- Use Cases: https://strangebee.com/use-cases-thehive/
+- [Overview](https://docs.strangebee.com/thehive/overview/)
+- [Analyst Corner](https://docs.strangebee.com/?_gl=1#analyst)
+- [Installation Methods](https://docs.strangebee.com/thehive/installation/installation-methods/)
+- [System Requirements](https://docs.strangebee.com/thehive/installation/system-requirements/)
+- [Official Website](https://strangebee.com/thehive/)
+- [Features](https://strangebee.com/thehive-features/)
+- [Use Cases](https://strangebee.com/use-cases-thehive/)
 
 ---
 
