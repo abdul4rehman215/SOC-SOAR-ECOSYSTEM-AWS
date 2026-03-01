@@ -1,4 +1,4 @@
-# 🛡️ Project 03 — Wazuh SIEM/XDR All-in-One Installation on AWS EC2 (Manager + Indexer + Dashboard)
+# 🛡️ Wazuh SIEM/XDR Installation Guide (AWS EC2)
 ### SOC-SOAR Ecosystem Core Detection Engine
 
 <div align="center">
@@ -7,59 +7,52 @@
 
 </div>
 
-> **Goal:** Deploy a complete **Wazuh SIEM/XDR stack** on AWS EC2 (All-in-One) and apply a **SOC-stable configuration** (`ossec.conf`) ready for agent onboarding, visibility dashboards, and future integrations.
+---
+
+# 📌 What is Wazuh?
+
+Wazuh is an open-source XDR (Extended Detection & Response) and SIEM platform designed for:
+
+- Threat detection
+- Log analysis
+- File integrity monitoring
+- Vulnerability detection
+- Compliance monitoring (PCI-DSS, CIS, GDPR, HIPAA)
+- Cloud workload protection
+- Endpoint security monitoring
+
+Wazuh provides unified visibility across:
+
+- Endpoints (Linux / Windows / macOS)
+- Cloud (AWS, Azure, GCP)
+- Containers
+- Network devices
+- Applications
 
 ---
 
-## 📌 Project Summary
+# 🏗️ Wazuh Core Components
 
-This project documents how I installed **Wazuh (All-in-One)** on a dedicated AWS EC2 instance using the **official Wazuh installation assistant**, then applied a stable SOC configuration baseline.
+Wazuh consists of:
 
-✅ Installed components:
-- Wazuh Manager (analysis engine + rules + agent management)
-- Wazuh Indexer (search/storage)
-- Wazuh Dashboard (web UI)
-- Filebeat (ships alerts/events manager → indexer)
+1️⃣ **Wazuh Server (Manager)**  
+- Receives agent logs  
+- Applies decoders and rules  
+- Generates alerts  
 
----
+2️⃣ **Wazuh Indexer**  
+- Stores alerts and events  
+- Based on OpenSearch  
+- Provides search & analytics  
 
-## 🎯 Objective
+3️⃣ **Wazuh Dashboard**  
+- Web UI  
+- Data visualization  
+- SOC dashboards  
 
-By the end of this project, I was able to:
-
-- Deploy Wazuh all-in-one stack
-- Access the dashboard securely over HTTPS
-- Apply a SOC-stable production-style `ossec.conf`
-- Enable:
-  - JSON logging
-  - vulnerability detection
-  - SCA compliance checks
-  - FIM monitoring
-  - secure agent connection + enrollment readiness
-  - lists prepared for AWS + IOC workflows
-- Validate services + logs + dashboard visibility
-
----
-
-## 🧠 What is Wazuh?
-
-Wazuh is an open-source **SIEM/XDR** platform used to:
-- collect and analyze security telemetry
-- detect threats using rules/decoders
-- monitor file integrity, configuration posture, and vulnerabilities
-- support regulatory compliance and SOC operations
-- manage endpoints via Wazuh agents (Windows/Linux/macOS)
-
----
-
-## 🌍 Common Use Cases (SOC Context)
-
-- Endpoint security monitoring (agents)
-- Threat intelligence enrichment (IOCs)
-- Incident response support (alerts + investigation)
-- Compliance monitoring (CIS/SCA policies)
-- Vulnerability detection and inventory visibility
-- Cloud security monitoring (AWS workloads)
+4️⃣ **Wazuh Agents**  
+- Installed on monitored endpoints  
+- Collect logs & telemetry  
 
 ---
 
@@ -69,180 +62,142 @@ Wazuh is an open-source **SIEM/XDR** platform used to:
 
 ![Wazuh Deployment Architecture](https://documentation.wazuh.com/current/_images/deployment-architecture1.png)
 
-## 🔁 Components & Data Flow
+## 🔄 Components & Data Flow
 
 ![Wazuh Components and Data Flow](https://documentation.wazuh.com/current/_images/wazuh-components-and-data-flow1.png)
 
 ---
 
-📁 Repository Structure
-03-wazuh-installation/
-├── README.md
-├── commands.sh
-├── ossec.conf
-├── troubleshooting.md
-├── architecture-notes.txt
-└── interview_qna.md
+# 🎯 Objective
 
---
+- Deploy Wazuh all-in-one stack
+- Configure SOC-stable production configuration
+- Enable vulnerability detection
+- Enable FIM
+- Enable compliance monitoring
+- Enable AWS integration
+- Validate services
+- Prepare for agent onboarding
 
-## 🖥️ EC2 Requirements
+---
 
-### ✅ Recommended Instance (Stable All-in-One)
+# 🖥️ EC2 Requirements
+
+## Recommended Instance
 
 | Resource | Value |
-|---|---|
-| Instance Type | `t2.large` / `t3.large` |
-| RAM | **8 GB** |
-| vCPU | **2** |
-| Storage | **100 GB** (gp3 recommended) |
+|----------|-------|
+| Instance Type | t2.large / t3.large |
+| RAM | 8 GB |
+| vCPU | 2 |
+| Storage | 100 GB |
 | OS | Ubuntu 24.04 LTS |
 | Public IP | Enabled |
 
 ⚠️ Less than 8GB RAM may cause:
-- Indexer instability/crash
+- Indexer crash
 - Dashboard instability
-- High swap usage
+- High memory swap usage
 
 ---
 
-## 🔐 Required Security Group Ports
-
-> Keep ports restricted wherever possible (Admin IP/VPN or internal subnets).
+# 🔐 Required Security Group Ports
 
 | Component | Port | Protocol | Purpose |
-|---|---:|---|---|
-| Agent Connection | 1514 | TCP | Agent data (events) |
+|------------|------|----------|---------|
+| Agent Connection | 1514 | TCP | Agent data |
 | Agent Enrollment | 1515 | TCP | Agent registration |
 | REST API | 55000 | TCP | Wazuh API |
-| Indexer API | 9200 | TCP | Indexer REST API |
-| Cluster | 9300–9400 | TCP | Indexer cluster comms (cluster only) |
+| Indexer API | 9200 | TCP | OpenSearch |
+| Cluster | 9300-9400 | TCP | Indexer cluster |
 | Dashboard | 443 | TCP | Web UI |
 
-### ✅ Recommended inbound rules (clean + secure)
-- **443/TCP** → Admin IP only (Dashboard)
-- **1514/TCP** → Agent networks/subnets only
-- **1515/TCP** → Agent networks/subnets only
-- **55000/TCP** → Admin IP/VPN only
-- **9200/TCP** → Internal only (avoid exposing publicly)
+Inbound rules required:
+
+- 1514 TCP → Agent networks
+- 1515 TCP → Agent networks
+- 55000 TCP → Local/VPN
+- 9200 TCP → Internal only
+- 443 TCP → Admin IP only
 
 Outbound:
-- Allow all (needed for updates, threat intel APIs, package downloads)
+- Allow all
 
 ---
 
-# 🧠 Component Communication (Summary)
+# 🧠 PHASE 1 – WAZUH INSTALLATION
 
-### ✅ Wazuh agent → Wazuh server
-- TCP **1514** (agent event communication)
-- Enrollment via TCP **1515** (authd)
+## 1️⃣ Install Wazuh Using Official Assistant
 
-### ✅ Wazuh server → Wazuh indexer
-- Uses **Filebeat** with **TLS**
-- Indexer listens on **9200/TCP** (default)
-
-### ✅ Wazuh dashboard → Wazuh server API
-- API on **55000/TCP** (TLS + authentication)
-
-### ✅ Wazuh dashboard → Wazuh indexer
-- Dashboard queries indexer for visualization/search
-
----
-
-# 🧱 Implementation Phases
-
-## 🟣 PHASE 1 — Wazuh Installation (Official Assistant)
-
-### 1) Download installer
 ```bash
 curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh
+sudo bash ./wazuh-install.sh -a
 ````
 
-### 2) Install all-in-one
-
-```bash
-sudo bash ./wazuh-install.sh -a
-```
-
-✅ This installs:
+This installs:
 
 * Wazuh Manager
 * Wazuh Indexer
 * Wazuh Dashboard
 * Filebeat
 
-📌 At the end of installation:
+At the end of installation, credentials are displayed:
 
-* **Dashboard URL**
-* **Username**
-* **Password**
-  are displayed.
+Username: admin
+Password: auto-generated
 
-⚠️ Save credentials securely — **do not commit secrets**.
+Save securely.
 
 ---
 
-## 🌐 PHASE 2 — Dashboard Access
+# 🌐 PHASE 2 – Dashboard Access
 
 Access:
 
-```text
+```
 https://<EC2-PUBLIC-IP>
 ```
 
-Steps:
-
-* Accept SSL warning (self-signed certificate)
-* Login using auto-generated credentials shown at install end
+* Accept SSL warning
+* Login using generated credentials
 
 ---
 
-## 🛠️ PHASE 3 — SOC Stable Configuration
+# ⚙️ PHASE 3 – SOC Stable Configuration
 
-### File
+File:
 
-```text
+```
 /var/ossec/etc/ossec.conf
 ```
 
-### Purpose (What this config enables)
+Purpose:
 
 * Enable JSON logging
 * Enable vulnerability detection
 * Enable SCA compliance
 * Enable FIM
-* Enable AWS lists preparation
-* Enable IOC list support (malware hashes, malicious IPs/domains)
-* Enable secure agent connection + enrollment
+* Enable AWS lists
+* Enable IOC lists
+* Enable secure agent connection
 
-✅ Configuration file included in this repo:
+Configuration file included separately in this repository as:
 
-* `configs/ossec.conf`
-
-### Apply config (with backup)
-
-```bash
-sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.backup
-sudo nano /var/ossec/etc/ossec.conf
 ```
-
-Restart only manager after changes:
-
-```bash
-sudo systemctl restart wazuh-manager
+ossec.conf
 ```
 
 ---
 
-## ✅ PHASE 4 — Validation Checklist
+# 🧪 PHASE 4 – Validation Checklist
 
 Run in this order:
 
 ```bash
 systemctl status wazuh-manager
+systemctl status wazuh-indexer
+systemctl status wazuh-dashboard
 systemctl status filebeat
-systemctl status wazuh-dashboard || true
-systemctl status wazuh-indexer || true
 ```
 
 Check logs:
@@ -257,46 +212,60 @@ Dashboard validation:
 * Vulnerabilities tab
 * Security Events
 * FIM alerts
-* AWS logs (if integrated later)
+* AWS logs (if integrated)
 
 ---
 
-## 🚨 Most Common Failures
+# 🚨 Most Common Failures
 
-| Problem               | Root Cause                             |
-| --------------------- | -------------------------------------- |
-| Dashboard down        | Port **443** blocked in Security Group |
-| Indexer crash         | Low memory / high swap                 |
-| Agents not connecting | **1514** blocked                       |
-| Enrollment fails      | **1515** blocked                       |
-
----
-
-## ✅ Result
-
-* Wazuh all-in-one stack deployed successfully
-* Dashboard accessible via HTTPS
-* SOC stable config applied and validated
-* Host ready for:
-
-  * agent onboarding
-  * vulnerability detection
-  * compliance scanning
-  * FIM monitoring
-  * future SOC integrations
+| Problem               | Root Cause       |
+| --------------------- | ---------------- |
+| Dashboard down        | Port 443 blocked |
+| Indexer crash         | Low memory       |
+| Agents not connecting | 1514 blocked     |
+| Enrollment fails      | 1515 blocked     |
+| API unreachable       | 55000 blocked    |
 
 ---
 
-## 🌍 Why This Matters
+# 🏁 Final Advice
 
-Wazuh acts as the **core SIEM/XDR** layer of the SOC ecosystem.
-A correct deployment enables real SOC workflows:
+* Backup ossec.conf before editing
+* Restart only wazuh-manager after config changes
+* Never edit indexer config without backup
+* Monitor RAM usage regularly
 
-* monitoring and triage
-* detection engineering
-* compliance visibility
-* incident investigation support
-* scalable endpoint coverage
+---
+
+# 🏢 Real-World Use Cases
+
+* SOC monitoring
+* Threat hunting
+* Cloud workload monitoring
+* Compliance reporting
+* Malware detection
+* File integrity monitoring
+* Log centralization
+
+---
+
+# 🌍 Why This Matters
+
+Wazuh is the core detection engine in this SOC ecosystem.
+
+Everything integrates with it:
+
+* MISP
+* TheHive
+* Cortex
+* Suricata
+* Zeek
+* AWS CloudTrail
+* VirusTotal
+* n8n automation
+
+Without stable Wazuh deployment:
+No SOC.
 
 ---
 
@@ -307,6 +276,37 @@ A correct deployment enables real SOC workflows:
 * Threat hunting using security event telemetry
 * Vulnerability management visibility
 * Compliance posture validation (CIS/SCA)
+
+---
+
+# 📁 Repository Structure
+
+```
+03-wazuh-installation/
+├── README.md
+├── commands.sh
+├── ossec.conf
+├── troubleshooting.md
+├── architecture-notes.txt
+└── interview_qna.md
+```
+
+---
+
+# ✅ Result
+
+* Wazuh all-in-one stack deployed successfully on AWS EC2
+* SOC-ready configuration applied
+* Dashboard accessible via HTTPS
+* Services validated
+
+Host Ready for integration with:
+
+  * agent onboarding
+  * vulnerability detection
+  * compliance scanning
+  * FIM monitoring
+  * future SOC SOAR integrations
 
 ---
 
