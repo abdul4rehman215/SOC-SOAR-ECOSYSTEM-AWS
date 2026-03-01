@@ -22,7 +22,7 @@ echo "Ensuring integrations directory exists..."
 sudo mkdir -p /var/ossec/integrations
 
 ###########################################################
-# Set Permissions Reminder
+# Set Permissions (Reminder)
 ###########################################################
 
 echo "IMPORTANT:"
@@ -31,8 +31,12 @@ echo "  - custom-w2thive.py"
 echo "  - custom-w2thive"
 echo ""
 echo "Then run:"
-echo "chmod +x /var/ossec/integrations/custom-w2thive.py"
-echo "chmod +x /var/ossec/integrations/custom-w2thive"
+echo "sudo chmod +x /var/ossec/integrations/custom-w2thive.py"
+echo "sudo chmod 755 /var/ossec/integrations/custom-w2thive.py"
+echo "sudo chown root:wazuh /var/ossec/integrations/custom-w2thive.py"
+echo "sudo chmod +x /var/ossec/integrations/custom-w2thive"
+echo "sudo chmod 755 /var/ossec/integrations/custom-w2thive"
+echo "sudo chown root:wazuh /var/ossec/integrations/custom-w2thive"
 
 ###########################################################
 # Restart Wazuh Manager
