@@ -1,26 +1,30 @@
 ====================================================================
 AWS EC2 INFRASTRUCTURE ARCHITECTURE NOTES
-SOC-SOAR ECOSYSTEM FOUNDATION
+SOC-SOAR ECOSYSTEM FOUNDATION (PROJECT 01)
 ====================================================================
 
 1. PURPOSE OF THIS ARCHITECTURE
 --------------------------------------------------------------------
-This infrastructure forms the base layer for the entire SOC-SOAR 
-ecosystem deployment including:
+This AWS EC2 foundation setup forms the base layer for the entire
+SOC/SOAR ecosystem portfolio. It is designed to support deployments
+and integrations such as:
 
-- Wazuh SIEM/XDR
+- Wazuh SIEM/XDR (Manager/Indexer/Dashboard)
 - TheHive (Case Management)
 - Cortex (Analyzers & Responders)
 - MISP (Threat Intelligence Platform)
-- Suricata IDS
-- Zeek Network Monitoring
-- Snort IDS
-- ModSecurity WAF
-- n8n Automation
-- AWS CloudTrail Integration
+- Suricata IDS (Network IDS)
+- Zeek (Network Visibility / NSM)
+- Snort IDS (Optional)
+- ModSecurity WAF (Apache/NGINX)
+- n8n Automation Workflows (SOAR/Email/AI triage)
+- AWS CloudTrail / EC2 monitoring integrations
 
-The objective is to create a controlled, production-style AWS 
-network environment instead of relying on default VPC settings.
+Objective:
+Create a controlled, production-style AWS network and instance baseline
+instead of relying on default VPC settings. This reduces deployment
+failures and improves stability for SOC tools that depend on DNS,
+time sync, and predictable network behavior.
 
 
 2. NETWORK DESIGN PRINCIPLES
@@ -29,180 +33,239 @@ CIDR Strategy:
 VPC CIDR: 10.0.0.0/16
 
 Reason:
-- Allows 65,536 IP addresses
-- Supports segmentation (public/private)
-- Scalable for multi-tier architecture
+- Large address space (65,536 IPs)
+- Supports segmentation across multiple subnets
+- Scales for future SOC expansion (separate instances per tool)
 
 Subnet Strategy:
 Public Subnet: 10.0.1.0/24
 Private Subnet (Optional): 10.0.2.0/24
 
 Reason:
-- Public subnet for dashboards & exposed services
-- Private subnet reserved for future database/log storage
+- Public subnet is used for:
+  - SSH administration (restricted to admin IP)
+  - SOC dashboards (restricted allowlist access)
+  - Controlled exposure of required web interfaces
+- Private subnet is reserved for:
+  - future database/log storage tiers
+  - internal-only services if architecture expands
+  - separation of sensitive components
 
 
-3. INTERNET CONNECTIVITY FLOW
+3. INTERNET CONNECTIVITY FLOW (MOST COMMON FAILURE AREA)
 --------------------------------------------------------------------
-
-Traffic Flow:
+Traffic Flow (Public Subnet Instance):
 
 EC2 Instance (10.0.1.x)
     ↓
-Public Subnet
+Public Subnet (Auto-assign Public IPv4 enabled)
     ↓
-Route Table (0.0.0.0/0 → IGW)
+Route Table (0.0.0.0/0 → Internet Gateway)
     ↓
-Internet Gateway
+Internet Gateway attached to VPC
     ↓
 Internet
 
-Critical Requirement:
-- IGW must be attached to VPC
-- Route table must contain 0.0.0.0/0 → IGW
-- Public IP must be enabled
+Critical Requirements:
+- IGW must exist and be attached to the correct VPC
+- Public route table must contain:
+  - 0.0.0.0/0 → IGW
+- Public route table must be associated with the public subnet
+- Instance must have a public IPv4 (or Elastic IP)
+- Outbound egress must be allowed for OS updates and integrations
 
 
-4. SECURITY MODEL
+4. SECURITY MODEL (LAYERED)
 --------------------------------------------------------------------
+Layer 1 — Network ACL (Stateless)
+- Default NACL is acceptable during initial provisioning
+- If customizing NACL:
+  - Allow inbound and outbound return traffic (stateless behavior)
+- Harden later once services and required ports are confirmed
 
-Layer 1 – Network ACL (Stateless)
-- Default allow during initial deployment
-- Can be hardened later
-- Must allow inbound & outbound return traffic
+Layer 2 — Security Groups (Stateful)
+Inbound (minimal during base setup):
+- SSH (22) restricted to admin public IP (never 0.0.0.0/0)
+- HTTPS (443) optional during base phase; open only when dashboards exist
 
-Layer 2 – Security Groups (Stateful)
-Inbound:
-- SSH (22) restricted to admin IP
-- HTTPS (443) for dashboards
-- Custom SOC ports (5601, 9000, 1514, etc.)
+Inbound (opened later depending on installed tools):
+- Wazuh Dashboard: 443/5601 (depends on architecture)
+- Wazuh Agent / Manager ports: 1514/1515 (only if needed externally)
+- TheHive: 9000 (restrict to admin IP/VPN)
+- Cortex: 9001 (restrict to admin IP/VPN)
+- MISP: 443 (restrict to admin IP/VPN)
+- n8n: 5678 (restrict to admin IP/VPN)
 
 Outbound:
-- Allow all (required for:
-    - OS updates
-    - Threat intelligence APIs
-    - Docker images
-    - GitHub packages
-    - Cloud integrations)
+- Allow all outbound initially (required for):
+  - apt updates
+  - Docker image pulls (if used)
+  - Threat intel APIs (VirusTotal, OTX, MISP feeds)
+  - Git clones and package downloads
+  - AWS integrations and endpoints
 
-Layer 3 – Instance Level (OS Firewall)
-- UFW optional
-- Disabled during base setup to prevent misconfiguration
+Layer 3 — Instance-level baseline
+- Optional UFW firewall baseline:
+  - deny inbound by default
+  - allow SSH
+  - allow outbound
+- Fail2Ban can be enabled later for SSH brute-force mitigation
+- Post-deployment hardening is applied after SOC tools are stable
 
 
-5. DNS ARCHITECTURE
+5. DNS ARCHITECTURE (MISSION CRITICAL FOR SOC DEPLOYMENTS)
 --------------------------------------------------------------------
-DNS Resolution must be enabled at VPC level.
+DNS must be enabled at the VPC level:
+- DNS Resolution: Enabled
+- DNS Hostnames: Enabled
 
-Why:
-- Wazuh agents require hostname resolution
-- Threat intel integrations require domain resolution
-- CloudTrail S3 logging requires proper endpoint resolution
-- API integrations depend on DNS
+Why DNS matters in SOC environments:
+- Package installs depend on DNS (apt, curl, git)
+- Docker repository key imports depend on DNS
+- Threat intelligence integrations require domain resolution
+- CloudTrail / S3 / AWS endpoint access requires DNS
+- SOC tool components may resolve hostnames internally during integration
 
-Failure in DNS:
-- apt update fails
-- curl fails
-- Docker GPG fails
-- Git clone fails
+Common DNS failure indicators:
+- ping to 8.8.8.8 works but google.com fails
+- apt update shows:
+  "Temporary failure resolving"
+- curl to https websites fails
+- docker GPG key imports fail
+- git clone fails
 
 
-6. HARDWARE SIZING STRATEGY
+6. HARDWARE SIZING STRATEGY (PRACTICAL APPROACH)
 --------------------------------------------------------------------
-
-Minimal Testing:
-Instance Type: t3.small
-RAM: 2GB
-Storage: 30GB
-Purpose: Initial setup & validation
+Minimal Validation Instance:
+- Instance: t3.small
+- RAM: 2GB
+- Storage: 30GB
+Purpose:
+- network validation
+- baseline OS setup
+- connectivity checks
+- quick smoke testing
 
 Multi-Tool SOC Deployment:
-Instance Type: t3.large
-RAM: 8GB
-Storage: 100GB+
-Purpose: Wazuh + Suricata + TheHive
+- Instance: t3.large
+- RAM: 8GB
+- Storage: 100GB+
+Purpose:
+- running SIEM + limited additional components
+- Wazuh + IDS with acceptable performance
 
-Full SOC Stack (Recommended):
-Instance Type: t3.xlarge
-RAM: 16GB
-Storage: 200GB+
-Purpose: Wazuh + TheHive + Cortex + MISP + IDS + Automation
+Full SOC Stack (Recommended for smoother experience):
+- Instance: t3.xlarge
+- RAM: 16GB
+- Storage: 200GB+
+Purpose:
+- Wazuh + TheHive + Cortex + MISP + IDS + automation
+- better stability for dashboards and indexing
+- improved performance during investigations and log ingestion
+
+Sizing rule of thumb:
+- Indexing/search dashboards benefit heavily from RAM and disk IO
+- IDS/NSM tools benefit from CPU depending on traffic volume
 
 
-7. AWS METADATA SERVICE (IMDS)
+7. INSTANCE IDENTITY + TIME INTEGRITY
 --------------------------------------------------------------------
+Hostname Strategy:
+- Set meaningful hostnames such as:
+  - wazuh-manager
+  - thehive
+  - cortex
+  - misp
+  - nsm-sensor
+Reason:
+- clearer logs and service management
+- easier integration across multiple hosts
+- reduces confusion during troubleshooting and evidence collection
 
-Metadata Endpoint:
+Time Sync Strategy:
+- Timezone must match operator preference
+- NTP sync must be enabled (timedatectl / chrony)
+Reason:
+- SOC correlation relies on accurate timestamps
+- incident timelines and investigations require consistent time
+- drift causes false ordering of events and weak reporting
+
+
+8. AWS METADATA SERVICE (IMDS) NOTES
+--------------------------------------------------------------------
+Metadata endpoint:
 http://169.254.169.254/
 
-Used For:
-- Instance ID retrieval
-- IAM role validation
-- CloudTrail integration
-- AWS log ingestion
+Used for:
+- instance identity (instance-id, region, etc.)
+- IAM role validation (when role attached)
+- cloud-based integrations that detect environment context
 
-If IMDS fails:
-- Cloud integrations break
-- IAM permissions not detected
-- Wazuh S3 wodle may fail
+If IMDS fails or is blocked:
+- role-based integrations may fail
+- cloud tooling may not detect region/instance metadata
+- troubleshooting becomes harder
+
+Note:
+IMDS settings should be aligned with security best practices
+(IMDSv2 recommended in production), but for lab environments
+the main requirement is functionality and stability.
 
 
-8. COMMON ARCHITECTURE MISTAKES
+9. COMMON ARCHITECTURE MISTAKES (WHAT BREAKS MOST)
 --------------------------------------------------------------------
+1. Using default VPC blindly without checking DNS settings
+2. Missing Internet Gateway or not attached to VPC
+3. Route table lacks 0.0.0.0/0 → IGW
+4. Public subnet not associated with public route table
+5. Public IP disabled or auto-assign disabled on subnet
+6. Overly restrictive outbound rules (break apt, docker, APIs)
+7. SSH open to 0.0.0.0/0 (unnecessary risk exposure)
+8. Installing tools before verifying:
+   - gateway ping
+   - external IP ping
+   - DNS resolution
+   - HTTPS connectivity
+9. Incorrect timezone / NTP disabled (breaks correlation later)
 
-1. Using default VPC blindly
-2. Not attaching Internet Gateway
-3. Route table not associated with subnet
-4. Public IP disabled
-5. Overly restrictive outbound rules
-6. SSH open to 0.0.0.0/0
-7. Forgetting DNS resolution setting
-8. Not verifying network before installing tools
 
-
-9. SECURITY HARDENING (POST DEPLOYMENT)
+10. POST-DEPLOYMENT HARDENING (AFTER SOC STACK IS STABLE)
 --------------------------------------------------------------------
+After tool installs and integrations work:
 
-After SOC stack is installed:
+- Restrict SSH to fixed admin IP (or VPN)
+- Use Elastic IP only if needed (stable access)
+- Harden Security Group ports (least privilege)
+- Consider:
+  - SSM Session Manager (optional) for access without public SSH
+  - VPN access for dashboards instead of public exposure
+- Enable CloudTrail logging and validate delivery destination
+- Validate IAM roles for required AWS log integrations
+- Enable GuardDuty / SecurityHub (optional enhancement)
+- Consider EBS expansion if logs and indices grow
 
-- Restrict SSH to fixed IP
-- Use Elastic IP if required
-- Enable CloudTrail logging
-- Configure IAM roles properly
-- Enable GuardDuty (optional)
-- Restrict dashboard ports to VPN or IP allowlist
-- Implement NACL hardening
 
-
-10. SCALABILITY CONSIDERATIONS
+11. FINAL ARCHITECTURE STATUS (PROJECT 01 OUTCOME)
 --------------------------------------------------------------------
-
-Future Improvements:
-
-- Separate EC2 instances per tool
-- Use private subnet for database services
-- Implement NAT Gateway for private instances
-- Deploy Application Load Balancer for dashboards
-- Implement Auto Scaling groups
-- Use EBS volume expansion for logs
-
-
-11. FINAL ARCHITECTURE STATUS
---------------------------------------------------------------------
-
-- VPC created manually
-- Public subnet configured
+- Custom VPC created manually (10.0.0.0/16)
+- Public subnet configured (10.0.1.0/24) with public IPv4 assignment
 - Internet Gateway attached
-- Route table correctly configured
-- Security group minimal and controlled
-- EC2 validated with:
-    - Internal gateway ping
-    - External IP ping
-    - DNS resolution test
-    - HTTPS connectivity test
-- Metadata service validated
-
-Infrastructure is now stable and ready for SOC-SOAR tool deployment.
+- Public route table configured:
+  - 0.0.0.0/0 → IGW
+- Security Group minimal and controlled:
+  - SSH restricted to admin IP
+  - Optional HTTPS for later dashboards
+- EC2 instance validated using:
+  - ip route verification (default gateway)
+  - ping gateway (10.0.1.1)
+  - ping external IP (8.8.8.8)
+  - DNS test (curl google.com)
+- Host baseline applied:
+  - timezone set
+  - NTP enabled
+  - hostname standardized
+- Infrastructure is stable and ready for SOC/SOAR tool installation projects.
 
 ====================================================================
 END OF ARCHITECTURE NOTES
