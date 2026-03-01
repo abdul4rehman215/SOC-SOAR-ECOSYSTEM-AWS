@@ -93,6 +93,169 @@ Community script inspiration:
 
 ---
 
+# 🔑 Step 0 – Create TheHive Service Account & API Key (Required)
+
+Before integrating Wazuh with TheHive, we must create:
+
+- A dedicated **Service user**
+- A restricted **Analyst profile**
+- A secure **API key**
+
+This API key will be used inside `ossec.conf` to authenticate Wazuh with TheHive.
+
+⚠️ Never use the default admin account for integrations.
+
+---
+
+# 🏢 0.1 – Create Custom Analyst Profile (Recommended)
+
+This ensures least-privilege access.
+
+### Navigate:
+
+Sidebar → **Entities Management** → **Profiles**
+
+### Click:
+➕ Create Profile
+
+### Configure:
+
+| Field | Value |
+|-------|-------|
+| Name | `API_Analyst_Access` |
+| Type | Organization |
+
+### Assign Required Permissions
+
+Minimum recommended:
+
+- `manageAlert`
+- `manageCase`
+- `manageObservable`
+- `manageTask`
+- `manageCaseReport`
+
+⚠️ Do NOT assign org-admin unless necessary.
+
+Click **Confirm**
+
+---
+
+# 👤 0.2 – Create Service User Account
+
+Now create a dedicated service account.
+
+### Navigate:
+
+Sidebar → **Organizations**  
+Select your Organization  
+Go to **Users** tab  
+Click ➕
+
+---
+
+### Fill the form:
+
+| Field | Value |
+|--------|--------|
+| Type | **Service** |
+| Login | `api_analyst@svc.com` |
+| Name | API Service Account – Analyst |
+| Profile | `analyst` |
+
+Click **Confirm**
+
+---
+
+⚠️ Important Notes:
+
+- Service accounts **cannot login via UI**
+- They authenticate only using API key
+- Designed specifically for integrations
+
+---
+
+# 🔐 0.3 – Generate API Key
+
+Now generate the key for this service account.
+
+### Steps:
+
+1. Go to **Users**
+2. Hover over `api_analyst_svc`
+3. Click Edit (✏️)
+4. Click **Create API Key**
+5. Copy the generated key
+6. Store it securely
+
+⚠️ This key acts as a password for API access.
+
+---
+
+# 📌 0.4 – Store API Key Securely
+
+Best practice:
+
+- Store in password manager
+- Never commit to GitHub
+- Restrict file permissions if saved on server
+
+---
+
+# 📍 0.5 – Where This API Key Will Be Used
+
+It will be used in:
+
+Manual test:
+
+```bash
+/var/ossec/integrations/custom-w2thive \
+/var/ossec/logs/alerts/alerts.json \
+YOUR_API_KEY \
+http://THEHIVE_IP:9000
+```
+
+And inside:
+
+```
+/var/ossec/etc/ossec.conf
+```
+
+```xml
+<integration>
+  <name>custom-w2thive</name>
+  <hook_url>http://THEHIVE_IP:9000</hook_url>
+  <api_key>YOUR_API_KEY</api_key>
+  <alert_format>json</alert_format>
+  <level>9</level>
+</integration>
+```
+
+---
+
+# 🛡 Why Use a Service Account?
+
+✔ Follows least privilege principle  
+✔ Isolates integration access  
+✔ Prevents misuse of admin credentials  
+✔ Can be rotated independently  
+✔ Better audit logging  
+
+---
+
+# ✅ Validation Checklist
+
+Before continuing:
+
+- Profile created
+- Service user created
+- API key generated
+- API key copied securely
+
+Now proceed to Step 1.
+
+---
+
 # ⚙️ Step 1 – Install TheHive Python Module (On Wazuh Server)
 
 ```bash
@@ -150,7 +313,7 @@ Run manually:
 ```bash
 /var/ossec/integrations/custom-w2thive \
 /var/ossec/logs/alerts/alerts.json \
-YOUR_API_KEY \
+YOUR_THEHIVE_API_KEY \
 http://THEHIVE_IP:9000
 ```
 
@@ -172,7 +335,7 @@ Add:
 <integration>
   <name>custom-w2thive</name>
   <hook_url>http://THEHIVE_IP:9000</hook_url>
-  <api_key>YOUR_API_KEY</api_key>
+  <api_key>YOUR_THEHIVE_API_KEY</api_key> <!--PASTE THE API KEY MADE FROM THEHIVE HERE-->
   <alert_format>json</alert_format>
   <level>9</level>
 </integration>
