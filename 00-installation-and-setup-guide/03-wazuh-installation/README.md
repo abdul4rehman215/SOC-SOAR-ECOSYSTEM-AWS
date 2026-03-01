@@ -3,8 +3,8 @@
 
 ---
 <div align="center">
-  
-![Wazuh Deployment Architecture](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/wazuh.png)
+
+![Wazuh Logo](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/wazuh.png)
 
 </div>
 
