@@ -1,0 +1,230 @@
+====================================================================
+DOCKER INSTALLATION – ARCHITECTURE NOTES
+SOC-SOAR ECOSYSTEM CONTAINER RUNTIME FOUNDATION
+====================================================================
+
+1. PURPOSE OF DOCKER IN SOC ECOSYSTEM
+--------------------------------------------------------------------
+
+Docker is used as the primary container runtime to deploy:
+
+- TheHive (Case Management Platform)
+- Cortex (Analyzer & Responder Engine)
+- MISP (Threat Intelligence Platform)
+- n8n (Automation & AI Workflows)
+- Supporting services (Redis, PostgreSQL, Elasticsearch where required)
+
+Docker allows:
+
+- Isolation of services
+- Version control of tools
+- Easy upgrades
+- Reproducible deployments
+- Simplified dependency management
+
+
+2. WHY USE OFFICIAL DOCKER REPOSITORY
+--------------------------------------------------------------------
+
+Ubuntu default repositories may:
+
+- Provide outdated Docker versions
+- Lack modern Compose plugin
+- Cause compatibility issues with newer container stacks
+
+Using official Docker repository ensures:
+
+- Latest stable Docker CE
+- Proper containerd version
+- Verified GPG-signed packages
+- Long-term compatibility
+
+
+3. DOCKER ARCHITECTURE OVERVIEW
+--------------------------------------------------------------------
+
+Docker Engine Components:
+
+- dockerd (Docker daemon)
+- containerd (Container runtime)
+- runc (Low-level container runtime)
+- Docker CLI
+- Docker Compose plugin
+
+Flow:
+
+User → Docker CLI → Docker Daemon → containerd → runc → Container
+
+
+4. USER PERMISSION MODEL
+--------------------------------------------------------------------
+
+By default, Docker requires root privileges.
+
+Instead of running:
+
+    sudo docker ...
+
+We add user to docker group:
+
+    sudo usermod -aG docker $USER
+
+This allows:
+
+- Non-root container management
+- Automation script execution
+- Cleaner deployment process
+
+
+5. STORAGE ARCHITECTURE
+--------------------------------------------------------------------
+
+Default Docker storage driver (Ubuntu):
+
+    overlay2
+
+Location:
+
+    /var/lib/docker/
+
+This directory stores:
+
+- Images
+- Containers
+- Volumes
+- Networks
+
+Important:
+
+Docker storage can grow rapidly during SOC deployments,
+especially when:
+
+- Running MISP
+- Running TheHive
+- Running Elasticsearch
+- Pulling large images
+
+Minimum recommended disk space:
+
+- 50GB for testing
+- 100GB+ for full SOC stack
+
+
+6. NETWORK ARCHITECTURE
+--------------------------------------------------------------------
+
+Docker creates default bridge network:
+
+    docker0
+
+Each container gets:
+
+- Virtual interface
+- Internal IP
+- Isolated namespace
+
+External access happens through:
+
+- Port mapping (host:container)
+- Example:
+    0.0.0.0:9000 → container:9000
+
+Security implication:
+
+Exposed ports must be restricted via:
+
+- AWS Security Groups
+- Firewall rules
+
+
+7. SECURITY CONSIDERATIONS
+--------------------------------------------------------------------
+
+Docker daemon runs as root.
+
+Security best practices:
+
+- Do not expose Docker socket publicly
+- Do not run containers as privileged unless required
+- Restrict dashboard ports (9000, 5601, 8080)
+- Regularly update Docker engine
+- Avoid untrusted images
+
+
+8. SERVICE MANAGEMENT
+--------------------------------------------------------------------
+
+Docker service:
+
+    systemctl status docker
+
+Must be:
+
+- Active (running)
+- Enabled (auto-start on reboot)
+
+If not enabled:
+
+Containers will not auto-start after reboot.
+
+
+9. RESOURCE MANAGEMENT
+--------------------------------------------------------------------
+
+Docker containers share host kernel.
+
+Resource limitations can be enforced using:
+
+- --memory flag
+- --cpus flag
+
+Example:
+
+    docker run --memory=1g --cpus=1 nginx
+
+For SOC stack:
+
+Minimum recommended:
+
+- 8GB RAM
+- 4 vCPUs
+- 100GB disk
+
+
+10. COMMON DEPLOYMENT ISSUES
+--------------------------------------------------------------------
+
+- GPG key import failure
+- DNS resolution failure
+- Outbound port blocked
+- Disk exhaustion
+- Permission denied (docker group missing)
+- Service not enabled
+
+
+11. SCALABILITY STRATEGY
+--------------------------------------------------------------------
+
+Future architectural improvements:
+
+- Separate containers per service
+- Use docker-compose.yml for orchestration
+- Use external volumes for persistent storage
+- Consider reverse proxy (NGINX) for dashboard routing
+- Consider private registry for internal images
+
+
+12. FINAL STATUS
+--------------------------------------------------------------------
+
+Docker Engine installed using official repository
+Compose plugin verified
+Daemon enabled and running
+Test container executed successfully
+User added to docker group
+
+System is ready for containerized SOC platform deployment.
+
+====================================================================
+END OF DOCKER ARCHITECTURE NOTES
+====================================================================
