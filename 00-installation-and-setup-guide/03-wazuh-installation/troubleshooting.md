@@ -1,142 +1,266 @@
-# 🛠️ Wazuh Installation – Troubleshooting Guide
-### AWS EC2 – Ubuntu 24.04 – All-in-One Deployment
+# 🛠️ Troubleshooting Guide — Project 03: Wazuh All-in-One Installation (AWS EC2)
+
+> This guide covers the most common Wazuh installation and access issues encountered in an AWS EC2 environment, including dashboard availability, indexer stability, agent connectivity, enrollment failures, and configuration mistakes.
 
 ---
 
-# 1️⃣ Dashboard Not Accessible (Port 443 Issue)
+## 📌 Quick Diagnosis Flow (Use This First)
 
-## Symptoms
-- Browser shows "Connection Refused"
-- Timeout error
-- HTTPS not reachable
-
-## Root Causes
-- Port 443 not allowed in Security Group
-- NACL blocking inbound
-- Wazuh dashboard service not running
-- Firewall (UFW) blocking
-
-## Diagnosis
-
+### 1) Check core services
 ```bash
-sudo systemctl status wazuh-dashboard
-sudo ss -tulnp | grep 443
-sudo ufw status
+sudo systemctl status wazuh-manager --no-pager
+sudo systemctl status filebeat --no-pager || true
+sudo systemctl status wazuh-dashboard --no-pager || true
+sudo systemctl status wazuh-indexer --no-pager || true
 ````
 
-## Fix
-
-AWS Security Group:
-
-Allow:
-
-* TCP 443 → Your public IP
-
-If UFW enabled:
+### 2) Check listening ports locally
 
 ```bash
+sudo ss -tuln | grep -E ':(443|1514|1515|55000|9200)\b' || true
+```
+
+### 3) Check Wazuh manager logs
+
+```bash
+sudo tail -n 80 /var/ossec/logs/ossec.log
+```
+
+---
+
+# 🌐 DASHBOARD ACCESS ISSUES
+
+---
+
+## 1) ❌ Wazuh Dashboard Not Accessible (Browser can’t open https://<PUBLIC-IP>)
+
+### Symptoms
+
+* Browser shows:
+
+  * "This site can’t be reached"
+  * timeout / connection refused
+* You cannot load login page on:
+
+  * `https://<EC2_PUBLIC_IP>`
+
+### Root Causes
+
+* Security Group does not allow inbound **443/TCP**
+* Instance does not have a public IP / Elastic IP
+* Dashboard service down
+* Local firewall blocking 443
+
+### Fix (AWS Side)
+
+✅ Ensure Security Group inbound includes:
+
+* 443/TCP → Your IP (recommended)
+* 443/TCP → 0.0.0.0/0 (not recommended, only if absolutely required)
+
+✅ Ensure instance has:
+
+* Public IPv4 enabled OR Elastic IP
+
+### Fix (Server Side)
+
+Check dashboard service:
+
+```bash
+sudo systemctl status wazuh-dashboard --no-pager || true
+sudo systemctl restart wazuh-dashboard || true
+sudo systemctl status wazuh-dashboard --no-pager || true
+```
+
+Check if port 443 is listening:
+
+```bash
+sudo ss -tuln | grep ':443' || true
+```
+
+If UFW is enabled:
+
+```bash
+sudo ufw status verbose
 sudo ufw allow 443/tcp
 sudo ufw reload
 ```
 
-Restart dashboard:
+---
 
-```bash
-sudo systemctl restart wazuh-dashboard
-```
+## 2) ⚠️ Browser SSL Warning (Certificate Not Trusted)
+
+### Symptoms
+
+* Browser warning about insecure/self-signed certificate
+
+### Root Cause
+
+* Wazuh uses a self-signed certificate by default
+
+### Fix
+
+* Proceed/accept the warning (expected for lab)
+* Optionally replace cert later (not required for portfolio lab)
 
 ---
 
-# 2️⃣ Indexer Service Not Starting
+# 🧠 INDEXER ISSUES (MOSTLY MEMORY / DISK RELATED)
 
-## Symptoms
+---
 
-* wazuh-indexer service fails
-* Dashboard shows "Server not ready"
-* Port 9200 not listening
+## 3) ❌ Indexer Crash / Dashboard Unstable / High Swap
 
-## Root Causes
+### Symptoms
 
-* Low RAM (less than 8GB)
-* Disk space exhausted
-* OpenSearch heap memory issue
-* Corrupted index
+* Dashboard loads slowly or stops responding
+* Indexer service fails or restarts
+* System becomes slow (high memory usage)
+* `wazuh-indexer` fails to start
 
-## Diagnosis
+### Root Causes
+
+* Instance RAM too low (< 8GB for All-in-One)
+* Disk space low
+* Heavy indexing load / background tasks
+
+### Fix
+
+Check memory and swap:
 
 ```bash
-sudo systemctl status wazuh-indexer
-sudo journalctl -u wazuh-indexer -xe
 free -h
+swapon --show
+```
+
+Check disk:
+
+```bash
 df -h
 ```
 
-## Fix
-
-Minimum requirements:
-
-* 8GB RAM
-* 100GB disk
-
-If memory low:
+Check indexer status/logs:
 
 ```bash
-sudo nano /etc/wazuh-indexer/jvm.options
+sudo systemctl status wazuh-indexer --no-pager || true
+sudo journalctl -u wazuh-indexer --no-pager -n 200 || true
 ```
 
-Adjust heap:
+Recommended fix (AWS):
 
-```
--Xms2g
--Xmx2g
-```
+* Upgrade instance type to `t2.large` / `t3.large` (8GB)
+* Increase EBS volume (100GB+ recommended)
 
-Restart:
+---
+
+# 🔌 AGENT CONNECTIVITY ISSUES
+
+---
+
+## 4) ❌ Agents Not Connecting (No active agents in dashboard)
+
+### Symptoms
+
+* Agents appear disconnected
+* No agent events received
+* "Never connected" or no heartbeat
+
+### Root Causes
+
+* Port **1514/TCP** blocked in Security Group
+* Agent configured to wrong manager IP/hostname
+* Network path blocked between endpoint and server
+
+### Fix (AWS Security Group)
+
+Allow inbound:
+
+* 1514/TCP → from agent network range (or your lab IPs)
+
+### Fix (Server checks)
+
+Confirm port listening:
 
 ```bash
-sudo systemctl restart wazuh-indexer
+sudo ss -tuln | grep ':1514' || true
+```
+
+Confirm manager running:
+
+```bash
+sudo systemctl status wazuh-manager --no-pager
 ```
 
 ---
 
-# 3️⃣ Agents Not Connecting
+## 5) ❌ Enrollment Fails (Agent cannot register)
 
-## Symptoms
+### Symptoms
 
-* Agent status shows "Never Connected"
-* Agent inactive in dashboard
-* No logs received
+* Agent enrollment fails
+* Agents cannot request enrollment
+* authd/enrollment errors
 
-## Root Causes
+### Root Causes
 
-* Port 1514 blocked
-* Port 1515 blocked
-* Wrong server IP configured
-* Firewall issue
+* Port **1515/TCP** blocked in Security Group
+* Enrollment not enabled / authd service misconfigured
+* Wrong enrollment method used
 
-## Diagnosis
+### Fix (AWS Security Group)
 
-On server:
+Allow inbound:
 
-```bash
-sudo ss -tulnp | grep 1514
-sudo ss -tulnp | grep 1515
-```
+* 1515/TCP → agent networks/subnets
 
-Check logs:
+### Fix (Server checks)
+
+Confirm port listening:
 
 ```bash
-sudo tail -f /var/ossec/logs/ossec.log
+sudo ss -tuln | grep ':1515' || true
 ```
 
-## Fix
+Confirm auth section exists in `/var/ossec/etc/ossec.conf`:
 
-AWS Security Group:
+* `<auth> ... <port>1515</port> ... </auth>`
 
-Allow:
+Restart manager after config change:
 
-* TCP 1514
-* TCP 1515
+```bash
+sudo systemctl restart wazuh-manager
+sudo systemctl status wazuh-manager --no-pager
+```
+
+---
+
+# 🔑 API / INTERNAL SERVICE ISSUES
+
+---
+
+## 6) ❌ Wazuh API Not Reachable (Dashboard shows API issues)
+
+### Symptoms
+
+* Dashboard loads but some sections fail
+* API-related errors appear
+
+### Root Causes
+
+* Port 55000 blocked locally or SG restricted incorrectly
+* Manager API service issues
+
+### Fix
+
+Check local listening:
+
+```bash
+sudo ss -tuln | grep ':55000' || true
+```
+
+If you need remote API access:
+
+* Restrict 55000/TCP to Admin IP/VPN only
 
 Restart manager:
 
@@ -146,259 +270,134 @@ sudo systemctl restart wazuh-manager
 
 ---
 
-# 4️⃣ API Not Responding (Port 55000)
+## 7) ⚠️ Indexer API (9200) exposed publicly (Security Risk)
 
-## Symptoms
+### Symptoms
 
-* Dashboard API error
-* curl [https://localhost:55000](https://localhost:55000) fails
+* 9200 open to internet in Security Group
 
-## Diagnosis
+### Root Cause
 
-```bash
-sudo systemctl status wazuh-manager
-sudo ss -tulnp | grep 55000
-```
+* Overly permissive SG inbound rules
 
-Test API:
+### Fix
 
-```bash
-curl -k -u admin:PASSWORD https://localhost:55000
-```
+* Remove 9200 from public inbound
+* Keep it internal only (localhost/VPC security group reference)
 
-## Fix
-
-Ensure:
-
-* Port 55000 allowed
-* wazuh-manager running
-
-Restart:
+Verify local only use is fine:
 
 ```bash
-sudo systemctl restart wazuh-manager
+sudo ss -tuln | grep ':9200' || true
 ```
 
 ---
 
-# 5️⃣ Vulnerability Detection Not Working
-
-## Symptoms
-
-* No vulnerability data in dashboard
-* Vulnerabilities tab empty
-
-## Root Causes
-
-* Internet access blocked
-* NVD feeds not updating
-* Provider misconfiguration
-
-## Diagnosis
-
-Check logs:
-
-```bash
-sudo tail -f /var/ossec/logs/ossec.log
-```
-
-Search for:
-
-* nvd
-* vulnerability
-
-Test internet:
-
-```bash
-curl https://nvd.nist.gov
-```
-
-## Fix
-
-Ensure:
-
-* Outbound internet allowed
-* DNS working
-* Correct provider config in ossec.conf
-
-Restart:
-
-```bash
-sudo systemctl restart wazuh-manager
-```
+# ⚙️ CONFIGURATION ISSUES (`ossec.conf`)
 
 ---
 
-# 6️⃣ File Integrity Monitoring Not Generating Alerts
+## 8) ❌ Wazuh Manager Fails After Editing `ossec.conf`
 
-## Symptoms
+### Symptoms
 
-* No FIM alerts
-* Modifying /etc files produces nothing
+* `wazuh-manager` fails to start after config changes
+* Errors in `ossec.log`
 
-## Diagnosis
+### Root Causes
 
-Modify test file:
+* XML syntax error (missing closing tags)
+* Invalid module config
+* Incorrect nesting
 
-```bash
-sudo touch /etc/testfile
-```
+### Fix
 
-Check logs:
-
-```bash
-sudo tail -f /var/ossec/logs/ossec.log
-```
-
-## Fix
-
-Ensure:
-
-```xml
-<syscheck>
-  <disabled>no</disabled>
-</syscheck>
-```
-
-Restart:
-
-```bash
-sudo systemctl restart wazuh-manager
-```
-
----
-
-# 7️⃣ Installation Script Fails
-
-## Symptoms
-
-* GPG error
-* Repository not signed
-* Key error
-
-## Root Cause
-
-* Network interruption
-* DNS issue
-* Partial key import
-
-## Fix
-
-Clean:
-
-```bash
-sudo rm -f wazuh-install.sh
-```
-
-Re-download:
-
-```bash
-curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh
-sudo bash ./wazuh-install.sh -a
-```
-
----
-
-# 8️⃣ High Memory Usage
-
-## Symptoms
-
-* Server becomes slow
-* Swap usage high
-* Indexer consuming RAM
-
-## Diagnosis
-
-```bash
-free -h
-htop
-```
-
-## Fix
-
-Upgrade instance to:
-
-* t3.large or higher
-
-Or adjust indexer heap:
-
-```bash
-sudo nano /etc/wazuh-indexer/jvm.options
-```
-
----
-
-# 9️⃣ SSL Certificate Warning
-
-## Explanation
-
-Self-signed certificate is generated during installation.
-
-This is normal in lab environment.
-
-For production:
-
-* Replace with valid certificate
-* Use reverse proxy
-
----
-
-# 🔟 Manager Crashes After Editing ossec.conf
-
-## Root Cause
-
-Syntax error in XML
-
-## Diagnosis
-
-Check log:
-
-```bash
-sudo tail -n 50 /var/ossec/logs/ossec.log
-```
-
-Validate XML:
-
-```bash
-xmllint --noout /var/ossec/etc/ossec.conf
-```
-
-## Fix
-
-Restore backup:
+Restore from backup:
 
 ```bash
 sudo cp /var/ossec/etc/ossec.conf.backup /var/ossec/etc/ossec.conf
 sudo systemctl restart wazuh-manager
+sudo systemctl status wazuh-manager --no-pager
 ```
 
----
-
-# 🧠 Best Practices
-
-* Always backup config before editing
-* Never edit indexer config without memory check
-* Monitor disk usage weekly
-* Restrict dashboard to admin IP only
-* Do not expose 9200 publicly
-
----
-
-# ✅ Final Health Check
+Check logs:
 
 ```bash
-systemctl status wazuh-manager
-systemctl status wazuh-indexer
-systemctl status wazuh-dashboard
-systemctl status filebeat
+sudo tail -n 120 /var/ossec/logs/ossec.log
 ```
 
-Dashboard should load
-Agents should connect
-Logs should be flowing
+✅ Best practice:
 
-SOC core is operational.
+* Edit config carefully
+* Restart only `wazuh-manager` after changes
+* Keep backups per change set
 
 ---
 
-End of Troubleshooting Guide.
+# 🧪 VALIDATION FAILURES (DASHBOARD SHOWS NO DATA)
+
+---
+
+## 9) ❌ No Security Events / Vulnerabilities Not Showing
+
+### Symptoms
+
+* Dashboard loads but data seems empty
+* Vulnerability tab shows nothing
+
+### Root Causes
+
+* No agents connected (no endpoint telemetry)
+* Inventory not populated yet (syscollector timing)
+* Vulnerability feeds still updating
+* Filebeat/indexer issues
+
+### Fix
+
+Confirm at least one agent exists (later project):
+
+* Agent must connect to generate endpoint data
+
+Check manager + filebeat:
+
+```bash
+sudo systemctl status wazuh-manager --no-pager
+sudo systemctl status filebeat --no-pager || true
+```
+
+Check logs:
+
+```bash
+sudo tail -n 80 /var/ossec/logs/ossec.log
+```
+
+Be patient for initial feed sync (few minutes), then refresh.
+
+---
+
+# ✅ FINAL DIAGNOSTIC COMMANDS (COPY/PASTE)
+
+```bash
+sudo systemctl status wazuh-manager --no-pager
+sudo systemctl status filebeat --no-pager || true
+sudo systemctl status wazuh-dashboard --no-pager || true
+sudo systemctl status wazuh-indexer --no-pager || true
+
+sudo ss -tuln | grep -E ':(443|1514|1515|55000|9200)\b' || true
+
+free -h
+df -h
+
+sudo tail -n 120 /var/ossec/logs/ossec.log
+```
+
+---
+
+## ✅ Final Notes
+
+* Dashboard access issues are usually **443 blocked**
+* Agent issues are usually **1514/1515 blocked**
+* Indexer issues are usually **low RAM / high swap**
+* Always backup `ossec.conf` before edits and restart only `wazuh-manager`
+
+---
