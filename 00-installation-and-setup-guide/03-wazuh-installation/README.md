@@ -74,6 +74,17 @@ Wazuh is an open-source **SIEM/XDR** platform used to:
 
 ---
 
+📁 Repository Structure
+03-wazuh-installation/
+├── README.md
+├── commands.sh
+├── ossec.conf
+├── troubleshooting.md
+├── architecture-notes.txt
+└── interview_qna.md
+
+--
+
 ## 🖥️ EC2 Requirements
 
 ### ✅ Recommended Instance (Stable All-in-One)
