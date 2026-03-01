@@ -55,6 +55,17 @@ MISP transforms raw indicators into **structured intelligence** that can be shar
 
 ---
 
+# 📂 Repository Structure
+
+00-installation-and-setup-guide/
+└── 05-misp-installation/
+    ├── README.md
+    ├── commands.sh
+    ├── troubleshooting.md
+    └── interview_qna.md
+
+---
+
 # 🏗 Architecture Overview
 
 <p align="center">
