@@ -1,0 +1,209 @@
+====================================================================
+AWS EC2 INFRASTRUCTURE ARCHITECTURE NOTES
+SOC-SOAR ECOSYSTEM FOUNDATION
+====================================================================
+
+1. PURPOSE OF THIS ARCHITECTURE
+--------------------------------------------------------------------
+This infrastructure forms the base layer for the entire SOC-SOAR 
+ecosystem deployment including:
+
+- Wazuh SIEM/XDR
+- TheHive (Case Management)
+- Cortex (Analyzers & Responders)
+- MISP (Threat Intelligence Platform)
+- Suricata IDS
+- Zeek Network Monitoring
+- Snort IDS
+- ModSecurity WAF
+- n8n Automation
+- AWS CloudTrail Integration
+
+The objective is to create a controlled, production-style AWS 
+network environment instead of relying on default VPC settings.
+
+
+2. NETWORK DESIGN PRINCIPLES
+--------------------------------------------------------------------
+CIDR Strategy:
+VPC CIDR: 10.0.0.0/16
+
+Reason:
+- Allows 65,536 IP addresses
+- Supports segmentation (public/private)
+- Scalable for multi-tier architecture
+
+Subnet Strategy:
+Public Subnet: 10.0.1.0/24
+Private Subnet (Optional): 10.0.2.0/24
+
+Reason:
+- Public subnet for dashboards & exposed services
+- Private subnet reserved for future database/log storage
+
+
+3. INTERNET CONNECTIVITY FLOW
+--------------------------------------------------------------------
+
+Traffic Flow:
+
+EC2 Instance (10.0.1.x)
+    ↓
+Public Subnet
+    ↓
+Route Table (0.0.0.0/0 → IGW)
+    ↓
+Internet Gateway
+    ↓
+Internet
+
+Critical Requirement:
+- IGW must be attached to VPC
+- Route table must contain 0.0.0.0/0 → IGW
+- Public IP must be enabled
+
+
+4. SECURITY MODEL
+--------------------------------------------------------------------
+
+Layer 1 – Network ACL (Stateless)
+- Default allow during initial deployment
+- Can be hardened later
+- Must allow inbound & outbound return traffic
+
+Layer 2 – Security Groups (Stateful)
+Inbound:
+- SSH (22) restricted to admin IP
+- HTTPS (443) for dashboards
+- Custom SOC ports (5601, 9000, 1514, etc.)
+
+Outbound:
+- Allow all (required for:
+    - OS updates
+    - Threat intelligence APIs
+    - Docker images
+    - GitHub packages
+    - Cloud integrations)
+
+Layer 3 – Instance Level (OS Firewall)
+- UFW optional
+- Disabled during base setup to prevent misconfiguration
+
+
+5. DNS ARCHITECTURE
+--------------------------------------------------------------------
+DNS Resolution must be enabled at VPC level.
+
+Why:
+- Wazuh agents require hostname resolution
+- Threat intel integrations require domain resolution
+- CloudTrail S3 logging requires proper endpoint resolution
+- API integrations depend on DNS
+
+Failure in DNS:
+- apt update fails
+- curl fails
+- Docker GPG fails
+- Git clone fails
+
+
+6. HARDWARE SIZING STRATEGY
+--------------------------------------------------------------------
+
+Minimal Testing:
+Instance Type: t3.small
+RAM: 2GB
+Storage: 30GB
+Purpose: Initial setup & validation
+
+Multi-Tool SOC Deployment:
+Instance Type: t3.large
+RAM: 8GB
+Storage: 100GB+
+Purpose: Wazuh + Suricata + TheHive
+
+Full SOC Stack (Recommended):
+Instance Type: t3.xlarge
+RAM: 16GB
+Storage: 200GB+
+Purpose: Wazuh + TheHive + Cortex + MISP + IDS + Automation
+
+
+7. AWS METADATA SERVICE (IMDS)
+--------------------------------------------------------------------
+
+Metadata Endpoint:
+http://169.254.169.254/
+
+Used For:
+- Instance ID retrieval
+- IAM role validation
+- CloudTrail integration
+- AWS log ingestion
+
+If IMDS fails:
+- Cloud integrations break
+- IAM permissions not detected
+- Wazuh S3 wodle may fail
+
+
+8. COMMON ARCHITECTURE MISTAKES
+--------------------------------------------------------------------
+
+1. Using default VPC blindly
+2. Not attaching Internet Gateway
+3. Route table not associated with subnet
+4. Public IP disabled
+5. Overly restrictive outbound rules
+6. SSH open to 0.0.0.0/0
+7. Forgetting DNS resolution setting
+8. Not verifying network before installing tools
+
+
+9. SECURITY HARDENING (POST DEPLOYMENT)
+--------------------------------------------------------------------
+
+After SOC stack is installed:
+
+- Restrict SSH to fixed IP
+- Use Elastic IP if required
+- Enable CloudTrail logging
+- Configure IAM roles properly
+- Enable GuardDuty (optional)
+- Restrict dashboard ports to VPN or IP allowlist
+- Implement NACL hardening
+
+
+10. SCALABILITY CONSIDERATIONS
+--------------------------------------------------------------------
+
+Future Improvements:
+
+- Separate EC2 instances per tool
+- Use private subnet for database services
+- Implement NAT Gateway for private instances
+- Deploy Application Load Balancer for dashboards
+- Implement Auto Scaling groups
+- Use EBS volume expansion for logs
+
+
+11. FINAL ARCHITECTURE STATUS
+--------------------------------------------------------------------
+
+- VPC created manually
+- Public subnet configured
+- Internet Gateway attached
+- Route table correctly configured
+- Security group minimal and controlled
+- EC2 validated with:
+    - Internal gateway ping
+    - External IP ping
+    - DNS resolution test
+    - HTTPS connectivity test
+- Metadata service validated
+
+Infrastructure is now stable and ready for SOC-SOAR tool deployment.
+
+====================================================================
+END OF ARCHITECTURE NOTES
+====================================================================
