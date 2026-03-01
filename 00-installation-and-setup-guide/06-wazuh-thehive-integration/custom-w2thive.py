@@ -1,11 +1,11 @@
+#!/var/ossec/framework/python/bin/python3
+
 ###########################################################
 ## Place this file at:
 # /var/ossec/integrations/custom-w2thive.py
 ## Make executable after saving:
 # chmod +x /var/ossec/integrations/custom-w2thive.py
 ###########################################################
-
-#!/var/ossec/framework/python/bin/python3
 
 import json
 import sys
@@ -200,3 +200,14 @@ if __name__ == "__main__":
         main(sys.argv)
     except Exception as e:
         logger.exception("Integration error occurred")
+
+###########################################################
+## ✅ What This Script Does
+
+# ✔ Reads Wazuh JSON alert
+# ✔ Converts it into formatted markdown
+# ✔ Extracts artifacts (IP, URL, domain)
+# ✔ Applies severity thresholds
+# ✔ Sends alert to TheHive via API
+# ✔ Logs result
+###########################################################
