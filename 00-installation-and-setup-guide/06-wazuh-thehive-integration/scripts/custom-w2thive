@@ -1,0 +1,68 @@
+#!/bin/sh
+
+###########################################################
+# Wazuh → TheHive Integration Wrapper Script
+# This ensures Wazuh executes the Python script correctly
+
+## 📍 Location:
+# /var/ossec/integrations/custom-w2thive
+## After saving:
+# chmod +x /var/ossec/integrations/custom-w2thive
+###########################################################
+
+WPYTHON_BIN="framework/python/bin/python3"
+SCRIPT_PATH_NAME="$0"
+DIR_NAME="$(cd $(dirname ${SCRIPT_PATH_NAME}); pwd -P)"
+SCRIPT_NAME="$(basename ${SCRIPT_PATH_NAME})"
+
+case ${DIR_NAME} in
+
+    */active-response/bin | */wodles*)
+        if [ -z "${WAZUH_PATH}" ]; then
+            WAZUH_PATH="$(cd ${DIR_NAME}/../..; pwd)"
+        fi
+        PYTHON_SCRIPT="${DIR_NAME}/${SCRIPT_NAME}.py"
+    ;;
+
+    */bin)
+        if [ -z "${WAZUH_PATH}" ]; then
+            WAZUH_PATH="$(cd ${DIR_NAME}/..; pwd)"
+        fi
+        PYTHON_SCRIPT="${WAZUH_PATH}/framework/scripts/${SCRIPT_NAME}.py"
+    ;;
+
+    */integrations)
+        if [ -z "${WAZUH_PATH}" ]; then
+            WAZUH_PATH="$(cd ${DIR_NAME}/..; pwd)"
+        fi
+        PYTHON_SCRIPT="${DIR_NAME}/${SCRIPT_NAME}.py"
+    ;;
+
+esac
+
+###########################################################
+# Execute the Python integration script
+###########################################################
+
+${WAZUH_PATH}/${WPYTHON_BIN} ${PYTHON_SCRIPT} "$@"
+
+###########################################################
+## 🔐 Why This Wrapper Is Required
+# Wazuh integrations must:
+# Use Wazuh’s embedded Python interpreter
+# Execute from correct Wazuh path
+# Work regardless of installation directory
+
+## Without this wrapper:
+# ❌ Integration will fail
+# ❌ Python path mismatch
+# ❌ Module import errors
+
+## ✅ Final File Checklist
+# Inside:
+# /var/ossec/integrations/
+# You should now have:
+# custom-w2thive
+# custom-w2thive.py
+# Both executable.
+###########################################################
