@@ -1,222 +1,249 @@
-# 🐳 Project 02 — Docker Installation Guide (Ubuntu / AWS EC2 Ready)
+# 🐳 Docker Installation Guide (Ubuntu 24.04 LTS)
 ### SOC-SOAR Ecosystem Standard Container Runtime Setup
 
-> **Goal:** Install Docker Engine + Docker Compose Plugin on Ubuntu (AWS EC2 or any VM) using the official Docker repository, verify installation, and prepare the host for SOC/SOAR tool deployments (TheHive, Cortex, MISP, n8n, etc.).
+<p align="center">
+
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/docker_logo.png" width="300"/>
+
+</p>
 
 ---
 
 ## 📌 Project Overview
 
-Many SOC/SOAR components in this portfolio (especially **TheHive**, **Cortex**, **n8n**, and sometimes **MISP**) run cleanly using Docker.
+Docker is the foundational container runtime used throughout the SOC-SOAR ecosystem for deploying:
 
-This project provides a **standard, reusable Docker installation guide** that can be applied to:
-- AWS EC2 Ubuntu instances
-- Local Ubuntu VMs
-- Cloud lab machines
+- TheHive
+- Cortex
+- MISP
+- n8n
+- Supporting services
+- Optional microservices components
 
-It follows the **official Docker installation method**:
-- install prerequisites
-- import Docker GPG key into `/etc/apt/keyrings`
-- add official Docker repository
-- install Docker engine + compose plugin
-- validate with `hello-world`
+This guide provides a clean, secure, and standard Docker installation procedure for Ubuntu-based AWS EC2 instances.
 
----
-
-## 🎯 Objectives
-
-By completing this project, I ensured:
-
-- Docker Engine is installed from the official Docker repository
-- Docker GPG key is properly added (no `NO_PUBKEY` errors)
-- Docker Compose plugin is installed and working (`docker compose ...`)
-- Docker service is enabled and starts automatically
-- The user can run Docker without `sudo` (docker group configured)
-- Installation is validated using the official `hello-world` test image
+It is written as a reusable installation blueprint for any Linux instance.
 
 ---
 
-## ✅ Prerequisites
+## 🎯 Objective
 
-### OS Requirements
-- Ubuntu 22.04 LTS or Ubuntu 24.04 LTS (recommended)
-- Working internet + DNS resolution
-- Sudo privileges
+- Install Docker Engine securely using official repository
+- Add Docker GPG key properly
+- Configure Docker repository correctly
+- Install Docker Compose plugin
+- Enable Docker service
+- Add non-root user access
+- Validate installation with container test
 
-### Recommended Pre-checks
-Before installing Docker, confirm:
-- internet works
-- DNS works
-- apt works
+---
+
+## 🖥️ Environment Requirements
+
+| Requirement | Minimum |
+|-------------|----------|
+| OS | Ubuntu 22.04 / 24.04 LTS |
+| RAM | 2GB minimum |
+| Disk | 20GB minimum |
+| Internet Access | Required |
+| User Privileges | sudo access |
+
+---
+
+## 🏗️ Why Use Official Docker Repository?
+
+Using Ubuntu’s default Docker package may:
+- Install outdated versions
+- Lack latest Compose plugin
+- Cause compatibility issues with TheHive/MISP
+
+Official Docker repository ensures:
+- Latest stable release
+- Verified packages
+- Secure GPG validation
+- Better container compatibility
+
+---
+
+## 🔐 Installation Phases
+
+---
+
+### 1️⃣ Install Prerequisites
+
+Install required system packages:
+
+- ca-certificates
+- curl
+- gnupg
+- lsb-release
+
+---
+
+### 2️⃣ Add Docker GPG Key (Secure Method)
+
+Instead of deprecated `apt-key`, modern keyring method is used:
+
+- Create `/etc/apt/keyrings`
+- Import Docker GPG key
+- Convert to binary format
+- Set read permissions
+
+This ensures:
+- Proper repository signing validation
+- No `NO_PUBKEY` errors
+- Secure package installation
+
+---
+
+### 3️⃣ Add Docker Official Repository
+
+Repository configuration dynamically adjusts based on:
+
+- Architecture (`dpkg --print-architecture`)
+- Ubuntu codename (`lsb_release -cs`)
+
+This ensures compatibility with:
+- amd64
+- arm64
+
+---
+
+### 4️⃣ Update Package Index
+
+Run:
+
+- `apt clean`
+- `apt update`
+
+You should NOT see:
+
+- NO_PUBKEY errors
+- Repository not signed warnings
+
+If you see those errors → GPG import failed.
+
+---
+
+### 5️⃣ Install Docker Engine & Plugins
+
+Install:
+
+- docker-ce
+- docker-ce-cli
+- containerd.io
+- docker-buildx-plugin
+- docker-compose-plugin
+
+This ensures:
+- Modern Docker architecture
+- Compose v2 support
+- Buildx support
+
+---
+
+### 6️⃣ Add User to Docker Group
+
+By default Docker requires root.
+
+To avoid using `sudo` every time:
+
+- Add current user to docker group
+- Reload group session
+
+---
+
+### 7️⃣ Enable & Start Docker
+
+Ensure Docker:
+
+- Starts automatically at boot
+- Runs immediately
+- Verified via test container
+
+---
+
+## 🔎 Validation Steps
+
+Run:
 
 ```bash
-ping -c 2 8.8.8.8
-curl -I https://google.com
-sudo apt update
+docker --version
+docker compose version
+docker run hello-world
 ````
 
----
+Expected Output:
 
-## 🧪 Lab Environment
+```
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+```
 
-| Component      | Value                                  |
-| -------------- | -------------------------------------- |
-| OS             | Ubuntu 24.04 LTS (works for 22.04 too) |
-| Platform       | AWS EC2 / VM / Cloud                   |
-| Install Method | Official Docker APT Repo               |
-| Compose        | Docker Compose Plugin                  |
-| Validation     | `docker run hello-world`               |
+If this message appears → Docker environment is fully operational.
 
 ---
 
-## 🧱 Task Overview (What Was Done)
-
-### ✅ Task 1 — Install prerequisites
-
-Installed required packages for secure repository setup:
-
-* `ca-certificates`
-* `curl`
-* `gnupg`
-* `lsb-release`
-
-### ✅ Task 2 — Add Docker GPG key (trusted keyring method)
-
-* Created `/etc/apt/keyrings`
-* Downloaded Docker GPG key
-* Converted key to `.gpg` format using `gpg --dearmor`
-* Set correct permissions
-* Verified key exists
-
-### ✅ Task 3 — Add Docker repository
-
-Added the official Docker APT repository for the detected Ubuntu release.
-
-### ✅ Task 4 — Update package index (ensure repo trust)
-
-* Cleaned apt cache
-* Updated apt index
-* Verified no trust/signing errors occurred
-
-### ✅ Task 5 — Install Docker + Compose
-
-Installed:
-
-* Docker Engine (`docker-ce`)
-* Docker CLI
-* containerd
-* buildx plugin
-* compose plugin
-
-### ✅ Task 6 — Enable and verify
-
-* Enabled and started Docker service
-* Added user to docker group
-* Verified:
-
-  * Docker version
-  * Docker compose version
-  * `hello-world` container output
-
----
-
-## 📂 Repository Structure
+## 📁 Repository Structure
 
 ```text
-00-installation-setup/
-└── 02-docker-installation-guide/
+00-installation-and-setup-guide/
+└── 02-docker-installation/
     ├── README.md
     ├── commands.sh
-    ├── scripts/
-    │   └── docker_postcheck.sh
     ├── troubleshooting.md
-    ├── interview_qna.md
     └── architecture-notes.txt
 ```
-
-> Notes:
->
-> * Scripts are optional but useful for quick health checks.
-
----
-
-## ✅ Expected Final Output (Validation)
-
-When running the test container:
-
-```bash
-docker run hello-world
-```
-
-You should see a message starting with:
-
-> **Hello from Docker!**
-> This message shows that your installation appears to be working correctly.
-
-This confirms:
-
-* Docker daemon is running
-* Docker can pull images
-* Containers can run successfully
-
----
-
-## 🔍 Verification Checklist
-
-Before using Docker to deploy tools:
-
-* [ ] `docker --version` works
-* [ ] `docker compose version` works
-* [ ] `docker run hello-world` prints success message
-* [ ] `systemctl status docker` shows active/running
-* [ ] User can run docker commands without sudo (after group apply)
 
 ---
 
 ## 🧠 What I Learned
 
-* Proper Docker installation should use keyring-based GPG trust (`/etc/apt/keyrings`)
-* Most Docker install failures come from:
-
-  * DNS issues
-  * incorrect GPG key permissions
-  * wrong repository configuration
-* Installing Docker correctly once saves hours of tool deployment failures later
-* Docker Compose plugin (`docker compose`) is now the standard (instead of old `docker-compose`)
+* Secure repository key management prevents GPG issues
+* Docker group permissions simplify container management
+* Proper version control avoids compatibility problems
+* Clean Docker setup prevents future deployment instability
 
 ---
 
 ## 🌍 Why This Matters
 
-Many SOC/SOAR tools deploy faster and cleaner with Docker:
+Docker is the container foundation of:
 
-* avoids dependency conflicts
-* reduces setup time
-* enables faster troubleshooting
-* supports repeatable deployments
+* Case management (TheHive)
+* Threat intelligence platforms (MISP)
+* Automation tools (n8n)
+* Analyzer engines (Cortex)
 
-For a SOC lab on AWS, Docker is a major enabler for:
+Without stable Docker:
 
-* rapid deployment
-* isolated services
-* clean upgrades/rebuilds
-
----
-
-## 🧩 Real-World Applications
-
-* Deploying SOAR tools using containers
-* Running SOC stacks in lab and staging environments
-* Reproducible security tool deployments
-* Blue-team test environments
-* Standardizing installations across multiple servers
+* SOC tools fail to start
+* Integrations break
+* Containers crash silently
 
 ---
 
-## 🏁 Conclusion
+## 🏢 Real-World Relevance
 
-This project provides a reliable, reusable Docker installation method for Ubuntu systems used in this SOC/SOAR portfolio.
+Docker is widely used in:
 
-With Docker installed and verified, future deployments (TheHive, Cortex, n8n, etc.) become faster, consistent, and easier to manage.
+* DevSecOps pipelines
+* Cloud-native deployments
+* Security automation platforms
+* Microservice-based SOC infrastructures
+
+Mastering Docker installation is a core infrastructure engineering skill.
+
+---
+
+## ✅ Result
+
+Docker installed securely using official repository, Compose plugin verified, test container executed successfully.
+
+System is ready for container-based SOC tool deployment.
+
+---
+
+Next Step → Deploy TheHive / Cortex / MISP using Docker.
 
 ---
