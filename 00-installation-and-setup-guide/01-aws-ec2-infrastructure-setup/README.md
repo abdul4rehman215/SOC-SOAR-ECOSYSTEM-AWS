@@ -219,6 +219,68 @@ curl -I https://google.com
 
 ---
 
+## 📅🕛 Post-Launch Server Standardization
+
+### 1️⃣ Check Current Time
+```
+
+timedatectl
+
+```
+
+### 2️⃣ Set Timezone
+```
+
+sudo timedatectl set-timezone Asia/Baku
+
+```
+
+(Replace with your preferred timezone)
+
+### 3️⃣ Enable NTP
+```
+
+sudo timedatectl set-ntp yes
+
+```
+
+---
+
+# 🏷️ Set Hostname
+
+```
+
+sudo hostnamectl set-hostname thehive
+
+```
+
+Update `/etc/hosts`:
+
+Change:
+
+```
+
+127.0.1.1 old-hostname
+
+```
+
+To:
+
+```
+
+127.0.1.1 thehive
+
+```
+
+Verify:
+```
+
+hostnamectl
+
+```
+
+---
+
 ### Interpretation:
 
 | Result                         | Meaning                      |
