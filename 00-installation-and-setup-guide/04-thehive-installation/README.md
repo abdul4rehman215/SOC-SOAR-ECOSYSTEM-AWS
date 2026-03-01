@@ -8,227 +8,257 @@
 
 ---
 
-# 🛡️ SOC-SOAR Ecosystem – Case Management Core
+# 🛡️ SOC-SOAR Ecosystem Role – Case Management Core
 
-TheHive is a powerful **Security Incident Response Platform** designed for SOC teams, CSIRTs, CERTs, and DFIR professionals.
+**TheHive is the Case Management + Incident Response backbone of my SOC-SOAR ecosystem.**
 
-In this project, TheHive 5.5 was deployed on AWS EC2 using Docker as part of a full SOC ecosystem integration with:
+In this AWS-based SOC environment, TheHive is used to:
 
-- Wazuh (SIEM/XDR)
-- MISP (Threat Intelligence)
-- Cortex (Analyzers & Responders)
-- AWS Cloud Monitoring
-- Automation workflows
+- Convert alerts into structured **cases**
+- Assign and track **tasks**
+- Manage **observables** (IPs, domains, hashes)
+- Maintain investigation timelines & audit trails
+- Integrate with **MISP (Threat Intelligence)**
+- Automate enrichment via **Cortex analyzers**
+- Support end-to-end workflows (triage → investigation → response → reporting)
+
+Integrated with:
+
+- **Wazuh (SIEM/XDR)** → detection engine  
+- **MISP** → IOC enrichment  
+- **Cortex** → automated analysis  
+- **AWS Cloud Monitoring** → infrastructure telemetry  
+- **n8n SOAR workflows** → automation & reporting  
 
 ---
 
 # 🎯 Objective
 
-Deploy TheHive 5.5 in a production-ready Docker environment on AWS EC2 to enable:
-
-- Incident case management
-- Alert triage workflows
-- Observable enrichment
-- Analyst collaboration
-- Integration with SIEM & Threat Intelligence platforms
+Deploy **TheHive 5.5** on AWS EC2 using Docker in a production-style configuration to enable structured SOC incident response workflows.
 
 ---
 
-# 🖥️ Infrastructure Requirements
-
-### ☁️ AWS EC2 Configuration
+# ☁️ Infrastructure Requirements
 
 | Component | Specification |
 |------------|---------------|
 | Instance Type | t2.xlarge |
 | vCPU | 4 |
 | RAM | 16 GB |
-| Storage | Minimum 50 GB |
+| Storage | 50+ GB |
 | OS | Ubuntu 24.04 LTS |
 
-📌 Why 16GB RAM?  
-TheHive depends on Elasticsearch and Cassandra. Both are memory-intensive. Less RAM may cause container crashes or unstable indexing.
+📌 Official requirements reference:  
+👉 [TheHive — System Requirements](https://docs.strangebee.com/thehive/installation/system-requirements/)
 
 ---
 
-# 🔐 Security Group Requirements
+# 🔐 Required Security Group Ports
 
-| Port | Purpose |
-|------|---------|
-| 22 | SSH |
-| 9000 | TheHive Web UI |
-| 443 (optional) | Reverse Proxy / SSL |
-| 9200 | Elasticsearch (Do NOT expose publicly) |
+Keep inbound access restricted to **your Admin IP / VPN**.
 
-🚨 IMPORTANT:
-- Never expose Elasticsearch to the public internet.
-- Restrict port 9000 to your IP if not using reverse proxy.
-- Docker must be installed prior (see installation guide below).
+| Port | Protocol | Purpose |
+|------|----------|----------|
+| 22 | TCP | SSH |
+| 9000 | TCP | TheHive Web UI |
+
+Outbound:
+- Allow all outbound traffic (Docker image pulls & updates)
+
+---
+
+# ✅ Prerequisites
+
+## 1️⃣ Baseline EC2 Setup (Time / NTP / Hostname)
+
+Before installing TheHive, ensure the EC2 baseline configuration is correct.
+
+👉 Refer to:  
+**Baseline Machine Setup (Timezone / NTP / Hostname)**  
+[Open EC2 Baseline Setup Guide](../../01-ec2-setup/README.md)
+
+This ensures:
+- Correct timezone
+- NTP synchronization
+- Proper hostname resolution
+
+---
+
+## 2️⃣ Docker Installed
+
+TheHive requires Docker Engine + Docker Compose plugin.
+
+👉 Refer to:  
+**Docker Installation Guide**  
+[Open Docker Installation Guide](../../02-docker-installation/README.md)
 
 ---
 
 # 🧠 What is TheHive?
 
-TheHive is a 4-in-1 Security Incident Response platform that provides:
+TheHive is a modern Security Incident Response Platform built for:
 
-- Case Management
-- Alert Triage
-- Observable Enrichment
-- Collaboration Engine
+- SOC teams  
+- CSIRTs  
+- DFIR professionals  
+- Threat Intelligence teams  
 
-It integrates seamlessly with:
+Learn more:
 
-- MISP (Threat Intelligence)
-- Cortex (Automated analyzers)
-- SIEM tools (like Wazuh)
-- Email ingestion pipelines
+- 👉 [TheHive Documentation — Overview](https://docs.strangebee.com/thehive/overview/)
+- 👉 [TheHive Official Product Page](https://strangebee.com/thehive/)
 
 ---
 
 # 🏗️ Architecture Overview
 
 <p align="center">
-  <img src="https://docs.strangebee.com/thehive/images/overview/thehive-application-stack.png" width="600"/>
+  <img src="https://docs.strangebee.com/thehive/images/overview/thehive-application-stack.png" width="650"/>
 </p>
 
-Core Components:
+TheHive stack includes:
 
 - Apache Cassandra (Database)
-- Elasticsearch (Indexing Engine)
-- TheHive Application Layer
-- File Storage (Local/NFS/S3-compatible)
+- Elasticsearch (Index engine)
+- TheHive Application
+- File storage layer
 
-Docker deployment handles orchestration of these services internally.
-
----
-
-# 🔄 Time & Host Configuration (MANDATORY BEFORE INSTALLATION)
-
-📌 Refer to:
-
-[time and hostname setup guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide/01-aws-ec2-infrastructure-setup#-post-launch-server-standardization)
-
----
-
-# 🐳 Docker Requirement
-
-Docker must be installed before proceeding.
-
-📌 Refer to:
-
-[Docker Installation Guide](./00-installation-and-setup-guide/02-docker-installation)
+Docker orchestrates these services.
 
 ---
 
 # 🚀 Installation Method Used
 
-Docker Official Deployment (StrangeBee GitHub Repository)
+Deployment method:
 
-Directory used:
-```
+👉 **Official StrangeBee Docker Repository**
 
-/opt/TheHive/
+Alternative installation options:
 
-```
+- 👉 [TheHive — Installation Methods](https://docs.strangebee.com/thehive/installation/installation-methods/)
 
 ---
 
 # 🌐 Access TheHive
 
+After deployment:
+
 ```
-http://<EC2-PUBLIC-IP>:9000
+http://<EC2_PUBLIC_IP>:9000/
 ```
 
-Default Credentials:
+Default credentials:
 
-- Username: admin
-- Password: secret
+- Username: `admin`
+- Password: `secret`
 
-⚠️ Change default password immediately after login.
+⚠ Change the default password immediately.
 
 ---
 
 # 📊 Key Features
 
-- Real-time alert triage
+Explore detailed feature breakdown:
+
+👉 [TheHive — Key Features](https://strangebee.com/thehive-features/)
+
+Core capabilities include:
+
+- Alert triage
 - Case lifecycle management
 - Observable enrichment
-- MISP integration
-- Cortex automation
+- Task assignment workflows
 - KPI dashboards
-- Collaboration workflows
-
-Explore official documentation:
-
-- [Overview](https://docs.strangebee.com/thehive/overview/)
-- [Analyst Corner](https://docs.strangebee.com/?_gl=1#analyst)
-- [Installation Methods](https://docs.strangebee.com/thehive/installation/installation-methods/)
-- [System Requirements](https://docs.strangebee.com/thehive/installation/system-requirements/)
-- [Official Website](https://strangebee.com/thehive/)
-- [Features](https://strangebee.com/thehive-features/)
-- [Use Cases](https://strangebee.com/use-cases-thehive/)
+- Cortex automation integration
+- Analyst collaboration engine
 
 ---
 
-# 🎯 Real-World SOC Relevance
+# 🧭 What to Explore After Installation (Documentation Navigation)
 
-TheHive transforms alerts into structured cases and allows:
+To fully understand TheHive capabilities, explore:
 
-- Evidence documentation
-- Task assignment
-- Timeline tracking
-- Observable correlation
-- Integration with threat intelligence feeds
-- Automated DFIR workflows
+### 🔎 Overview & Architecture
+👉 [TheHive Documentation — Overview](https://docs.strangebee.com/thehive/overview/)
 
-It bridges the gap between detection (SIEM) and response (IR).
+### 👨‍💻 Analyst Corner (Highly Recommended)
+Triage → Investigate → Convert alerts into cases  
+👉 [TheHive — Analyst Corner](https://docs.strangebee.com/?_gl=1#analyst)
+
+This section covers:
+- Alerts Management
+- Case Management
+- Task workflows
+- Observables handling
+- Dashboards
+- Filtering & Sorting
+
+### ⚙ Installation Methods
+👉 [TheHive — Installation Methods](https://docs.strangebee.com/thehive/installation/installation-methods/)
+
+### 🧩 Use Cases
+👉 [TheHive — Use Cases](https://strangebee.com/use-cases-thehive/)
+
+Examples include:
+- Alert triage
+- Automated DFIR
+- Phishing investigations
+- Continuous improvement workflows
 
 ---
 
-# 🏁 Result
+# 🧠 SOC Workflow Impact
 
-Successfully deployed TheHive 5.5 on AWS EC2 using Docker as part of a unified SOC ecosystem.
+TheHive transforms raw alerts into **structured incident response workflows**:
 
-Enabled:
+Detection → Triage → Investigation → Enrichment → Response → Reporting
 
-- Centralized case management
-- SOC workflow automation
-- Threat intelligence integration
-- Scalable IR operations
+Without TheHive:
+Alerts remain isolated.
+
+With TheHive:
+✔ Structured investigations  
+✔ Collaboration  
+✔ Audit trails  
+✔ Case documentation  
+✔ Automation-ready IR  
 
 ---
 
 # 📂 Repository Structure
 
 ```
-
 04-thehive-installation/
 │
 ├── README.md
 ├── commands.sh
 ├── interview_qna.md
-├── architecture-notes.txt
 ├── troubleshooting.md
-
 ```
 
 ---
 
-# 🐝 Why TheHive Matters
+# 🎯 Result
 
-In a mature SOC environment:
-
-Detection without structured response leads to chaos.
-
-TheHive introduces:
-
-✔ Standardized case workflow  
-✔ Collaborative investigation  
-✔ Automation-ready architecture  
-✔ SOC scalability  
-
-It is a critical backbone for modern DFIR and SOAR operations.
+- TheHive 5.5 deployed successfully on AWS EC2
+- Web UI accessible on port 9000
+- Containers validated via `docker ps`
+- Integrated into full SOC-SOAR ecosystem
 
 ---
 
-End of README.
+# 🏁 Conclusion
+
+This deployment establishes TheHive as the **Case Management Core** of my AWS-based SOC ecosystem.
+
+It enables:
+
+- Structured incident response
+- Analyst collaboration
+- Threat intelligence enrichment
+- Automation via Cortex
+- Integration with Wazuh detections
+
+TheHive bridges the gap between detection and response — turning alerts into actionable investigations.
+
+---
