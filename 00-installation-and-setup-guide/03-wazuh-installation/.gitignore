@@ -1,0 +1,81 @@
+# =========================================
+# Project 03 — Wazuh All-in-One (Safe Ignore)
+# Goal: Prevent credentials, keys, certs, dumps, and logs from being committed
+# =========================================
+
+# -------------------------
+# OS / Editor junk
+# -------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# -------------------------
+# Logs / runtime outputs
+# -------------------------
+*.log
+logs/
+var/log/
+tmp/
+temp/
+*.tmp
+
+# -------------------------
+# Credentials / secrets (DO NOT COMMIT)
+# -------------------------
+*.env
+.env
+.env.*
+**/secrets.*
+**/password*
+**/*creds*
+**/*credentials*
+
+# SSH keys / private keys
+**/*.pem
+**/*.key
+**/*id_rsa*
+**/*id_ed25519*
+**/known_hosts
+**/authorized_keys
+**/.ssh/
+
+# -------------------------
+# Certificates / TLS material (DO NOT COMMIT)
+# -------------------------
+**/certs/
+**/*.crt
+**/*.cer
+**/*.p12
+**/*.pfx
+**/*-key.pem
+**/*key*.pem
+**/*root-ca*.pem
+**/*ca*.pem
+
+# -------------------------
+# Wazuh sensitive/internal directories (keep config copies in /configs)
+# -------------------------
+# Do NOT commit live server directories copied into repo
+/var/ossec/
+/etc/filebeat/certs/
+/etc/wazuh-indexer/
+/etc/wazuh-dashboard/
+/etc/wazuh-dashboard/certs/
+/etc/opensearch/
+/etc/kibana/
+
+# -------------------------
+# Large exports (optional)
+# If you plan to export lots of data, ignore it.
+# -------------------------
+*.tar
+*.gz
+*.zip
+*.7z
+*.pcap
+*.evtx
