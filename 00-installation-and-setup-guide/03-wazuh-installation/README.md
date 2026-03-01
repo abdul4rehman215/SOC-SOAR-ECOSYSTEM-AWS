@@ -1,4 +1,5 @@
-# 🛡️ Project 03 — Wazuh All-in-One Installation on AWS EC2 (Manager + Indexer + Dashboard)
+# 🛡️ Project 03 — Wazuh SIEM/XDR All-in-One Installation on AWS EC2 (Manager + Indexer + Dashboard)
+### SOC-SOAR Ecosystem Core Detection Engine
 
 <div align="center">
 
