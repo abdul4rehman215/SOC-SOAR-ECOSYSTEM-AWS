@@ -1,139 +1,154 @@
 #!/bin/bash
+# ==========================================
+# Project 01 — AWS EC2 Foundation Setup
+# Commands Executed (Sequential / Paste-ready)
+# ==========================================
 
-############################################################
-# AWS EC2 Infrastructure Setup - Validation Commands
-# SOC-SOAR Ecosystem Foundation
-############################################################
+# -------------------------------
+# 0) Connect to EC2 (Run locally)
+# -------------------------------
+# chmod 400 your-key.pem
+# ssh -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
 
-#############################
-# 1️⃣ Initial System Check
-#############################
-
+# -------------------------------
+# 1) Initial System Verification
+# -------------------------------
 whoami
 hostname
 uname -a
-lsb_release -a
+cat /etc/os-release
 
-#############################
-# 2️⃣ Network Interface Check
-#############################
-
+# -------------------------------
+# 2) Network Verification (DO NOT SKIP)
+# -------------------------------
 ip a
-ip addr show
 ip route
-ip route show
-cat /etc/netplan/*.yaml
-
-#############################
-# 3️⃣ Gateway Connectivity Test
-#############################
-
 ping -c 3 10.0.1.1
-
-#############################
-# 4️⃣ External IP Connectivity Test
-#############################
-
 ping -c 3 8.8.8.8
-ping -c 3 1.1.1.1
-
-#############################
-# 5️⃣ DNS Resolution Test
-#############################
-
-cat /etc/resolv.conf
-nslookup google.com
-dig google.com
 curl -I https://google.com
 
-#############################
-# 6️⃣ Update System (ONLY After Network Validation)
-#############################
+# If DNS fails but 8.8.8.8 works:
+# cat /etc/resolv.conf
+# resolvectl status
 
+# -------------------------------
+# 3) Update & Base Tools
+# -------------------------------
 sudo apt update
 sudo apt upgrade -y
 
-#############################
-# 7️⃣ Install Basic Utilities
-#############################
-
 sudo apt install -y \
-curl \
-wget \
-git \
-net-tools \
-vim \
-htop \
-unzip \
-ca-certificates \
-gnupg \
-lsb-release \
-software-properties-common
+  curl wget git unzip zip \
+  net-tools dnsutils jq \
+  ca-certificates gnupg lsb-release \
+  software-properties-common \
+  build-essential \
+  htop nano vim \
+  ufw
 
-#############################
-# 8️⃣ Firewall Status Check
-#############################
+# -------------------------------
+# 4) Timezone / NTP Setup
+# -------------------------------
+timedatectl
 
-sudo ufw status
-sudo iptables -L -n -v
+# Example timezone (change if needed)
+sudo timedatectl set-timezone Asia/Baku
 
-#############################
-# 9️⃣ Open Required Ports (If Using UFW)
-#############################
+# Enable NTP sync
+sudo timedatectl set-ntp yes
 
-sudo ufw allow 22/tcp
-sudo ufw allow 443/tcp
-sudo ufw allow 5601/tcp
-sudo ufw allow 9200/tcp
-sudo ufw allow 1514/tcp
-sudo ufw allow 1515/tcp
-sudo ufw allow 9000/tcp
+# Verify
+timedatectl
+
+# -------------------------------
+# 5) Hostname Setup (Example: thehive)
+# -------------------------------
+hostnamectl
+
+sudo hostnamectl set-hostname "thehive"
+
+# Update /etc/hosts for local resolution
+sudo nano /etc/hosts
+# Change:
+# 127.0.1.1 old-hostname
+# To:
+# 127.0.1.1 thehive
+
+# Verify
+hostnamectl
+hostname -f
+
+# -------------------------------
+# 6) Create SOC Base Directory Layout (Optional but recommended)
+# -------------------------------
+mkdir -p ~/soc-ecosystem/{logs,scripts,configs,reports,evidence,installers,backups}
+ls -la ~/soc-ecosystem
+
+# -------------------------------
+# 7) Basic Port/Service Visibility Checks
+# -------------------------------
+ss -tuln
+df -h
+free -h
+
+# -------------------------------
+# 8) Optional: Basic Firewall Baseline (UFW)
+# -------------------------------
+sudo ufw status verbose
+
+# Allow SSH (IMPORTANT: do this before enabling UFW)
+sudo ufw allow OpenSSH
+
+# Enable firewall
 sudo ufw enable
 
-#############################
-# 🔟 Time Synchronization Check
-#############################
+# Verify
+sudo ufw status verbose
 
+# -------------------------------
+# 9) Optional: Create a Non-Root Admin User (Recommended)
+# -------------------------------
+# Replace "socadmin" with your preferred username
+sudo adduser socadmin
+sudo usermod -aG sudo socadmin
+
+# Setup SSH directory for new user (if you want key-based login)
+sudo mkdir -p /home/socadmin/.ssh
+sudo chmod 700 /home/socadmin/.ssh
+
+# Copy authorized_keys from current user (Ubuntu default user)
+sudo cp ~/.ssh/authorized_keys /home/socadmin/.ssh/authorized_keys
+sudo chown -R socadmin:socadmin /home/socadmin/.ssh
+sudo chmod 600 /home/socadmin/.ssh/authorized_keys
+
+# Test switching user
+su - socadmin
+exit
+
+# -------------------------------
+# 10) Optional: SSH Hardening (Key-only recommended)
+# -------------------------------
+# Backup config first
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+
+# Edit SSH config (manual edits)
+sudo nano /etc/ssh/sshd_config
+
+# Suggested settings (ensure you have key access before disabling password auth):
+# PasswordAuthentication no
+# PermitRootLogin no
+# PubkeyAuthentication yes
+
+# Restart SSH
+sudo systemctl restart ssh
+sudo systemctl status ssh --no-pager
+
+# -------------------------------
+# 11) Final Validation Checklist
+# -------------------------------
+ping -c 3 8.8.8.8
+curl -I https://google.com
 timedatectl
-sudo timedatectl set-timezone UTC
-
-#############################
-# 1️⃣1️⃣ Verify Outbound HTTPS
-#############################
-
-curl -v https://api.github.com
-curl -v https://google.com
-
-#############################
-# 1️⃣2️⃣ Check Open Ports
-#############################
-
-sudo ss -tulnp
-sudo netstat -tulnp
-
-#############################
-# 1️⃣3️⃣ Disk & Resource Check
-#############################
-
-df -h
-free -m
-top
-
-#############################
-# 1️⃣4️⃣ Test AWS Metadata Service
-#############################
-
-curl http://169.254.169.254/latest/meta-data/
-curl http://169.254.169.254/latest/meta-data/instance-id
-curl http://169.254.169.254/latest/meta-data/public-ipv4
-
-#############################
-# 1️⃣5️⃣ Final Validation Summary
-#############################
-
-echo "EC2 Network Validation Completed"
-echo "Ready for SOC-SOAR Tool Installation"
-
-############################################################
-# END OF FILE
-############################################################
+hostnamectl
+ss -tuln
+sudo ufw status verbose
