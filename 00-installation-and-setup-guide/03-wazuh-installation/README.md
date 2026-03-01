@@ -127,6 +127,13 @@ Outbound:
 
 # 🧠 PHASE 1 – WAZUH INSTALLATION
 
+# 🔄 Time & Host Configuration (MANDATORY BEFORE INSTALLATION)
+
+📌 Refer to:
+
+[time and hostname setup guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide/01-aws-ec2-infrastructure-setup#-post-launch-server-standardization)
+
+
 ## 1️⃣ Install Wazuh Using Official Assistant
 
 ```bash
