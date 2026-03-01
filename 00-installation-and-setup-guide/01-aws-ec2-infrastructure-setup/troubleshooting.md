@@ -1,404 +1,391 @@
-# 🚨 AWS EC2 Infrastructure Setup – Troubleshooting Guide  
-### SOC-SOAR Ecosystem Foundation
+# 🛠️ Troubleshooting Guide — Project 01: AWS EC2 Foundation Setup (SOC / SOAR Ecosystem)
+
+> This troubleshooting guide covers the most common issues during AWS EC2 foundation setup, especially network/DNS problems and baseline OS configuration issues.
 
 ---
 
-## 📌 Overview
+## 📌 Quick Diagnosis Flow (Use This First)
 
-> This document outlines common real-world issues encountered during AWS EC2 infrastructure setup and their root causes, diagnostics, and resolution steps.
-> Most deployment failures originate from network misconfiguration — especially VPC, route tables, and security group issues.
+### ✅ Step 1 — Check routing + gateway
+```bash
+ip route
+````
 
----
+You must see a default route like:
 
-# 🌐 1️⃣ No Internet Connectivity
+* `default via 10.0.1.1 dev ens5`
 
-## ❌ Symptoms
-
-- `ping 8.8.8.8` fails
-- `apt update` fails
-- `curl https://google.com` fails
-- Docker install fails
-- Git clone fails
-
----
-
-## 🔍 Possible Root Causes
-
-| Cause | Description |
-|--------|------------|
-| Missing Internet Gateway | IGW not attached to VPC |
-| Bad Route Table | No 0.0.0.0/0 → IGW route |
-| Subnet not associated | Route table not linked to subnet |
-| Public IP disabled | Instance has no public IPv4 |
-| NACL blocking outbound | Return traffic blocked |
-| Security group outbound restricted | Outbound not allowed |
-
----
-
-## 🛠️ Diagnostics
+### ✅ Step 2 — Check internet (raw IP)
 
 ```bash
+ping -c 3 8.8.8.8
+```
+
+* ❌ If this fails → network routing/egress issue
+
+### ✅ Step 3 — Check DNS (domain name)
+
+```bash
+curl -I https://google.com
+```
+
+* ❌ If `8.8.8.8` works but `google.com` fails → DNS issue
+
+---
+
+# 🌐 NETWORK + INTERNET ISSUES
+
+---
+
+## 1) ❌ No Internet Access Even With Public IP
+
+### Symptoms
+
+* `ping 8.8.8.8` fails
+* `apt update` fails
+* `curl https://google.com` fails
+
+### Root Causes
+
+* Missing Internet Gateway (IGW)
+* Route table missing `0.0.0.0/0 → IGW`
+* Public subnet not associated to correct route table
+* Instance launched in wrong subnet (private subnet)
+* Security Group outbound rules blocked (rare)
+* NACL blocking outbound/return traffic
+
+### Fix Checklist (AWS Console)
+
+✅ **Internet Gateway**
+
+* Ensure IGW exists and is attached to the correct VPC
+
+✅ **Route Table**
+Public route table MUST have:
+
+* `0.0.0.0/0 → igw-xxxx`
+
+✅ **Subnet Association**
+
+* Ensure the public subnet is associated with the public route table
+
+✅ **Public IP**
+
+* Ensure instance has a public IPv4 assigned (or attach Elastic IP)
+
+✅ **NACL**
+
+* Ensure inbound + outbound allow traffic (default is OK)
+
+### EC2 Side Commands
+
+```bash
+ip a
 ip route
 ping -c 3 10.0.1.1
 ping -c 3 8.8.8.8
-````
-
-Check in AWS Console:
-
-* VPC → Internet Gateway attached?
-* Route Table → 0.0.0.0/0 → igw-xxxx?
-* Subnet → Associated Route Table?
-* EC2 → Public IP enabled?
+```
 
 ---
 
-## ✅ Fix
+## 2) ❌ `apt update` Fails (Network OK Sometimes, But DNS Broken)
 
-* Attach IGW
-* Add 0.0.0.0/0 route to IGW
-* Associate route table to public subnet
-* Enable public IPv4
-* Ensure outbound rule allows 0.0.0.0/0
-
----
-
-# 🌍 2️⃣ DNS Not Working
-
-## ❌ Symptoms
+### Symptoms
 
 * `ping 8.8.8.8` works
-* `curl google.com` fails
-* `apt update` fails with DNS error
+* `curl https://google.com` fails
+* `apt update` shows errors like “Temporary failure resolving…”
 
----
+### Root Causes
 
-## 🔍 Root Causes
+* VPC DNS settings disabled
+* Bad resolver config
+* DNS not enabled in VPC
 
-| Cause                           | Description          |
-| ------------------------------- | -------------------- |
-| DNS Resolution disabled in VPC  | VPC DNS disabled     |
-| /etc/resolv.conf corrupted      | Incorrect nameserver |
-| Security group outbound blocked | DNS traffic blocked  |
-| Custom DNS misconfiguration     | Wrong resolver       |
+### Fix (AWS Console)
 
----
+In the VPC settings, ensure:
 
-## 🛠️ Diagnostics
+* ✅ DNS Resolution enabled
+* ✅ DNS Hostnames enabled
+
+### Fix (Ubuntu EC2)
+
+Check resolver:
 
 ```bash
 cat /etc/resolv.conf
-nslookup google.com
-dig google.com
+resolvectl status
 ```
 
-Check VPC settings:
-
-* DNS Resolution → Enabled
-* DNS Hostnames → Enabled
-
----
-
-## ✅ Fix
-
-Enable DNS in VPC:
-
-VPC → Edit → Enable DNS Resolution
-VPC → Edit → Enable DNS Hostnames
-
-If needed:
+Try restarting DNS resolver:
 
 ```bash
-sudo nano /etc/resolv.conf
+sudo systemctl restart systemd-resolved
+resolvectl status
 ```
 
-Add:
-
-```
-nameserver 8.8.8.8
-nameserver 1.1.1.1
-```
-
----
-
-# 🔐 3️⃣ SSH Connection Refused
-
-## ❌ Symptoms
-
-* SSH timeout
-* Permission denied
-* Connection refused
-
----
-
-## 🔍 Root Causes
-
-| Cause                           | Description         |
-| ------------------------------- | ------------------- |
-| Security group missing SSH rule | Port 22 not allowed |
-| Wrong key pair                  | Incorrect .pem file |
-| File permission wrong           | Key not 400         |
-| Wrong public IP                 | Instance restarted  |
-
----
-
-## 🛠️ Diagnostics
-
-Check Security Group:
-
-Inbound Rule:
-
-* SSH (22) → Your IP
-
-Verify key permissions:
+Quick temporary resolver test:
 
 ```bash
-chmod 400 your-key.pem
+sudo bash -c 'printf "nameserver 8.8.8.8\n" > /etc/resolv.conf'
 ```
 
-Connect properly:
+Then test:
 
 ```bash
-ssh -i your-key.pem ubuntu@PUBLIC_IP
+curl -I https://google.com
 ```
 
----
-
-## ✅ Fix
-
-* Add SSH rule (port 22)
-* Restrict to your public IP
-* Correct key permissions
-* Verify instance public IP
+> Note: On Ubuntu, `/etc/resolv.conf` may be managed by systemd-resolved. Permanent fix should be VPC DNS settings + systemd-resolved.
 
 ---
 
-# 🛑 4️⃣ apt Update Fails
+## 3) ❌ Instance Has No Public IP / SSH Not Working
 
-## ❌ Symptoms
+### Symptoms
 
-* Repository unreachable
-* Temporary failure resolving
+* You cannot SSH into EC2
+* EC2 shows no public IPv4
+
+### Root Causes
+
+* Public IP not enabled during launch
+* Subnet auto-assign public IPv4 disabled
+* Instance launched into private subnet
+
+### Fix
+
+✅ Enable subnet setting:
+
+* Public subnet → **Auto-assign public IPv4 → YES**
+
+✅ Re-launch instance (best clean fix), or:
+
+* Allocate and attach an **Elastic IP**
 
 ---
 
-## 🔍 Root Causes
+## 4) ❌ SSH Timeout / Connection Refused
 
-| Cause              | Description                     |
-| ------------------ | ------------------------------- |
-| DNS issue          | Name resolution failure         |
-| Outbound blocked   | Security group outbound blocked |
-| Network unstable   | Packet loss                     |
-| Interrupted update | Lock file issue                 |
+### Symptoms
 
----
+* SSH hangs (timeout) or refused
 
-## 🛠️ Diagnostics
+### Root Causes
+
+* Security Group inbound rule missing port 22
+* SSH allowed but source IP is wrong (not your IP)
+* NACL blocking
+* Instance not running / no route to host
+* Wrong username (Ubuntu = `ubuntu`)
+
+### Fix
+
+✅ Security Group inbound should include:
+
+* SSH 22 → **your IP/32**
+
+✅ Confirm your IP:
+
+* Use a “what is my IP” check on your network
+* If your IP changes, update SG rule
+
+✅ Use correct username:
 
 ```bash
-ping 8.8.8.8
-curl https://google.com
-sudo lsof /var/lib/dpkg/lock
+ssh -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
 ```
 
----
-
-## ✅ Fix
-
-If lock issue:
+✅ Confirm SSH daemon status (if you can access via EC2 serial console / SSM):
 
 ```bash
-sudo rm /var/lib/dpkg/lock-frontend
-sudo dpkg --configure -a
-```
-
-Then retry:
-
-```bash
-sudo apt update
-```
-
----
-
-# 🔥 5️⃣ Dashboard Not Accessible (Port 443 / 5601 / 9000)
-
-## ❌ Symptoms
-
-* Browser cannot connect
-* Connection refused
-
----
-
-## 🔍 Root Causes
-
-| Cause                            | Description      |
-| -------------------------------- | ---------------- |
-| Security group missing port rule | Port not allowed |
-| Service not running              | Service crashed  |
-| Firewall blocking                | UFW active       |
-| Wrong public IP                  | IP changed       |
-
----
-
-## 🛠️ Diagnostics
-
-```bash
-sudo ss -tulnp
-sudo ufw status
-sudo systemctl status service-name
-```
-
-Check Security Group inbound rules.
-
----
-
-## ✅ Fix
-
-Add inbound rule:
-
-* TCP 443 → Your IP
-* TCP 5601 → Your IP
-* TCP 9000 → Your IP
-
-Disable UFW if required:
-
-```bash
-sudo ufw disable
+sudo systemctl status ssh --no-pager
 ```
 
 ---
 
-# 🧠 6️⃣ AWS Metadata Service Not Working
-
-## ❌ Symptoms
-
-* Cloud integrations fail
-* IAM role not detected
+# 🖥️ BASELINE OS ISSUES (TIME / HOSTNAME)
 
 ---
 
-## 🔍 Root Causes
+## 5) ❌ Wrong Time / Time Drift (SOC Correlation Problems Later)
 
-| Cause                             | Description           |
-| --------------------------------- | --------------------- |
-| No IAM role attached              | Instance role missing |
-| IMDSv2 misconfigured              | Metadata blocked      |
-| Firewall blocking 169.254.169.254 | Local firewall issue  |
+### Symptoms
 
----
+* Logs show incorrect timestamps
+* SOC alerts later have confusing timelines
+* `timedatectl` shows NTP disabled
 
-## 🛠️ Diagnostics
+### Fix
 
 ```bash
-curl http://169.254.169.254/latest/meta-data/
+timedatectl
+sudo timedatectl set-ntp yes
+timedatectl
+```
+
+If Chrony is installed:
+
+```bash
+sudo systemctl enable --now chrony
+sudo systemctl status chrony --no-pager
 ```
 
 ---
 
-## ✅ Fix
+## 6) ❌ Hostname Changed But Doesn’t Resolve Properly
 
-* Attach IAM role to EC2
-* Ensure IMDSv2 enabled
-* Check firewall rules
+### Symptoms
 
----
+* Some services show old hostname
+* Local apps fail resolving hostname
+* `sudo` warnings about hostname lookup
 
-# 🗄️ 7️⃣ Disk Full Errors
+### Root Cause
 
-## ❌ Symptoms
+* `/etc/hosts` still references old hostname
 
-* Install fails
-* Logs not writing
-* Docker failing
+### Fix
 
----
-
-## 🛠️ Diagnostics
+Set hostname:
 
 ```bash
+sudo hostnamectl set-hostname "thehive"
+```
+
+Update hosts file:
+
+```bash
+sudo nano /etc/hosts
+```
+
+Change:
+
+```text
+127.0.1.1 old-hostname
+```
+
+To:
+
+```text
+127.0.1.1 thehive
+```
+
+Verify:
+
+```bash
+hostnamectl
+hostname -f
+```
+
+---
+
+# 🔐 SECURITY GROUP + PORT ISSUES (SOC TOOL READINESS)
+
+---
+
+## 7) ❌ SOC Dashboards Not Reachable Later (Ports Not Open)
+
+### Symptoms
+
+* You install tools later (Wazuh/TheHive/MISP)
+* Services run locally but not accessible externally
+
+### Root Cause
+
+* Security Group inbound rules not opened for required tool ports
+
+### Fix (Best Practice)
+
+✅ Keep ports closed by default, open only when needed:
+
+* Wazuh Dashboard: 443/5601 (depends on setup)
+* TheHive: 9000
+* Cortex: 9001
+* MISP: 443 (or 80/443 depending)
+* n8n: 5678
+
+Also ensure:
+
+* Source = your IP / VPN IP (not 0.0.0.0/0 unless absolutely required)
+
+---
+
+# 🧩 AWS-SPECIFIC SOC ISSUES (COMMON LATER, BUT IMPORTANT)
+
+---
+
+## 8) ❌ No CloudTrail Events / Monitoring Doesn’t Work
+
+### Symptoms
+
+* CloudTrail not generating logs
+* SIEM ingest later shows nothing
+
+### Root Causes
+
+* CloudTrail not enabled
+* Wrong region selected
+* IAM role missing permissions
+* Logs delivered to wrong destination (S3/CloudWatch)
+
+### Fix Checklist
+
+* Ensure CloudTrail enabled in correct region
+* Validate delivery target (S3 bucket or CloudWatch)
+* Ensure IAM permissions exist for delivery + reading
+
+---
+
+## 9) ❌ AWS S3 Wazuh Wodle Silent (No Data)
+
+### Symptoms
+
+* Integration configured but nothing appears
+
+### Root Causes
+
+* Wrong bucket name
+* Missing permissions / wrong IAM role
+* Wrong region
+* Bucket policy blocks access
+
+### Fix Checklist
+
+* Confirm bucket name and region
+* Confirm IAM role permissions (list/get)
+* Check bucket policy
+* Confirm trail is delivering logs to that bucket
+
+---
+
+# 🧾 FINAL QUICK COMMANDS (COPY/PASTE DIAGNOSTICS)
+
+Run these and check outputs:
+
+```bash
+ip a
+ip route
+ping -c 2 10.0.1.1
+ping -c 2 8.8.8.8
+curl -I https://google.com
+cat /etc/resolv.conf
+resolvectl status
+timedatectl
+hostnamectl
+ss -tuln
 df -h
+free -h
 ```
 
 ---
 
-## ✅ Fix
+## ✅ Final Advice
 
-Resize EBS volume in AWS → Modify Volume
-Then inside instance:
-
-```bash
-sudo growpart /dev/nvme0n1 1
-sudo resize2fs /dev/nvme0n1p1
-```
-
----
-
-# ⚠️ 8️⃣ NACL Blocking Traffic
-
-## ❌ Symptoms
-
-* Random connectivity failures
-* Ping works but service doesn't
-* Return traffic blocked
-
----
-
-## 🔍 Explanation
-
-NACLs are stateless.
-
-Inbound AND outbound rules must allow return traffic.
-
----
-
-## ✅ Fix
-
-Allow:
-
-Inbound:
-
-* ALL traffic → 0.0.0.0/0
-
-Outbound:
-
-* ALL traffic → 0.0.0.0/0
-
----
-
-# 🏁 Final Troubleshooting Strategy
-
-Always troubleshoot in this order:
-
-1️⃣ Local Interface
-2️⃣ Gateway Reachability
-3️⃣ External IP Reachability
-4️⃣ DNS Resolution
-5️⃣ Security Groups
-6️⃣ Route Table
-7️⃣ Internet Gateway
-8️⃣ NACL
-
-Never install software before network validation is 100% successful.
-
----
-
-# 🧠 Key Takeaway
-
-Cloud infrastructure reliability begins with network correctness.
-
-If EC2 networking is stable:
-
-* SIEM deployment becomes smooth
-* Threat intelligence integrations work
-* Dashboards remain accessible
-* Automation pipelines remain stable
-
-If networking is unstable:
-Everything else will fail silently.
-
----
-
-## ✅ Status
-
-Infrastructure validated and ready for SOC tool deployment.
+* Never rush networking.
+* Fix IGW + route table + subnet association first.
+* Don’t install tools until **ping + DNS + apt update** work.
+* Time and hostname must be correct for SOC correlation later.
 
 ---
