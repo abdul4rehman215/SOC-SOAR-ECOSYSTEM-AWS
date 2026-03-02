@@ -1,0 +1,115 @@
+WAZUH + SYSMON ARCHITECTURE NOTES
+==================================
+
+PROJECT TYPE:
+Endpoint Detection & Telemetry Engineering Lab
+
+OBJECTIVE:
+Integrate Sysmon advanced Windows telemetry into Wazuh SIEM and build custom detection rules.
+
+------------------------------------------------------------
+ARCHITECTURE OVERVIEW
+------------------------------------------------------------
+
+[ Windows Endpoint ]
+    |
+    |-- Sysmon (Kernel driver + Event Channel logging)
+    |-- Wazuh Agent (Event Forwarder)
+    |
+    V
+Secure TCP (1514/1515)
+    |
+    V
+[ Wazuh Manager - Linux ]
+    |
+    |-- Log Collection
+    |-- Decoding
+    |-- Rule Matching
+    |-- Alert Generation
+    |
+    V
+[ Wazuh Dashboard ]
+    |
+    |-- Threat Hunting
+    |-- MITRE Mapping
+    |-- Alert Investigation
+
+------------------------------------------------------------
+DATA FLOW EXPLAINED
+------------------------------------------------------------
+
+1. User executes process on Windows
+2. Sysmon captures:
+      - Process metadata
+      - Command line
+      - Parent process
+      - Hash
+      - DNS query
+      - Registry modification
+3. Sysmon writes to:
+      Microsoft-Windows-Sysmon/Operational
+4. Wazuh Agent monitors this channel
+5. Agent forwards logs securely to Manager
+6. Manager decodes event fields
+7. Rules match events
+8. Alert indexed in wazuh-alerts-* index
+9. Dashboard visualizes detection
+
+------------------------------------------------------------
+WHY NOT USE DEFAULT WINDOWS LOGS?
+------------------------------------------------------------
+
+Default Windows Logging:
+- Limited command-line visibility
+- No DNS logging
+- Weak registry monitoring
+- No parent-child correlation
+
+Sysmon Provides:
+- Full command line capture
+- DNS Query logging (Event ID 22)
+- Registry persistence tracking
+- File hash logging
+- Detailed network telemetry
+
+------------------------------------------------------------
+KEY EVENT IDS USED
+------------------------------------------------------------
+
+Event ID 1   - Process Creation
+Event ID 3   - Network Connection
+Event ID 10  - Process Access (LSASS detection)
+Event ID 13  - Registry Value Set
+Event ID 22  - DNS Query
+
+------------------------------------------------------------
+SECURITY USE CASES
+------------------------------------------------------------
+
+- Encoded PowerShell Detection
+- DNS-based C2 Detection
+- Credential Dumping (LSASS Access)
+- LOLBins Abuse
+- Persistence Detection (Registry Run Keys)
+
+------------------------------------------------------------
+BENEFITS OF THIS ARCHITECTURE
+------------------------------------------------------------
+
+- SOC-ready telemetry
+- MITRE ATT&CK mapping
+- Low-cost SIEM lab
+- Detection engineering practice
+- Real-world blue team workflow simulation
+
+------------------------------------------------------------
+FUTURE IMPROVEMENTS
+------------------------------------------------------------
+
+- Sigma rule integration
+- TheHive case automation
+- Active Response blocking
+- Threat intelligence enrichment
+- Multi-endpoint scaling
+
+END OF ARCHITECTURE NOTES
