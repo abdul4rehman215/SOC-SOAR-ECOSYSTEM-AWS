@@ -284,14 +284,14 @@ Closed
 
 # 📈 Project Outcome
 
-✔ ML-based anomaly detection engineered
-✔ Baseline learned
-✔ Real-time Slack alert triggered
-✔ Logs investigated
-✔ MITRE mapping performed
-✔ Incident documented in TheHive
-✔ Host-level mitigation applied
-✔ Case formally closed
+- ✔ ML-based anomaly detection engineered
+- ✔ Baseline learned
+- ✔ Real-time Slack alert triggered
+- ✔ Logs investigated
+- ✔ MITRE mapping performed
+- ✔ Incident documented in TheHive
+- ✔ Host-level mitigation applied
+- ✔ Case formally closed
 
 As summarized in the final section of the project PDF , this demonstrates a full end-to-end SOC workflow.
 
