@@ -1,0 +1,146 @@
+BEHAVIOR-BASED HTTP ANOMALY DETECTION
+Architecture Notes
+Wazuh + OpenSearch ML + Slack + TheHive
+
+--------------------------------------------------
+1. HIGH-LEVEL ARCHITECTURE
+--------------------------------------------------
+
+Attacker (Kali Linux)
+        |
+        v
+Apache Web Server (Target Host)
+        |
+        v
+Wazuh Agent
+        |
+        v
+Wazuh Manager
+        |
+        v
+OpenSearch Index (wazuh-alerts-*)
+        |
+        v
+OpenSearch Anomaly Detection (ML)
+        |
+        v
+Alerting Monitor
+        |
+        v
+Slack Notification
+        |
+        v
+TheHive Case Management
+        |
+        v
+Host-Level Mitigation (iptables)
+
+--------------------------------------------------
+2. DATA FLOW EXPLANATION
+--------------------------------------------------
+
+1. Apache generates HTTP access logs.
+2. Wazuh Agent collects logs.
+3. Wazuh Manager parses logs and assigns rule.groups = web.
+4. Events stored in wazuh-alerts-* index.
+5. OpenSearch ML builds baseline of web rule frequency.
+6. Anomaly Detector identifies deviation.
+7. Alert Monitor evaluates grade + confidence.
+8. Slack notification sent to SOC.
+9. Analyst investigates in Discover.
+10. Case created in TheHive.
+11. Attacker IP blocked via firewall.
+
+--------------------------------------------------
+3. DETECTION ENGINEERING DESIGN
+--------------------------------------------------
+
+Detector Configuration:
+
+Index: wazuh-alerts-*
+Filter: rule.groups = web
+Feature: http_error_count
+Aggregation: value_count(rule.id)
+Interval: 1 minute
+Shingle size: 8
+
+Reasoning:
+
+- Aggregating rule.id captures web-related events.
+- 1-minute interval allows near-real-time detection.
+- Shingle size 8 improves anomaly sensitivity.
+- Historical analysis establishes behavioral baseline.
+
+--------------------------------------------------
+4. ALERT LOGIC DESIGN
+--------------------------------------------------
+
+Trigger Conditions:
+
+Anomaly Grade > 0.7
+AND
+Confidence > 0.7
+
+Why both?
+
+- Grade measures deviation severity.
+- Confidence measures model certainty.
+- Using both reduces false positives.
+
+--------------------------------------------------
+5. INVESTIGATION WORKFLOW
+--------------------------------------------------
+
+1. Validate anomaly in ML dashboard.
+2. Pivot to Discover.
+3. Filter: rule.groups:web
+4. Identify attacker IP.
+5. Analyze request frequency and patterns.
+6. Extract observables.
+7. Map to MITRE ATT&CK.
+8. Escalate to TheHive.
+
+--------------------------------------------------
+6. MITRE ATT&CK CLASSIFICATION
+--------------------------------------------------
+
+Tactic: Reconnaissance
+Techniques:
+- T1595 Active Scanning
+- T1046 Network Service Discovery
+
+Justification:
+Repeated URL probing with high 404 rate indicates enumeration behavior.
+
+--------------------------------------------------
+7. MITIGATION STRATEGY
+--------------------------------------------------
+
+Layer 1:
+iptables DROP rule for attacker IP
+
+Layer 2:
+Apache rate limiting module
+
+Layer 3:
+ModSecurity enabled
+
+This ensures layered defense and reduces recurrence.
+
+--------------------------------------------------
+8. SOC DESIGN PRINCIPLES DEMONSTRATED
+--------------------------------------------------
+
+- Behavior-based detection
+- Baseline modeling
+- Threshold tuning
+- Real-time alerting
+- Structured investigation
+- Threat mapping
+- Case documentation
+- Verified containment
+- Formal closure process
+
+--------------------------------------------------
+END OF ARCHITECTURE NOTES
+--------------------------------------------------
