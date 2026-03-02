@@ -1,11 +1,11 @@
 # 🔗 MISP ↔ TheHive Integration (GUI-Based SOC Deployment)
 
-## Threat Intelligence ↔ Incident Response Automation
-
 <p align="center">
   <img src="https://www.misp-project.org/img/logo.png" width="200">
     <img src="https://docs.strangebee.com/thehive/images/overview/thehive.svg" width="200"/>
 </p>
+
+## Threat Intelligence ↔ Incident Response Automation
 
 This integration connects:
 
