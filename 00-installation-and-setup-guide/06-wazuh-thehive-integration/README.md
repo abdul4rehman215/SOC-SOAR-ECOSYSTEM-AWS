@@ -82,15 +82,15 @@ Community script inspiration:
 # 📁 Repository Structure
 
 ```
-00-installation-and-setup-guide/
-└── 06-wazuh-thehive-integration/
-    ├── README.md
-    ├── scripts/
-    |   ├── custom-w2thehive.py
-    |   └── custom-w2thehive
-    ├── commands.sh
-    ├── troubleshooting.md
-    └── interview_qna.md
+06-wazuh-thehive-integration/
+├── README.md
+├── scripts/
+|   ├── custom-w2thehive.py
+|   └── custom-w2thehive
+├── commands.sh
+├── architecture-notes.txt
+├── troubleshooting.md
+└── interview_qna.md
 ```
 
 ---
