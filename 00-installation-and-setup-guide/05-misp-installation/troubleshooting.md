@@ -1,20 +1,22 @@
 # 🚨 MISP Deployment – Troubleshooting Guide
-### AWS EC2 | Ubuntu 24.04 | LAMP Stack
+
+### AWS EC2 | Ubuntu 24.04 | LAMP Stack | Feed-Enabled SOC Deployment
 
 ---
 
 # 1️⃣ Apache Not Running
 
 ## Symptoms
-- https://EC2_PUBLIC_IP not loading
-- Connection refused
-- 502 / 503 error
+
+* https://EC2_PUBLIC_IP not loading
+* Connection refused
+* 502 / 503 error
 
 ## Check
 
 ```bash
 systemctl status apache2
-````
+```
 
 ## Fix
 
@@ -23,7 +25,7 @@ sudo systemctl restart apache2
 sudo systemctl enable apache2
 ```
 
-If still failing:
+Check logs:
 
 ```bash
 sudo tail -f /var/log/apache2/error.log
@@ -35,8 +37,9 @@ sudo tail -f /var/log/apache2/error.log
 
 ## Symptoms
 
-* MISP UI shows database connection error
-* database.php exists but login fails
+* Database connection error in UI
+* Login fails
+* Events not loading
 
 ## Check
 
@@ -51,13 +54,13 @@ sudo systemctl restart mariadb
 sudo systemctl enable mariadb
 ```
 
-Check DB file:
+Verify DB file:
 
 ```bash
 ls /var/www/MISP/app/Config/database.php
 ```
 
-If missing → installer failed → re-run installer.
+If missing → installer failed → re-run installer clean.
 
 ---
 
@@ -65,9 +68,10 @@ If missing → installer failed → re-run installer.
 
 ## Symptoms
 
-* Background jobs stuck
-* Correlation not working
-* Workers inactive in MISP UI
+* Workers inactive
+* Correlation disabled
+* Feed caching stuck
+* Background jobs failing
 
 ## Check
 
@@ -88,25 +92,25 @@ sudo systemctl enable redis-server
 
 ## Symptoms
 
-* Redirecting to misp.local
-* Cannot access from browser
-* SSL certificate mismatch
+* Redirects to misp.local
+* SSL mismatch
+* Login loops
 
 ## Fix
 
-Get public IP:
+Get IP:
 
 ```bash
 curl -s http://169.254.169.254/latest/meta-data/public-ipv4
 ```
 
-Set correct base URL:
+Set:
 
 ```bash
 sudo -u www-data /var/www/MISP/app/Console/cake Admin setSetting MISP.baseurl "https://EC2_PUBLIC_IP"
 ```
 
-Reload Apache:
+Reload:
 
 ```bash
 sudo systemctl reload apache2
@@ -118,8 +122,7 @@ sudo systemctl reload apache2
 
 ## Symptoms
 
-* Browser shows insecure site
-* SSL module disabled
+* Browser insecure warning
 * HTTPS not loading
 
 ## Fix
@@ -129,7 +132,7 @@ sudo a2enmod ssl
 sudo systemctl reload apache2
 ```
 
-Check:
+Verify:
 
 ```bash
 apachectl -M | grep ssl
@@ -139,22 +142,17 @@ apachectl -M | grep ssl
 
 # 6️⃣ 500 Internal Server Error
 
-## Most Common Causes
+## Common Causes
 
-* PHP memory limit too low
-* Permissions issue
+* PHP memory limit low
+* Permission issue
 * MariaDB failure
 * Redis stopped
 
-## Check logs
+## Check Logs
 
 ```bash
 sudo tail -f /var/www/MISP/app/tmp/logs/error.log
-```
-
-Also check:
-
-```bash
 sudo tail -f /var/log/apache2/error.log
 ```
 
@@ -164,9 +162,9 @@ sudo tail -f /var/log/apache2/error.log
 
 ## Symptoms
 
-* Correlation disabled
-* Scheduled tasks not executing
-* Email notifications not sent
+* Correlation not working
+* Feeds not fetching
+* Scheduled tasks inactive
 
 ## Fix
 
@@ -185,46 +183,128 @@ sudo systemctl restart apache2
 
 ---
 
-# 8️⃣ Installer Fails Midway
+# 8️⃣ Feed Stuck in "Not Cached"
+
+## Symptoms
+
+* Red “Not cached” label
+* Feed enabled but not usable
 
 ## Causes
 
-* Low RAM
-* Interrupted execution
-* Network instability
-* Disk space full
+* Redis stopped
+* Permissions issue
+* Feed URL unreachable
 
-## Check memory
+## Fix (CLI preferred)
 
 ```bash
-free -h
+sudo -u www-data /var/www/MISP/app/Console/cake Server cacheFeed all
 ```
 
-Minimum recommended for this deployment:
-
-16GB RAM (t2.xlarge)
-
-Check disk:
+Or specific feed:
 
 ```bash
-df -h
+sudo -u www-data /var/www/MISP/app/Console/cake Server cacheFeed FEED_ID
 ```
 
-If corrupted → safest fix:
+Check Redis:
 
 ```bash
-sudo rm -rf /var/www/MISP
-Re-run installer clean
+systemctl status redis-server
 ```
 
 ---
 
-# 9️⃣ Permission Issues
+# 9️⃣ Fetch & Store Not Importing Events
 
 ## Symptoms
 
-* Cannot write to logs
-* Errors saving events
+* Feed cached but no events visible
+* Events → List Events empty
+
+## Causes
+
+* Timestamp filter too strict
+* Tag filter blocking events
+* Fetch not executed
+
+## Fix
+
+Test without filter temporarily:
+
+```bash
+sudo -u www-data /var/www/MISP/app/Console/cake Server fetchFeed FEED_ID
+```
+
+Check logs:
+
+```bash
+sudo tail -f /var/www/MISP/app/tmp/logs/error.log
+```
+
+---
+
+# 🔟 Feed Import Causing High CPU / RAM
+
+## Symptoms
+
+* Server slow
+* MariaDB high CPU
+* Redis backlog
+* System freezing
+
+## Check
+
+```bash
+htop
+free -h
+df -h
+```
+
+## Fix
+
+* Reduce timestamp window (`30d` instead of `90d`)
+* Disable unused feeds
+* Fetch one feed at a time
+* Increase RAM (recommended 16GB for production)
+
+---
+
+# 1️⃣1️⃣ Cron Not Running Feed Updates
+
+## Symptoms
+
+* Feeds not updating automatically
+* Old events only
+
+## Check cron
+
+```bash
+sudo crontab -u www-data -l
+```
+
+If missing, add:
+
+```bash
+0 * * * * /var/www/MISP/app/Console/cake Server cacheFeed all
+30 * * * * /var/www/MISP/app/Console/cake Server fetchFeed all
+```
+
+Restart cron:
+
+```bash
+sudo systemctl restart cron
+```
+
+---
+
+# 1️⃣2️⃣ Permission Issues
+
+## Symptoms
+
+* Cannot write logs
+* Cannot save events
 * Attachment upload fails
 
 ## Fix
@@ -236,38 +316,44 @@ sudo chmod -R 755 /var/www/MISP
 
 ---
 
-# 🔟 Performance Slow
+# 1️⃣3️⃣ Installer Fails Midway
 
-## Common Causes
+## Causes
 
 * Low RAM
-* MariaDB heavy load
-* Large event correlation
-* Redis queue backlog
+* Disk full
+* Interrupted execution
 
-## Check CPU usage
-
-```bash
-htop
-```
-
-## Check MySQL processes
+## Check Memory
 
 ```bash
-sudo mysqladmin processlist
+free -h
 ```
 
-Production sizing used in this project:
+## Check Disk
+
+```bash
+df -h
+```
+
+Minimum recommended:
 
 * 4 vCPU
 * 16GB RAM
 * SSD storage
 
+If corrupted:
+
+```bash
+sudo rm -rf /var/www/MISP
+Re-run installer
+```
+
 ---
 
 # 🔎 Log Locations Summary
 
-| Component | Log Location               |
+| Component | Location                   |
 | --------- | -------------------------- |
 | MISP      | /var/www/MISP/app/tmp/logs |
 | Apache    | /var/log/apache2/error.log |
@@ -276,9 +362,9 @@ Production sizing used in this project:
 
 ---
 
-# 🧠 Advanced Debug Mode
+# 🧠 Advanced Debug Mode (Temporary Only)
 
-Enable debug (temporary only):
+Edit:
 
 ```bash
 sudo nano /var/www/MISP/app/Config/config.php
@@ -290,27 +376,41 @@ Set:
 'debug' => 1,
 ```
 
-After troubleshooting → revert to:
+After troubleshooting revert to:
 
 ```php
 'debug' => 0,
 ```
 
----
-
-# 🏁 Final Validation Checklist
-
-✔ Apache running
-✔ MariaDB running
-✔ Redis running
-✔ database.php exists
-✔ BaseURL correct
-✔ SSL enabled
-✔ Workers active
-✔ Login successful
+Never leave debug enabled in production.
 
 ---
 
-If everything above passes, your MISP deployment is production-ready.
+# 🏁 Final Validation Checklist (Feed-Enabled Production Mode)
+
+- ✔ Apache running
+- ✔ MariaDB running
+- ✔ Redis running
+- ✔ database.php exists
+- ✔ BaseURL correct
+- ✔ SSL enabled
+- ✔ Workers active
+- ✔ Feeds enabled
+- ✔ Feeds cached
+- ✔ Events imported
+- ✔ Cron configured
+- ✔ Events visible in UI
+
+---
+
+If all above pass:
+
+Your MISP deployment is:
+
+- ✔ Stable
+- ✔ Feed-enabled
+- ✔ Automated
+- ✔ SOC-ready
+- ✔ Production-grade
 
 ---
