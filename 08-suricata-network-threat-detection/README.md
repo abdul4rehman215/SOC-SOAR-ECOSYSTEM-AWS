@@ -121,13 +121,7 @@ TheHive (Incident Response)
 
 ---
 
-# ========================= PART 1 ===========================
-
-#         Suricata Deployment & Wazuh Integration
-
-# ============================================================
-
----
+# Suricata Deployment & Wazuh Integration
 
 ## Step 1 — Install Suricata on Ubuntu 24.04
 
@@ -292,13 +286,7 @@ You should see:
 
 ---
 
-# ========================= PART 2 ===========================
-
-#          Detection Engineering & Noise Reduction
-
-# ============================================================
-
----
+# Detection Engineering & Noise Reduction
 
 ## 🔎 Problems Observed After Default Integration
 
