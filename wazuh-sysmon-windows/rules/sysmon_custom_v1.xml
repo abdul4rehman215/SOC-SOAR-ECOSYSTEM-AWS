@@ -1,0 +1,70 @@
+<!-- ============================= -->
+<!-- Basic Sysmon Monitoring Rules -->
+<!-- ============================= -->
+
+<group name="sysmon">
+
+  <!-- ===================== -->
+  <!-- Event 1 - Process Create -->
+  <!-- ===================== -->
+  <rule id="101101" level="5">
+    <if_sid>61603</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 1: Process creation.</description>
+  </rule>
+
+  <!-- ===================== -->
+  <!-- Event 2 - File Creation Time Changed -->
+  <!-- ===================== -->
+  <rule id="101102" level="5">
+    <if_sid>61604</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 2: A process changed a file creation time.</description>
+  </rule>
+
+  <!-- ===================== -->
+  <!-- Event 3 - Network Connection -->
+  <!-- ===================== -->
+  <rule id="101103" level="5">
+    <if_sid>61605</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 3: Network connection.</description>
+  </rule>
+
+  <!-- ===================== -->
+  <!-- Event 10 - Process Access -->
+  <!-- ===================== -->
+  <rule id="101110" level="5">
+    <if_sid>61612</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 10: ProcessAccess.</description>
+  </rule>
+
+  <!-- ===================== -->
+  <!-- Event 11 - File Create -->
+  <!-- ===================== -->
+  <rule id="101111" level="5">
+    <if_sid>61613</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 11: FileCreate.</description>
+  </rule>
+
+  <!-- ===================== -->
+  <!-- Event 13 - Registry Value Set -->
+  <!-- ===================== -->
+  <rule id="101113" level="5">
+    <if_sid>61615</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 13: RegistryEvent (Value Set).</description>
+  </rule>
+
+  <!-- ===================== -->
+  <!-- Event 22 - DNS Query -->
+  <!-- ===================== -->
+  <rule id="101100" level="5">
+    <if_group>sysmon</if_group>
+    <field name="win.system.eventID">22</field>
+    <description>Sysmon - Event 22: DNS Query.</description>
+  </rule>
+
+</group>
