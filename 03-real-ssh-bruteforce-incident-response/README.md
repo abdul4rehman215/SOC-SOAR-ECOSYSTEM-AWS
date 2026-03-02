@@ -39,10 +39,12 @@ This is a full Blue Team operational workflow.
 
 ## 🖼 SOC Workflow Diagram
 
+<div align="center">
 
-<img src="YOUR_IMAGE_LINK_HERE" width="800"/>
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/soc_workflow.png" width="800"/>
 
-
+<div/>
+  
 ---
 
 ## 🏗 Operational Architecture
@@ -255,7 +257,7 @@ This represents a full incident response cycle.
 
 For full investigation screenshots and documentation:
 
-👉 **[View the complete Incident Response PDF Guide](Embed text link here – you will insert manually)**
+👉 **[View the complete Incident Response PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/03-real-ssh-bruteforce-incident-response/Real%20SSH%20Brute%20Force%20Incident%20Respons%20Wazuh%20TheHive%20MISP.pdf)**
 
 This includes:
 
@@ -302,7 +304,8 @@ It reflects how real blue teams operate — not just lab simulation.
 
 Complete installation and integration guides available here:
 
-👉 [View the full SOC ecosystem setup guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide)
+👉 **[View the full SOC ecosystem setup guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide)**
+
 ---
 
 # 🏁 Final Note
