@@ -1,0 +1,230 @@
+SSH Brute Force Detection & Real-Time Alerting Architecture
+Wazuh + Slack + Kali Linux SOC Lab
+
+================================================================
+1. PURPOSE OF THIS ARCHITECTURE
+================================================================
+
+This architecture simulates how a Security Operations Center (SOC)
+detects and escalates SSH brute force attacks in real time.
+
+The focus is on:
+
+- Behavioral detection (not single-event alerts)
+- Threshold-based correlation
+- Source IP grouping
+- Noise reduction
+- Real-time analyst notification
+
+
+================================================================
+2. ENVIRONMENT COMPONENTS
+================================================================
+
+1) Kali Linux (Attacker)
+   - Generates repeated SSH login attempts
+   - Simulates brute force behavior
+   - Connects to Ubuntu over port 22
+
+2) Ubuntu Client (Victim System)
+   - Runs SSH service
+   - Logs authentication failures to:
+     /var/log/auth.log
+   - Runs Wazuh Agent
+   - Forwards logs to Wazuh Manager
+
+3) Wazuh Agent
+   - Monitors auth.log
+   - Parses SSH authentication failures
+   - Sends structured events to Wazuh Manager
+
+4) Wazuh Manager
+   - Receives agent events
+   - Applies built-in SSH detection rules
+   - Stores alerts in wazuh-alerts-* index
+   - Executes alert monitor logic
+   - Triggers Slack notification
+
+5) Slack
+   - Receives webhook notifications
+   - Displays real-time SOC alerts
+   - Acts as analyst notification layer
+
+
+================================================================
+3. DATA FLOW SEQUENCE
+================================================================
+
+Step 1:
+Kali initiates multiple SSH login attempts using invalid usernames.
+
+Step 2:
+Ubuntu logs:
+   "Invalid user <username> from <IP>"
+
+Step 3:
+Wazuh Agent reads /var/log/auth.log
+and forwards structured event to Manager.
+
+Step 4:
+Wazuh Manager applies SSH rule:
+   rule.id = 100300
+   (Invalid SSH user attempt)
+
+Step 5:
+Monitor evaluates conditions:
+   - Count of documents
+   - Last 1 minute
+   - rule.id = 100300
+   - rule.level >= 5
+   - Group by data.srcip
+
+Step 6:
+If count > 5 from same source IP:
+   → Alert Triggered
+
+Step 7:
+Slack webhook sends alert message.
+
+Step 8:
+SOC analyst receives notification.
+
+
+================================================================
+4. DETECTION ENGINEERING DESIGN
+================================================================
+
+This architecture avoids single-event alerting.
+
+Instead, it uses:
+
+- Time-based window (1 minute)
+- Frequency threshold (>5 failures)
+- Source IP grouping
+- Severity filtering
+
+This creates behavioral detection.
+
+Goal:
+Detect attack patterns, not isolated log entries.
+
+
+================================================================
+5. GROUPING LOGIC EXPLANATION
+================================================================
+
+Grouping by:
+   data.srcip
+
+Why?
+
+Without grouping:
+Each failed login generates separate alert noise.
+
+With grouping:
+Multiple failures from same attacker IP are correlated.
+
+This mimics enterprise SIEM correlation logic.
+
+
+================================================================
+6. ALERTING LOGIC
+================================================================
+
+Monitor Type:
+Per Bucket Monitor
+
+Metric:
+Count of documents
+
+Time Window:
+Last 1 minute
+
+Trigger Condition:
+Count > 5
+
+Severity:
+High
+
+Action:
+Slack notification (Per alert, deduplicated)
+
+
+================================================================
+7. FALSE POSITIVE REDUCTION STRATEGY
+================================================================
+
+Noise Reduction Techniques:
+
+- Severity filter (rule.level >= 5)
+- Threshold > 5 failures
+- Short time window (1 minute)
+- Grouping per attacker IP
+
+This prevents:
+- Single typo login alerts
+- Random SSH attempts from triggering alarms
+
+
+================================================================
+8. SECURITY CONSIDERATIONS
+================================================================
+
+- Slack webhook must remain confidential
+- SSH service should use key-based authentication
+- Thresholds should match environment baseline
+- Monitor tuning is required in production
+- Dashboard access must be secured
+
+
+================================================================
+9. SCALABILITY MODEL
+================================================================
+
+In enterprise deployment:
+
+- Hundreds of agents forward to centralized manager
+- Same detection logic applies globally
+- Thresholds tuned per environment size
+- Alerts may integrate with ticketing systems
+
+This lab models scalable detection logic.
+
+
+================================================================
+10. REAL-WORLD EQUIVALENT SCENARIOS
+================================================================
+
+This architecture detects:
+
+- SSH brute force attacks
+- Password spraying
+- Credential stuffing
+- Bot scanning behavior
+- Insider reconnaissance attempts
+
+It represents foundational authentication monitoring
+used in real SOC environments.
+
+
+================================================================
+11. SOC MATURITY IMPACT
+================================================================
+
+Without engineered detection:
+- High alert noise
+- Manual review required
+- Alert fatigue
+
+With threshold-based correlation:
+- Pattern recognition
+- Reduced false positives
+- Faster escalation
+- Improved SOC efficiency
+
+This project reflects structured SOC detection engineering.
+
+
+================================================================
+END OF ARCHITECTURE NOTES
+================================================================
