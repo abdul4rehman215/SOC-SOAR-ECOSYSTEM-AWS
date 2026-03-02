@@ -31,6 +31,26 @@ When a file is created on a monitored endpoint:
 
 ---
 
+# 📁 Repository Structure
+
+```
+08-wazuh-misp-integration/
+│
+├── README.md
+├── commands.sh
+├── architecture-notes.txt
+├── troubleshooting.md
+├── interview_qna.md
+│
+├── scripts/
+│   └── custom-misp-file-hashes.py
+│
+└── rules/
+    └── misp_file_hashes.xml
+```
+
+---
+
 # 🎯 Why Integrate Wazuh with MISP?
 
 Without MISP:
@@ -53,14 +73,14 @@ With MISP:
 
 ### Scenario
 
-- 1️⃣ Malware dropped in `/tmp`
-- 2️⃣ Wazuh detects file creation
-- 3️⃣ Hash extracted
-- 4️⃣ MISP queried via REST API
-- 5️⃣ Match found in global intelligence feed
-- 6️⃣ Rule 100802 triggered (Hash Match)
-- 7️⃣ High-confidence detection created
-- 8️⃣ Forwarded to TheHive for case triage
+1️⃣ Malware dropped in `/tmp`
+2️⃣ Wazuh detects file creation
+3️⃣ Hash extracted
+4️⃣ MISP queried via REST API
+5️⃣ Match found in global intelligence feed
+6️⃣ Rule 100802 triggered (Hash Match)
+7️⃣ High-confidence detection created
+8️⃣ Forwarded to TheHive for case triage
 
 ---
 
@@ -68,6 +88,7 @@ With MISP:
 
 Integration Flow:
 
+```
 Wazuh Agent
 ↓
 Wazuh Manager (Syscheck Event ID 554)
@@ -77,6 +98,7 @@ Custom MISP Integration Script
 MISP REST API
 ↓
 Enriched Detection in Wazuh
+```
 
 Threat intelligence feeds into MISP from:
 
@@ -87,15 +109,50 @@ Threat intelligence feeds into MISP from:
 
 ---
 
-# 📚 Official References Used
+# 📚 Official References & Technical Foundations
 
-This project is based on official MISP resources:
+This implementation aligns with official guidance and reference material published by the MISP Project.
+The following authoritative resources were used during architecture design and validation:
 
-🔗 MISP Official Blog
-[https://www.misp-project.org/2025/10/06/wazuh-integration.html/](https://www.misp-project.org/2025/10/06/wazuh-integration.html/)
+---
 
-🔗 MISP GitHub Integration Repository
-[https://github.com/MISP/wazuh-integration](https://github.com/MISP/wazuh-integration)
+### 🔹 MISP Official Blog – Wazuh Integration Architecture
+
+[Official technical article published by the MISP Project detailing the Wazuh integration workflow, API interaction model, and architectural considerations](https://www.misp-project.org/2025/10/06/wazuh-integration.html/)
+
+This article explains:
+
+* How Wazuh queries MISP using the REST API
+* Expected integration flow
+* Security considerations
+* Real-world deployment guidance
+
+---
+
+### 🔹 MISP GitHub – Official Wazuh Integration Repository
+
+[Official MISP-maintained integration scripts and reference implementation hosted on GitHub](https://github.com/MISP/wazuh-integration)
+
+This repository provides:
+
+* Reference Python integration scripts
+* Example configurations
+* Rule definitions
+* Production-grade implementation patterns
+
+---
+
+## 📌 Why These References Matter
+
+Using official MISP resources ensures:
+
+* Architectural correctness
+* API compatibility
+* Alignment with supported deployment models
+* Security best practices
+* Enterprise-ready implementation
+
+This project adapts the official model into a real-world AWS SOC lab deployment with structured rule engineering and alert refinement.
 
 ---
 
@@ -113,13 +170,29 @@ This project is based on official MISP resources:
 
 # ⚙️ Step 1 – Integration Script
 
-## 📍 Path
+## 📍 Script Location in Repository
+
+You can directly download the integration script from:
+
+👉 **Script (Repository Link)**
+[Click here.](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/00-installation-and-setup-guide/08-wazuh-misp-integration/scripts/custom-misp-file-hashes.py)
+
+---
+
+## 📍 Script Path on Wazuh Manager
 
 ```
 /var/ossec/integrations/custom-misp-file-hashes.py
 ```
 
-(You already provided the full script — keep it in README under collapsible section if needed.)
+Create the script:
+
+```bash
+cd /var/ossec/integrations/
+nano custom-misp-file-hashes.py
+```
+
+Paste the script from the repository link above.
 
 ---
 
@@ -150,9 +223,17 @@ Add:
 <directories check_all="yes" realtime="yes">/usr/local/bin</directories>
 ```
 
+Restart agent:
+
+```bash
+systemctl restart wazuh-agent
+```
+
 ---
 
 ## 🔹 Windows Agent
+
+Add:
 
 ```xml
 <directories check_all="yes" realtime="yes">C:\Users</directories>
@@ -160,11 +241,17 @@ Add:
 <directories check_all="yes" realtime="yes">C:\ProgramData</directories>
 ```
 
+Restart service:
+
+```powershell
+Restart-Service wazuh
+```
+
 ---
 
 # ⚙️ Step 3 – Wazuh Manager Integration Block
 
-File:
+Edit:
 
 ```
 /var/ossec/etc/ossec.conf
@@ -181,31 +268,45 @@ File:
 </integration>
 ```
 
+Validate before restart:
+
+```bash
+/var/ossec/bin/wazuh-analysisd -t
+```
+
+Restart:
+
+```bash
+systemctl restart wazuh-manager
+```
+
 ---
 
 # ⚙️ Step 4 – Create Custom Rules
 
-📍 Directory:
+## 📍 Rules File in Repository
+
+👉 **Rules File (Repository Link)**
+[Click here.](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/00-installation-and-setup-guide/08-wazuh-misp-integration/rules/misp_file_hashes.xml)
+
+---
+
+## 📍 Path on Wazuh Manager
 
 ```
-/var/ossec/etc/rules/
+/var/ossec/etc/rules/misp_file_hashes.xml
 ```
 
-Create:
+Create file:
 
+```bash
+cd /var/ossec/etc/rules/
+nano misp_file_hashes.xml
 ```
-misp_file_hashes.xml
-```
 
-Rules handle:
+Paste content from repository link above.
 
-* Hash found
-* Hash not found
-* API errors
-* Rate limiting
-* Server failures
-
-Then validate syntax:
+Validate:
 
 ```bash
 /var/ossec/bin/wazuh-analysisd -t
@@ -229,9 +330,9 @@ MD5:
 44d88612fea8a8f36de82e1278abb02f
 ```
 
-### Download Test File
+---
 
-Linux:
+### Download Test File (Linux)
 
 ```bash
 curl -Lo /tmp/eicar.exe https://secure.eicar.org/eicar.com
@@ -249,10 +350,10 @@ You should see:
 
 This confirms:
 
-✔ Script working
-✔ API authentication valid
-✔ Hash correlation successful
-✔ Detection pipeline active
+- ✔ Script working
+- ✔ API authentication valid
+- ✔ Hash correlation successful
+- ✔ Detection pipeline active
 
 ---
 
@@ -314,7 +415,7 @@ After Integration:
 
 ---
 
-# 🧩 How This Strengthens Your SOC-SOAR Ecosystem
+# 🧩 SOC-SOAR Ecosystem Impact
 
 You now have:
 
