@@ -69,8 +69,7 @@ This reduces noise while detecting true attack patterns.
 
 For full dashboard walkthrough and configuration screenshots:
 
-👉 **View the complete visual setup guide (PDF version of this project)**  
-(Embed your PDF link text here)
+👉 **View the complete visual setup guide [PDF version of this project](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/02-wazuh-ssh-bruteforce-alerting-lab/Wazuh%20Alerting%20Setup%20SSH%20Brute%20Force%20Simulation.pdf)**
 
 This includes:
 
@@ -205,8 +204,7 @@ This mirrors practical SOC operations.
 
 For complete Wazuh installation and ecosystem setup:
 
-👉 **View the full SOC installation & integration guide here**
-(Embed installation guide repo link text here)
+👉 **[View the full SOC installation & integration guide here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide)**
 
 ---
 
