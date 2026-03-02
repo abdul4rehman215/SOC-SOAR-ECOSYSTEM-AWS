@@ -273,8 +273,8 @@ It reflects how modern SOC teams operate in enterprise environments.
 
 Full deployment guides, configurations, scripts, and troubleshooting documentation are available here:
 
-🔗 **Complete Installation & Integration Guide**
-[Click to view the Full Installation & Integration Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide)
+[🔗 **Click to view the Full Installation & Integration Guide**](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide)
+
 That section includes:
 
 * AWS infrastructure setup
