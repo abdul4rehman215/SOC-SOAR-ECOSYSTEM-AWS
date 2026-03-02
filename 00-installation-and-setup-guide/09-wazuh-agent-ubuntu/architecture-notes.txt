@@ -1,0 +1,51 @@
+===========================================================
+Wazuh Agent Deployment – Architecture Notes
+Ubuntu 24.04 Endpoint
+===========================================================
+
+1. ROLE IN SOC
+
+Agent is telemetry collector.
+Manager is processing engine.
+Dashboard is visualization layer.
+
+2. DATA FLOW
+
+Endpoint Logs →
+Wazuh Agent →
+Encrypted Channel →
+Wazuh Manager →
+Indexer →
+Dashboard
+
+3. DESIGN PRINCIPLES
+
+- Minimal noise
+- Real-time FIM only where needed
+- Rootcheck every 12 hours
+- Skip container directories
+- Controlled EPS limits
+
+4. PERFORMANCE CONTROL
+
+- queue_size 5000
+- events_per_second 500
+- max_eps 50 (FIM)
+- synchronization enabled
+
+5. SECURITY CONSIDERATIONS
+
+- AES encryption
+- Enrollment authentication
+- Manager IP validation
+- No open agent ports externally
+
+6. FUTURE EXTENSIONS
+
+- Custom decoders
+- Custom rules
+- YARA integration
+- SCA policies
+- Active response automation
+
+===========================================================
