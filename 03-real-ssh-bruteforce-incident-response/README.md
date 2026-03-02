@@ -43,7 +43,7 @@ This is a full Blue Team operational workflow.
 
 <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/soc_workflow.png" width="800"/>
 
-<div/>
+</div>
   
 ---
 
