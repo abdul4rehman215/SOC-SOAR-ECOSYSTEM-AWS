@@ -377,6 +377,7 @@ With TheHive:
 │
 ├── README.md
 ├── commands.sh
+├── architecture-notes.txt
 ├── interview_qna.md
 ├── troubleshooting.md
 ```
