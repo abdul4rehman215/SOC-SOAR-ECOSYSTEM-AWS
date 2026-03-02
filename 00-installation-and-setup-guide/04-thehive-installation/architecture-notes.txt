@@ -1,0 +1,304 @@
+===========================================================
+TheHive 5.5 Deployment – Architecture Notes
+Docker on AWS EC2 | t2.xlarge (4 vCPU / 16GB RAM)
+SOC-SOAR Case Management Core
+===========================================================
+
+1. ROLE IN SOC ECOSYSTEM
+-----------------------------------------------------------
+
+TheHive acts as the Incident Response & Case Management layer.
+
+Position in stack:
+
+Wazuh (Detection Engine)
+        ↓
+TheHive (Case Management Core)
+        ↓
+Cortex (Automated Enrichment)
+        ↓
+MISP (Threat Intelligence Backend)
+
+TheHive transforms alerts into structured investigation workflows.
+
+It does NOT detect.
+It does NOT store raw logs.
+It manages incident lifecycle.
+
+
+2. DEPLOYMENT STRATEGY
+-----------------------------------------------------------
+
+Deployment Model:
+Docker-based (Official StrangeBee repository)
+
+Infrastructure:
+AWS EC2
+Ubuntu 24.04
+Instance: t2.xlarge
+4 vCPU
+16GB RAM
+50GB+ SSD
+
+Reasoning:
+
+TheHive requires:
+- JVM memory allocation
+- Elasticsearch indexing
+- Cassandra data persistence
+- Concurrent analyst sessions
+
+Less than 16GB RAM leads to:
+- Elasticsearch crashes
+- Cassandra instability
+- JVM heap errors
+- Slow case search
+
+
+3. CONTAINER ARCHITECTURE
+-----------------------------------------------------------
+
+Containers used:
+
+- thehive (application layer)
+- cassandra (primary database)
+- elasticsearch (search/index engine)
+
+Communication:
+
+thehive → cassandra (data storage)
+thehive → elasticsearch (search indexing)
+
+All services isolated via Docker network.
+
+Data persistence handled through Docker volumes.
+
+
+4. WHY DOCKER?
+-----------------------------------------------------------
+
+Reasons for Docker deployment:
+
+- Environment consistency
+- Faster provisioning
+- Easier upgrades
+- Service isolation
+- Simplified troubleshooting
+- Production-aligned architecture
+
+Manual installation increases configuration drift.
+
+
+5. DATA STORAGE DESIGN
+-----------------------------------------------------------
+
+Cassandra:
+
+- Stores cases
+- Stores tasks
+- Stores observables
+- Maintains audit trail
+- Stores user/organization data
+
+Elasticsearch:
+
+- Indexes observables
+- Enables fast search
+- Supports filtering
+- Improves dashboard performance
+
+Cassandra = durable storage
+Elasticsearch = search layer
+
+
+6. MEMORY DESIGN CONSIDERATIONS
+-----------------------------------------------------------
+
+Elasticsearch:
+Requires heap allocation.
+Heavy indexing operations increase memory pressure.
+
+Cassandra:
+Uses JVM and benefits from large memory allocation.
+
+TheHive:
+Java-based, requires stable heap.
+
+Minimum recommended for stable SOC:
+16GB RAM.
+
+Below 8GB:
+Unstable behavior expected.
+
+
+7. ORGANIZATION-BASED ACCESS CONTROL
+-----------------------------------------------------------
+
+Design decision:
+
+- Do NOT operate with global super-admin.
+- Create dedicated organization.
+- Create org-admin account.
+- Assign proper permission profiles.
+
+Benefits:
+
+- Role-based access control (RBAC)
+- Multi-tenant ready
+- Separation of duties
+- Platform admin ≠ SOC operator
+
+This aligns with enterprise SOC practices.
+
+
+8. SECURITY DESIGN
+-----------------------------------------------------------
+
+Security measures applied:
+
+- Port 9000 restricted via Security Group
+- Default credentials changed immediately
+- Org-based RBAC enabled
+- Docker group permission controlled
+- Time synchronization enabled
+- No direct exposure of Cassandra or Elasticsearch
+
+Production recommendation:
+
+- Reverse proxy (NGINX)
+- TLS termination
+- VPN-only access
+
+
+9. INTEGRATION DESIGN
+-----------------------------------------------------------
+
+TheHive integrates with:
+
+MISP:
+- Observable enrichment
+- Threat correlation
+
+Cortex:
+- Automated analyzers
+- Reputation checks
+- Malware scans
+
+Wazuh:
+- Alert ingestion (manual/API integration)
+
+TheHive acts as orchestration layer between detection and enrichment.
+
+
+10. DATA FLOW MODEL
+-----------------------------------------------------------
+
+Alert generated → 
+Converted into case →
+Tasks assigned →
+Observables added →
+Cortex enrichment →
+MISP correlation →
+Investigation completed →
+Case closed →
+Report generated
+
+TheHive provides structured workflow management.
+
+
+11. FAILURE DOMAINS
+-----------------------------------------------------------
+
+If Elasticsearch fails:
+- Search disabled
+- Case filtering broken
+
+If Cassandra fails:
+- Cases unavailable
+- TheHive fails to start
+
+If insufficient RAM:
+- JVM crash
+- Container restarts
+
+If Security Group misconfigured:
+- UI inaccessible
+
+If wrong organization role:
+- Cases invisible
+- Permission errors
+
+
+12. SCALING STRATEGY (ENTERPRISE)
+-----------------------------------------------------------
+
+For larger deployments:
+
+- Separate Cassandra cluster
+- Separate Elasticsearch cluster
+- Dedicated reverse proxy
+- Increased RAM (32GB+)
+- Horizontal scaling
+- Load balancer in front of TheHive nodes
+
+Production SOC scaling must consider:
+
+- Concurrent analysts
+- Case volume
+- Alert ingestion rate
+
+
+13. PERFORMANCE MONITORING
+-----------------------------------------------------------
+
+Monitor:
+
+docker stats
+htop
+free -h
+df -h
+
+Watch:
+
+- Elasticsearch CPU usage
+- Cassandra memory
+- Disk I/O
+- JVM heap
+
+SOC case management requires stable memory profile.
+
+
+14. DESIGN PRINCIPLES USED
+-----------------------------------------------------------
+
+- Separation of platform and operational roles
+- Docker-based isolation
+- Memory-adequate sizing
+- Secure-by-default networking
+- Enterprise-ready RBAC model
+- Integration-ready design
+
+
+15. FINAL ARCHITECTURE STATE
+-----------------------------------------------------------
+
+✔ Docker stack deployed
+✔ Cassandra operational
+✔ Elasticsearch operational
+✔ Organization created
+✔ Org-admin created
+✔ RBAC enforced
+✔ Port restricted
+✔ Memory adequate
+✔ Integrated into SOC-SOAR ecosystem
+
+TheHive is operating as:
+
+- Incident lifecycle engine
+- Case orchestration layer
+- SOC workflow manager
+- Enrichment coordinator
+
+===========================================================
+END OF ARCHITECTURE NOTES
+===========================================================
