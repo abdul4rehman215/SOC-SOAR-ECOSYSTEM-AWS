@@ -1,0 +1,252 @@
+============================================================
+Suricata IDS + Wazuh SIEM SOC Architecture
+Network Threat Detection & Detection Engineering
+============================================================
+
+1. OVERVIEW
+------------------------------------------------------------
+
+This architecture implements a layered SOC detection pipeline combining:
+
+- Network-based IDS (Suricata)
+- Host-based log forwarding (Wazuh Agent)
+- Centralized correlation engine (Wazuh Manager)
+- Search & visualization layer (OpenSearch / Wazuh Dashboard)
+- Incident response platform (TheHive)
+
+The goal is to transform raw network telemetry into structured,
+contextualized, SOC-ready security intelligence.
+
+
+2. HIGH-LEVEL ARCHITECTURE FLOW
+------------------------------------------------------------
+
+Kali Linux (Attacker)
+        ↓
+Network Traffic
+        ↓
+Ubuntu Endpoint (Suricata IDS + Wazuh Agent)
+        ↓
+eve.json (Suricata JSON log output)
+        ↓
+Wazuh Agent (Log forwarding)
+        ↓
+Wazuh Manager (Decoding + Rule Engine + Correlation)
+        ↓
+OpenSearch Index (wazuh-alerts-*)
+        ↓
+Wazuh Dashboard (Visualization)
+        ↓
+TheHive (Incident Response & Case Management)
+
+
+3. COMPONENT BREAKDOWN
+------------------------------------------------------------
+
+A. Kali Linux (Attack Simulation)
+
+Purpose:
+- Simulate adversary behavior
+- Generate reconnaissance traffic
+- Validate detection engineering
+
+Examples:
+- Nmap SYN scans
+- Vulnerability scripts
+- Service enumeration
+
+
+B. Ubuntu Endpoint (Suricata Sensor + Wazuh Agent)
+
+This machine acts as:
+
+1) Network IDS sensor
+2) Log forwarder
+
+Suricata:
+- Performs deep packet inspection
+- Applies Emerging Threats rules
+- Detects network signatures
+- Outputs structured JSON logs (eve.json)
+
+Wazuh Agent:
+- Monitors /var/log/suricata/eve.json
+- Forwards logs securely to Wazuh Manager
+
+
+C. Wazuh Manager (Core Detection Engine)
+
+Primary responsibilities:
+
+- JSON decoding
+- Custom decoder application
+- Rule matching
+- Correlation logic
+- Severity normalization
+- MITRE ATT&CK enrichment
+- Alert generation
+
+This is where detection engineering happens.
+
+Customizations implemented:
+
+- Custom JSON decoders
+- Custom rule groups
+- Noise suppression rules
+- High-confidence detection rules
+- MITRE T1595 mapping
+
+
+D. OpenSearch (Storage Layer)
+
+Wazuh Manager indexes alerts into:
+
+wazuh-alerts-*
+
+Provides:
+- Structured searchable storage
+- Fast querying
+- Aggregation support
+- Dashboard visualization backend
+
+
+E. Wazuh Dashboard
+
+Provides SOC analyst interface:
+
+- Discover view
+- Alert filtering
+- Signature grouping
+- MITRE tactic visualization
+- Trend analysis
+- Top attacker IP ranking
+- Severity distribution
+
+
+F. TheHive (Incident Response Platform)
+
+Purpose:
+- Convert alerts into cases
+- Extract observables
+  - IP
+  - Domain
+  - URL
+- Maintain investigation timeline
+- Enable SOC workflow escalation
+
+
+4. DATA FLOW EXPLANATION
+------------------------------------------------------------
+
+Step 1:
+Attacker generates traffic (e.g., Nmap scan)
+
+Step 2:
+Suricata detects suspicious pattern
+Matching Emerging Threat rule:
+ET SCAN Nmap Scripting Engine
+
+Step 3:
+Suricata writes JSON alert into:
+    /var/log/suricata/eve.json
+
+Step 4:
+Wazuh Agent monitors file and forwards event
+
+Step 5:
+Wazuh Manager:
+    - Applies JSON decoder
+    - Extracts fields (src_ip, dst_ip, signature, severity)
+    - Matches custom rules
+    - Applies MITRE mapping
+    - Generates enriched alert
+
+Step 6:
+Alert indexed in OpenSearch
+
+Step 7:
+Dashboard visualizes:
+    - Signature
+    - Source IP
+    - Technique (T1595)
+    - Severity
+    - Timeline
+
+Step 8:
+Alert forwarded to TheHive as case
+
+Detection → Correlation → Enrichment → Visualization → Response
+
+
+5. SECURITY DESIGN PRINCIPLES APPLIED
+------------------------------------------------------------
+
+Defense-in-Depth:
+- Network IDS + SIEM correlation
+
+Separation of Concerns:
+- IDS detection separate from correlation engine
+
+Centralized Monitoring:
+- All network alerts indexed centrally
+
+Detection Engineering:
+- Custom decoders
+- Structured rule grouping
+- Severity normalization
+- Noise reduction
+
+Scalability:
+- Agent groups for IDS sensors
+- Group-based configuration
+- Modular rule files
+
+Operational Maturity:
+- Dedicated Suricata dashboard
+- MITRE ATT&CK alignment
+- High-confidence detections
+- SOC triage optimization
+
+
+6. ARCHITECTURE STRENGTHS
+------------------------------------------------------------
+
+✔ Real network-layer visibility
+✔ Centralized log normalization
+✔ Clean separation of endpoint & network alerts
+✔ MITRE ATT&CK enrichment
+✔ Reduced alert fatigue
+✔ Case management integration
+✔ Production-style scalability
+✔ Modular detection logic
+
+
+7. HOW THIS SCALES IN ENTERPRISE ENVIRONMENTS
+------------------------------------------------------------
+
+In production environments:
+
+- Multiple Suricata sensors across subnets
+- All sensors added to "Suricata" agent group
+- Centralized rule management
+- Centralized dashboard monitoring
+- Automated response scripts (optional extension)
+
+Architecture supports horizontal expansion.
+
+
+8. FUTURE EXTENSIONS (OPTIONAL)
+------------------------------------------------------------
+
+- Enable Suricata IPS mode
+- Integrate firewall auto-blocking
+- Add GeoIP enrichment
+- Add threat intelligence feeds
+- Implement anomaly detection layer
+- Add Slack alert notifications
+- Add SOAR playbooks
+
+
+============================================================
+END OF ARCHITECTURE NOTES
+============================================================
