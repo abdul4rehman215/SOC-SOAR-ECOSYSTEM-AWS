@@ -1,0 +1,128 @@
+REAL SSH BRUTE FORCE INCIDENT RESPONSE
+Architecture Notes
+Wazuh + TheHive 5.5 + MISP
+
+--------------------------------------------------
+1. ARCHITECTURE
+--------------------------------------------------
+
+Attacker (External IP)
+        |
+        v
+Linux Target Server (Ubuntu)
+        |
+        v
+Wazuh Agent
+        |
+        v
+Wazuh Manager (SIEM Engine)
+        |
+        v
+Slack (Alert Notification)
+        |
+        v
+TheHive 5.5 (Case Management)
+        |
+        v
+MISP (Threat Intelligence)
+
+--------------------------------------------------
+2. COMPONENT ROLES
+--------------------------------------------------
+
+Wazuh:
+- Collects authentication logs
+- Applies correlation rules
+- Detects brute force behavior
+- Maps detection to MITRE ATT&CK (T1110)
+
+TheHive:
+- Receives alert
+- Manages incident lifecycle
+- Stores observables (attacker IP)
+- Tracks investigation notes
+- Maintains incident timeline
+
+MISP:
+- Performs threat intelligence lookup
+- Stores and publishes IOC
+- Enables community sharing
+- Adds contextual metadata
+
+Linux Server:
+- Generates SSH authentication logs
+- Target of brute force attack
+- Applies mitigation (iptables, Fail2Ban, SSH hardening)
+
+--------------------------------------------------
+3. DETECTION LOGIC FLOW
+--------------------------------------------------
+
+Step 1:
+Multiple SSH authentication failures detected.
+
+Step 2:
+Events correlated by same source IP.
+
+Step 3:
+Threshold exceeded → Wazuh generates alert.
+
+Step 4:
+Alert forwarded to Slack.
+
+Step 5:
+Analyst triages alert in TheHive.
+
+--------------------------------------------------
+4. INVESTIGATION FLOW
+--------------------------------------------------
+
+1. Confirm detection in Wazuh Discover.
+2. Validate repeated failures.
+3. Extract attacker IP.
+4. Add IP as observable in TheHive.
+5. Map to MITRE ATT&CK T1110.
+6. Perform threat intel lookup in MISP.
+
+--------------------------------------------------
+5. CONTAINMENT ARCHITECTURE
+--------------------------------------------------
+
+Layer 1: Firewall Blocking
+- iptables DROP rule
+
+Layer 2: Fail2Ban
+- Automatic IP banning after threshold
+
+Layer 3: SSH Hardening
+- Disable root login
+- Disable password authentication
+
+This provides layered defense.
+
+--------------------------------------------------
+6. INTELLIGENCE SHARING FLOW
+--------------------------------------------------
+
+TheHive → Create MISP Event
+Add attribute: ip-src
+Add timestamps (first seen / last seen)
+Add contextual comment
+Publish event
+
+This closes the SOC loop.
+
+--------------------------------------------------
+7. SOC DESIGN PRINCIPLES DEMONSTRATED
+--------------------------------------------------
+
+- Detection → Investigation → Mitigation → Intelligence
+- Behavior-based validation
+- Documentation discipline
+- Structured case workflow
+- Community intelligence sharing
+- Defense in depth
+
+--------------------------------------------------
+END OF ARCHITECTURE NOTES
+--------------------------------------------------
