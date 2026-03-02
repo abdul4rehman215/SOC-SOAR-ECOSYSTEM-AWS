@@ -1,0 +1,315 @@
+===========================================================
+MISP Deployment – Architecture Notes
+AWS EC2 | Ubuntu 24.04 | t2.xlarge (4 vCPU / 16GB RAM)
+SOC-SOAR Threat Intelligence Core
+===========================================================
+
+1. ROLE IN SOC ARCHITECTURE
+-----------------------------------------------------------
+
+MISP functions as the Threat Intelligence Core in the SOC stack.
+
+Flow:
+
+Wazuh (Detection)
+        ↓
+TheHive (Case Management)
+        ↓
+Cortex (Automated Enrichment)
+        ↓
+MISP (Intelligence Correlation & Distribution)
+
+MISP provides:
+
+- Centralized IOC storage
+- Event correlation
+- Intelligence sharing
+- Structured taxonomy usage (Galaxies)
+- Detection export capability
+
+MISP is NOT just a feed aggregator.
+It is an intelligence correlation engine.
+
+
+2. DEPLOYMENT STRATEGY
+-----------------------------------------------------------
+
+Cloud: AWS EC2
+OS: Ubuntu 24.04
+Instance Type: t2.xlarge
+CPU: 4 vCPU
+RAM: 16GB
+Storage: 50GB+ SSD
+
+Why 16GB RAM?
+
+MISP performs:
+
+- MariaDB heavy read/write
+- Attribute correlation indexing
+- Redis background jobs
+- Feed caching
+- Event import operations
+
+Less than 8GB RAM causes:
+
+- Worker queue backlog
+- Redis memory exhaustion
+- Slow correlation
+- PHP execution timeouts
+
+
+3. ARCHITECTURAL STACK
+-----------------------------------------------------------
+
+LAMP-based architecture:
+
+Linux → OS
+Apache → Web server
+MariaDB → Primary datastore
+Redis → Caching & background processing
+PHP → Core application logic
+Python → Modules & integrations
+
+Redis is critical.
+If Redis fails → correlation stops.
+
+
+4. BASEURL DECISION (AWS-SPECIFIC)
+-----------------------------------------------------------
+
+Default installer uses:
+
+misp.local
+
+This is not usable in cloud environments.
+
+Decision:
+
+Set BaseURL to EC2 Public IP or DNS.
+
+Impact:
+
+- Prevents redirect loops
+- Ensures API stability
+- Allows SSL configuration
+- Enables external integrations
+
+
+5. FEED STRATEGY (CRITICAL ARCHITECTURE DECISION)
+-----------------------------------------------------------
+
+DO NOT enable all feeds.
+
+Why?
+
+- Database explosion
+- High MariaDB CPU usage
+- Redis overload
+- Slow correlation
+- Memory pressure
+
+Chosen feeds:
+
+- CIRCL OSINT
+- Botvrij
+- Optional: Abuse.ch
+
+Filtering strategy:
+
+Allowed tags:
+- tlp:white
+- confidence:high
+
+Timestamp filter:
+{"timestamp":"30d"}
+
+Purpose:
+
+- Reduce ingestion noise
+- Maintain DB performance
+- Focus on relevant intelligence
+- Prevent stale IOC buildup
+
+
+6. CACHE vs FETCH ARCHITECTURE
+-----------------------------------------------------------
+
+Load Metadata → Registers feeds only
+
+Cache → Downloads metadata only
+Safe operation.
+
+Fetch & Store → Imports full events
+Controlled operation.
+
+Design rule:
+
+Never fetch before filtering.
+
+
+7. AUTOMATION STRATEGY
+-----------------------------------------------------------
+
+Manual feed updates are not scalable.
+
+Cron automation:
+
+0 * * * * cacheFeed all
+30 * * * * fetchFeed all
+
+This ensures:
+
+- Hourly feed refresh
+- Intelligence stays current
+- No analyst dependency
+- Production-ready workflow
+
+
+8. DATA FLOW INTEGRATION
+-----------------------------------------------------------
+
+TheHive:
+- Queries MISP during observable enrichment
+
+Cortex:
+- Can leverage MISP intelligence context
+
+Wazuh:
+- Can consume exported IOCs (STIX/JSON/Snort)
+
+Suricata:
+- Rule generation from MISP attributes
+
+MISP acts as the intelligence exchange layer.
+
+
+9. CORRELATION ENGINE CONSIDERATIONS
+-----------------------------------------------------------
+
+Correlation occurs when:
+
+- Matching attributes exist across events
+- Redis workers process correlation jobs
+
+Heavy correlation scenarios:
+
+- Large imported feeds
+- Unfiltered ingestion
+- High-volume events
+
+Mitigation:
+
+- Timestamp filtering
+- Limited feed selection
+- Adequate RAM
+- Monitor worker queues
+
+
+10. SECURITY CONSIDERATIONS
+-----------------------------------------------------------
+
+- Restrict EC2 Security Group access
+- Enable SSL
+- Change default credentials immediately
+- Limit feed ingestion scope
+- Protect API keys
+- Monitor logs
+
+MISP stores sensitive intelligence.
+It must not be publicly exposed without restriction.
+
+
+11. PERFORMANCE BOTTLENECKS
+-----------------------------------------------------------
+
+Common bottlenecks:
+
+MariaDB:
+- Slow queries during large imports
+
+Redis:
+- Memory exhaustion under heavy feed ingestion
+
+PHP:
+- Timeout under correlation spikes
+
+Disk:
+- SSD required for event-heavy workloads
+
+Monitoring:
+
+htop
+free -h
+mysqladmin processlist
+journalctl -u redis-server
+
+
+12. SCALING STRATEGY (ENTERPRISE)
+-----------------------------------------------------------
+
+For larger environments:
+
+- Separate DB server
+- Dedicated Redis instance
+- Load-balanced Apache nodes
+- Increase RAM (32GB+)
+- Use RDS for managed DB
+- Enable external object storage for attachments
+
+
+13. FAILURE SCENARIOS
+-----------------------------------------------------------
+
+If Redis stops:
+- Correlation stops
+- Workers inactive
+- Feeds fail
+
+If MariaDB overloaded:
+- Event load slow
+- Correlation delayed
+
+If feeds unfiltered:
+- Database growth uncontrolled
+- System instability
+
+Architectural lesson:
+Feed control is mandatory.
+
+
+14. DESIGN PRINCIPLES USED
+-----------------------------------------------------------
+
+- Minimal feed ingestion
+- Timestamp restriction
+- Controlled import
+- Automation via cron
+- Secure-by-default configuration
+- Resource-appropriate sizing
+
+
+15. FINAL ARCHITECTURE STATE
+-----------------------------------------------------------
+
+✔ Feed metadata loaded
+✔ Trusted feeds enabled
+✔ Filtering applied
+✔ Cached
+✔ Controlled fetch
+✔ Cron automation configured
+✔ SSL enabled
+✔ BaseURL corrected
+✔ Workers verified
+✔ SOC-integrated
+
+MISP is now operating as:
+
+- Intelligence ingestion engine
+- Correlation platform
+- IOC distribution node
+- SOC enrichment layer
+
+===========================================================
+END OF ARCHITECT NOTES
+===========================================================
