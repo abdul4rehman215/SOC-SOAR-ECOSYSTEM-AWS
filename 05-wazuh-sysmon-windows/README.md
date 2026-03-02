@@ -24,6 +24,12 @@ The objective:
 
 # 🏗️ Architecture
 
+<div align="center">
+
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Wazuh%20and%20Sysmon%20threat%20detection%20architecture.png" width="800"/>
+
+</div>
+
 ```
 Windows Endpoint
    ├── Sysmon (Event Channel Logging)
