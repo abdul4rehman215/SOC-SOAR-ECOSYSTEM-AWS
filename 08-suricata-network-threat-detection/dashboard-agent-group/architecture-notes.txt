@@ -1,0 +1,227 @@
+============================================================
+Suricata SOC Operational Architecture – Part 3
+Agent Groups + Dedicated Dashboard + Workflow Optimization
+============================================================
+
+1. PURPOSE OF PART 3
+------------------------------------------------------------
+
+Part 3 introduces operational maturity to the Suricata + Wazuh
+detection pipeline.
+
+While Parts 1 & 2 focused on:
+
+- IDS deployment
+- SIEM integration
+- Detection engineering
+- Noise reduction
+- MITRE mapping
+
+Part 3 focuses on:
+
+- Scalability
+- Configuration management
+- Telemetry separation
+- Dashboard engineering
+- Analyst workflow optimization
+
+This represents a production SOC design pattern.
+
+
+2. OPERATIONAL ARCHITECTURE FLOW
+------------------------------------------------------------
+
+Suricata Sensor (Ubuntu Endpoint)
+        ↓
+Wazuh Agent (Member of Suricata Group)
+        ↓
+Group-Based Configuration (agent.conf)
+        ↓
+Wazuh Manager (Central Policy & Detection Engine)
+        ↓
+OpenSearch Index (wazuh-alerts-*)
+        ↓
+Dedicated Suricata Dashboard
+        ↓
+SOC Analyst Investigation
+        ↓
+TheHive Escalation
+
+
+3. AGENT GROUP ARCHITECTURE
+------------------------------------------------------------
+
+Agent Groups allow centralized configuration control.
+
+Instead of manually editing each agent:
+
+We apply configuration at group level.
+
+Example:
+
+Group Name: Suricata
+
+Group Configuration File:
+/var/ossec/etc/shared/Suricata/agent.conf
+
+Any agent added to this group automatically:
+
+- Ingests Suricata logs
+- Applies consistent configuration
+- Maintains centralized policy control
+
+This allows horizontal scaling.
+
+
+4. WHY AGENT GROUPS MATTER IN ENTERPRISE SOC
+------------------------------------------------------------
+
+In enterprise environments:
+
+- Hundreds of endpoints
+- Multiple IDS sensors
+- Segmented networks
+- Multiple detection policies
+
+Agent groups provide:
+
+✔ Centralized configuration
+✔ Policy-based deployment
+✔ Reduced configuration drift
+✔ Clean separation of telemetry
+✔ Faster rollout of updates
+
+This aligns with enterprise security governance.
+
+
+5. DASHBOARD ISOLATION ARCHITECTURE
+------------------------------------------------------------
+
+Without isolation:
+
+- Network alerts mix with endpoint logs
+- Authentication logs mix with IDS alerts
+- Triage becomes inefficient
+
+With dedicated Suricata dashboard:
+
+- Only rule.groups: suricata visible
+- MITRE tactics clearly grouped
+- Top attacker IP ranking visible
+- Alert trend spikes easily detectable
+
+This supports focused network threat monitoring.
+
+
+6. DASHBOARD DESIGN PRINCIPLES
+------------------------------------------------------------
+
+Panels Designed:
+
+1. Top Suricata Signatures
+2. MITRE Tactic Distribution
+3. MITRE Technique Frequency
+4. Alerts Over Time (Trend Analysis)
+5. Top Source IPs
+6. Alerts by Severity
+
+Design Goals:
+
+✔ Immediate threat visibility
+✔ Attack lifecycle context
+✔ Attacker prioritization
+✔ Alert spike detection
+✔ Severity awareness
+
+
+7. SOC TRIAGE WORKFLOW MODEL
+------------------------------------------------------------
+
+Traditional Model:
+Alert → Investigate → Manual Filtering → Slow Context Building
+
+Optimized Model:
+
+Dashboard Overview
+        ↓
+Identify Spike
+        ↓
+Check Signature
+        ↓
+Check Source IP
+        ↓
+Review MITRE Mapping
+        ↓
+Drill Down in Discover
+        ↓
+Escalate to TheHive
+
+Time to triage reduced significantly.
+
+
+8. SEPARATION OF TELEMETRY LAYERS
+------------------------------------------------------------
+
+SOC Telemetry Layers:
+
+Layer 1 – Network IDS (Suricata)
+Layer 2 – Endpoint Telemetry (Sysmon / Linux Sysmon)
+Layer 3 – Authentication Logs
+Layer 4 – Cloud Logs (CloudTrail)
+Layer 5 – Application Logs
+
+Part 3 enforces clean separation between:
+
+Network detection vs Host detection
+
+This improves SOC clarity and reporting.
+
+
+9. SCALABILITY MODEL
+------------------------------------------------------------
+
+To scale this architecture:
+
+- Deploy additional Suricata sensors
+- Add sensors to Suricata agent group
+- Maintain single shared configuration
+- Keep centralized rule management
+- Extend dashboard filters per subnet
+
+This model supports:
+
+✔ Multi-subnet environments
+✔ DMZ monitoring
+✔ Data center segmentation
+✔ Cloud network IDS deployment
+
+
+10. OPERATIONAL SECURITY BENEFITS
+------------------------------------------------------------
+
+✔ Faster triage
+✔ Reduced analyst fatigue
+✔ Clean detection classification
+✔ Improved incident escalation
+✔ Enterprise-grade configuration management
+✔ Clear auditability
+
+
+11. ARCHITECTURE MATURITY LEVEL
+------------------------------------------------------------
+
+Part 1:
+Basic IDS Deployment
+
+Part 2:
+Detection Engineering & Contextual Enrichment
+
+Part 3:
+Operational SOC Architecture & Scalability
+
+This progression reflects real-world SOC maturity.
+
+
+============================================================
+END OF PART 3 ARCHITECTURE NOTES
+============================================================
