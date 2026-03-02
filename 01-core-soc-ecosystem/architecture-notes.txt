@@ -1,0 +1,270 @@
+=====================================================================
+CORE SOC ECOSYSTEM – ARCHITECTURE NOTES
+Detection → Intelligence → Investigation
+AWS-Based Open-Source SOC Deployment
+=====================================================================
+
+1. PURPOSE OF THIS ARCHITECTURE
+---------------------------------------------------------------------
+
+This architecture demonstrates a complete Security Operations Center (SOC)
+workflow built using open-source tools on AWS.
+
+It connects:
+
+- Wazuh (Detection Layer)
+- MISP (Threat Intelligence Layer)
+- TheHive (Investigation & Case Management Layer)
+
+The goal is to transform raw security events into structured,
+intelligence-driven investigations.
+
+
+2. HIGH-LEVEL ARCHITECTURE OVERVIEW
+---------------------------------------------------------------------
+
+Core Flow:
+
+Endpoint → Wazuh → MISP → TheHive → SOC Analyst
+
+Functional Flow:
+
+Detection → Enrichment → Investigation → Case Management
+
+Each tool performs a distinct operational role in the SOC pipeline.
+
+
+3. LOGICAL ARCHITECTURE COMPONENTS
+---------------------------------------------------------------------
+
+A. WAZUH – Detection Engine
+
+Role:
+Security Information and Event Management (SIEM)
+
+Responsibilities:
+- Collect logs from endpoints and servers
+- Apply rule-based analysis
+- Generate alerts
+- Perform File Integrity Monitoring (FIM)
+- Map detections to MITRE ATT&CK
+- Provide dashboard visibility
+
+Output:
+Structured JSON alerts
+
+
+B. MISP – Threat Intelligence Platform
+
+Role:
+Centralized Threat Intelligence Repository
+
+Responsibilities:
+- Store Indicators of Compromise (IOCs)
+- Share threat intelligence
+- Correlate IPs, domains, file hashes
+- Provide enrichment context
+- Maintain intelligence lifecycle
+
+Output:
+Contextual intelligence data linked to alerts
+
+
+C. THEHIVE – Incident Investigation Platform
+
+Role:
+Case Management and Investigation Hub
+
+Responsibilities:
+- Convert alerts into cases
+- Assign cases to analysts
+- Track investigation progress
+- Store evidence
+- Maintain audit trail
+- Enable collaboration
+
+Output:
+Structured incident cases with resolution status
+
+
+4. DATA FLOW MODEL
+---------------------------------------------------------------------
+
+Step 1 – Log Collection
+
+Endpoints generate logs and events.
+Wazuh agents forward logs to Wazuh Manager.
+
+Step 2 – Detection
+
+Wazuh applies detection rules.
+If conditions match, an alert is generated.
+
+Step 3 – Intelligence Correlation
+
+Indicators from the alert (IP, hash, domain)
+are queried against MISP.
+
+If a match is found:
+- Alert severity increases
+- Threat context is added
+
+Step 4 – Case Creation
+
+Alert forwarded to TheHive.
+Case created with:
+- Observables
+- Alert metadata
+- Intelligence context
+
+Step 5 – Investigation
+
+SOC analyst:
+- Reviews evidence
+- Correlates related activity
+- Documents findings
+- Assigns resolution status
+
+
+5. TRUST BOUNDARIES
+---------------------------------------------------------------------
+
+Trust Boundary 1:
+Between endpoints and Wazuh
+Secured via agent authentication and encrypted communication.
+
+Trust Boundary 2:
+Between Wazuh and MISP
+Secured via API key authentication and HTTPS.
+
+Trust Boundary 3:
+Between Wazuh and TheHive
+Secured via API authentication and controlled access.
+
+Trust Boundary 4:
+Analyst access to platforms
+Controlled via role-based access control (RBAC).
+
+
+6. SECURITY CONTROLS IMPLEMENTED
+---------------------------------------------------------------------
+
+- API key-based authentication
+- HTTPS communication between services
+- Dedicated integration accounts
+- Restricted monitoring to high-risk directories
+- Rule-based alert filtering
+- Structured case documentation
+- Audit logging within TheHive
+
+
+7. PERFORMANCE CONSIDERATIONS
+---------------------------------------------------------------------
+
+Factors impacting performance:
+
+- Volume of endpoint logs
+- Detection rule complexity
+- Frequency of IOC queries to MISP
+- Network latency between instances
+- Alert forwarding rate to TheHive
+
+Mitigation strategies:
+
+- Restrict monitored directories
+- Limit enrichment to relevant indicators
+- Use filtered rule IDs for integrations
+- Deploy services on adequate AWS instance sizes
+
+
+8. FAILURE SCENARIOS
+---------------------------------------------------------------------
+
+Scenario 1:
+MISP unavailable
+Impact:
+Alerts generated without enrichment.
+
+Scenario 2:
+API authentication failure
+Impact:
+Integration stops.
+
+Scenario 3:
+High alert volume
+Impact:
+Investigation backlog.
+
+Scenario 4:
+Improper rule tuning
+Impact:
+False positives increase.
+
+Proper troubleshooting and rule tuning are critical to SOC stability.
+
+
+9. SCALABILITY MODEL
+---------------------------------------------------------------------
+
+In enterprise deployments:
+
+- Multiple Wazuh agents across environments
+- Centralized Wazuh manager cluster
+- Centralized MISP intelligence hub
+- Dedicated TheHive cluster for case handling
+- Role-based segmentation per team
+
+This model supports:
+
+- Multi-region operations
+- Large analyst teams
+- High event volumes
+
+
+10. SOC MATURITY IMPROVEMENT
+---------------------------------------------------------------------
+
+Without integration:
+
+- Alerts remain isolated
+- Manual correlation required
+- Limited context
+- Slower investigations
+
+With integration:
+
+- Automated intelligence enrichment
+- Structured investigation workflow
+- Documented incident lifecycle
+- Continuous intelligence improvement
+
+
+11. ARCHITECTURAL VALUE
+---------------------------------------------------------------------
+
+This architecture demonstrates:
+
+- Real-world SOC design principles
+- Clear separation of detection and investigation layers
+- Intelligence-driven security operations
+- Practical API-based integrations
+- Enterprise-style workflow modeling
+
+It mirrors modern blue team environments rather than lab-only setups.
+
+
+12. FINAL ARCHITECTURE STATE
+---------------------------------------------------------------------
+
+Detection Layer: Operational (Wazuh)
+Intelligence Layer: Integrated (MISP)
+Investigation Layer: Structured (TheHive)
+Workflow: Connected end-to-end
+SOC Model: Intelligence-driven and auditable
+
+This represents a complete open-source SOC ecosystem built on AWS.
+
+
+=====================================================================
+END OF ARCHITECTURE NOTES
+=====================================================================
