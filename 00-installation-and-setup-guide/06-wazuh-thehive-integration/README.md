@@ -2,7 +2,7 @@
 
 <div align="center">
 
- <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/wazuh.png" width="300"/>
+ <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh.png" width="300"/>
 
  <img src="https://docs.strangebee.com/thehive/images/overview/thehive.svg" width="300"/>
 
