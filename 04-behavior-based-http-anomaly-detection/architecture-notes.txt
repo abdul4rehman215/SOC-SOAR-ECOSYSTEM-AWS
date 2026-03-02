@@ -3,7 +3,7 @@ Architecture Notes
 Wazuh + OpenSearch ML + Slack + TheHive
 
 --------------------------------------------------
-1. HIGH-LEVEL ARCHITECTURE
+1. ARCHITECTURE
 --------------------------------------------------
 
 Attacker (Kali Linux)
