@@ -1,0 +1,249 @@
+========================================================
+AWS CLOUDTRAIL + WAZUH EC2 MONITORING
+ARCHITECTURE NOTES (SOC ENGINEERING EXPLANATION)
+========================================================
+
+
+1️⃣ HIGH-LEVEL ARCHITECTURE FLOW
+--------------------------------------------------------
+
+AWS CloudTrail
+        ↓
+Amazon S3 (Central Log Storage)
+        ↓
+IAM Role (EC2 Secure Access)
+        ↓
+Wazuh aws-s3 Wodle
+        ↓
+Wazuh Manager (Log Processing & Rule Matching)
+        ↓
+Wazuh Dashboard (Visualization & Investigation)
+
+
+
+2️⃣ COMPONENT BREAKDOWN
+--------------------------------------------------------
+
+A) AWS CloudTrail
+
+Purpose:
+Captures all AWS API activity across the account.
+
+What it logs:
+- EC2 StartInstances
+- StopInstances
+- TerminateInstances
+- RebootInstances
+- ConsoleLogin
+- IAM changes
+- Security Group modifications
+
+Why critical:
+CloudTrail provides audit-level visibility into AWS management activity.
+Without it, cloud API actions are invisible.
+
+
+--------------------------------------------------------
+
+B) Amazon S3 (CloudTrail Log Storage)
+
+Purpose:
+Stores CloudTrail logs in JSON format.
+
+Security Controls Enabled:
+- Log file validation
+- SSE-KMS encryption
+
+Why important:
+CloudTrail does not retain logs long-term unless stored in S3.
+S3 acts as centralized, tamper-resistant audit storage.
+
+
+--------------------------------------------------------
+
+C) IAM Role (EC2 Trust Relationship)
+
+Trusted Entity:
+EC2
+
+Policy Attached:
+AmazonS3ReadOnlyAccess
+
+Purpose:
+Allows the Wazuh Manager EC2 instance to read CloudTrail logs securely.
+
+Why this design matters:
+- No hardcoded AWS keys
+- No exposed credentials
+- Follows least-privilege principle
+- Production-grade secure architecture
+
+
+--------------------------------------------------------
+
+D) Wazuh aws-s3 Wodle
+
+Location:
+Inside /var/ossec/etc/ossec.conf
+
+Function:
+- Connects to S3
+- Pulls CloudTrail logs every 1 minute
+- Parses JSON format
+- Sends events into Wazuh pipeline
+
+Important Settings:
+
+<interval>1m</interval>
+Ensures near real-time ingestion.
+
+<run_on_start>yes</run_on_start>
+Triggers immediate ingestion on service restart.
+
+<bucket type="cloudtrail">
+Ensures correct JSON parsing logic.
+
+
+--------------------------------------------------------
+
+E) Wazuh Manager
+
+Function:
+- Receives parsed CloudTrail events
+- Applies built-in AWS decoders
+- Matches events against rules
+- Assigns severity level
+- Maps MITRE techniques (if applicable)
+
+Example Event Flow:
+
+CloudTrail JSON
+   → Decoder
+   → Rule Matching
+   → Alert Level Assigned
+   → Indexed in OpenSearch
+
+
+--------------------------------------------------------
+
+F) Wazuh Dashboard
+
+Purpose:
+- Visualization
+- Filtering
+- Timeline analysis
+- SOC investigation
+
+Fields Visible:
+- eventName (StartInstances, StopInstances)
+- aws.accountId
+- userIdentity
+- sourceIPAddress
+- eventTime
+- region
+
+SOC can:
+- Detect unusual instance activity
+- Identify compromised credentials
+- Investigate suspicious IP addresses
+
+
+
+3️⃣ DATA FLOW TIMING
+--------------------------------------------------------
+
+CloudTrail Event Generated
+        ↓ (usually seconds)
+Delivered to S3
+        ↓
+Wazuh Polls Every 60 Seconds
+        ↓
+Event Appears in Dashboard
+
+Average Detection Delay:
+~1–2 minutes
+
+This is acceptable for management-level monitoring.
+
+
+
+4️⃣ SECURITY DESIGN DECISIONS
+--------------------------------------------------------
+
+✔ Used IAM Role instead of AWS Access Keys
+✔ Used ReadOnly policy (least privilege)
+✔ Enabled Log Validation
+✔ Enabled Encryption at Rest
+✔ Multi-region CloudTrail
+✔ Near real-time ingestion interval
+
+This mirrors production SOC cloud design.
+
+
+
+5️⃣ DETECTION ENGINEERING PERSPECTIVE
+--------------------------------------------------------
+
+CloudTrail provides visibility.
+Wazuh provides detection logic.
+
+Examples:
+
+If EventName = TerminateInstances
+→ High severity
+
+If ConsoleLogin from unusual IP
+→ Investigate
+
+If Instance launched in unexpected region
+→ Policy violation
+
+This project enables writing detection logic on top of cloud telemetry.
+
+
+
+6️⃣ REAL SOC SCENARIO
+--------------------------------------------------------
+
+Scenario 1:
+Attacker gains AWS credentials.
+Stops production EC2 instance.
+
+CloudTrail logs:
+EventName: StopInstances
+
+Wazuh ingests.
+SOC sees:
+- userIdentity
+- sourceIPAddress
+- time
+- region
+
+Immediate investigation triggered.
+
+
+Scenario 2:
+Insider launches unauthorized instance.
+CloudTrail logs:
+EventName: RunInstances
+
+Wazuh logs and dashboard visualization show anomaly.
+
+
+
+7️⃣ LIMITATIONS OF THIS DESIGN
+--------------------------------------------------------
+
+- Polling-based ingestion (not push-based)
+- 1-minute delay possible
+- Depends on CloudTrail log delivery timing
+- No real-time AWS EventBridge integration
+
+However:
+This setup is realistic for SIEM-based cloud monitoring.
+
+
+
+========================================================
+END OF ARCHITECTURE NOTES
+========================================================
