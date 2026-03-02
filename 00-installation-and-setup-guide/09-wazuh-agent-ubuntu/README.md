@@ -141,12 +141,12 @@ In Dashboard:
 
 # 🏁 Result
 
-✔ Agent installed
-✔ Enrollment successful
-✔ Agent visible in dashboard
-✔ FIM enabled
-✔ Rootcheck enabled
-✔ Log collection active
+- ✔ Agent installed
+- ✔ Enrollment successful
+- ✔ Agent visible in dashboard
+- ✔ FIM enabled
+- ✔ Rootcheck enabled
+- ✔ Log collection active
 
 The endpoint is now fully integrated into the SOC.
 
