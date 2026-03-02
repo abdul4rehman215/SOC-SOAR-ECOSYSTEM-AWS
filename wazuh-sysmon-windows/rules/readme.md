@@ -41,13 +41,13 @@ It:
 
 This version includes:
 
-✔ Proper Event 22 matching
-✔ LSASS access detection
-✔ Suspicious DNS detection
-✔ LOLBins detection
-✔ Encoded PowerShell detection
-✔ MITRE mapping
-✔ Clean grouping
+- ✔ Proper Event 22 matching
+- ✔ LSASS access detection
+- ✔ Suspicious DNS detection
+- ✔ LOLBins detection
+- ✔ Encoded PowerShell detection
+- ✔ MITRE mapping
+- ✔ Clean grouping
 
 ---
 
