@@ -17,7 +17,7 @@ To design and validate a SOC-style detection pipeline that:
 - Sends real-time alerts to Slack  
 - Demonstrates practical alert engineering  
 
-This is not just tool setup — it is detection design.
+This is not just tool setup — it is detection engineering.
 
 ---
 
