@@ -1,8 +1,8 @@
-# 🔐 SSH Brute Force Detection & Real-Time Alerting
-### Wazuh + Slack + Kali Linux (End-to-End SOC Lab)
+# 🔐 SSH Brute Force Detection & Real-Time Alerting  
+### Wazuh + Slack + Kali Linux (SOC Detection Engineering Lab)
 
-> This project demonstrates how a real Security Operations Center (SOC) detects, correlates, and escalates SSH brute force attacks in real time.
-> It simulates attacker behavior, engineers detection logic in Wazuh, and delivers instant alerts to Slack — reflecting how modern blue teams monitor authentication abuse.
+> This project simulates a real-world SSH brute force attack and demonstrates how a SOC detects, correlates, and escalates authentication abuse in real time using Wazuh and Slack.
+> This is not just tool configuration — it is alert engineering and detection design.
 
 ---
 
@@ -10,14 +10,13 @@
 
 To design and validate a SOC-style detection pipeline that:
 
-- Simulates an SSH brute force attack  
-- Detects repeated authentication failures  
-- Applies threshold-based alerting logic  
-- Groups events by attacker IP  
-- Sends real-time alerts to Slack  
-- Demonstrates practical alert engineering  
-
-This is not just tool setup — it is detection engineering.
+- Simulates SSH brute force behavior
+- Detects repeated authentication failures
+- Applies time-based threshold logic
+- Groups events by attacker source IP
+- Reduces alert noise
+- Sends real-time alerts to Slack
+- Demonstrates practical blue team monitoring
 
 ---
 
@@ -25,164 +24,285 @@ This is not just tool setup — it is detection engineering.
 
 | Component | Role |
 |------------|------|
-| Wazuh Manager | Log ingestion & alert engine |
-| Ubuntu Client | Victim system (Wazuh Agent installed) |
+| Wazuh Manager | Log analysis & alert engine |
+| Ubuntu Client | Victim system (SSH service running) |
 | Kali Linux | Attacker machine |
-| Slack | Real-time SOC notification channel |
+| Slack | Real-time SOC alert channel |
 
-Detection Flow:
+### Detection Flow
 
-Kali → Ubuntu (SSH failures)  
+Kali → Ubuntu (SSH failures logged)  
 Ubuntu → Wazuh Agent → Wazuh Manager  
-Wazuh → Alert Trigger → Slack  
+Wazuh → Monitor Trigger → Slack Notification  
 
 ---
 
-# 🧠 What This Project Demonstrates
+# 📊 Detection Engineering Logic
 
-- ✔ Event correlation  
-- ✔ Threshold-based detection logic  
-- ✔ Log filtering & severity tuning  
-- ✔ Source IP grouping  
-- ✔ Real-time alert delivery  
-- ✔ SOC workflow simulation  
+The alert is engineered using:
 
-This reflects real enterprise authentication monitoring.
+- Metric: Count of documents  
+- Time Window: 1 minute  
+- Filter: rule.id = 100300 (SSH invalid user)  
+- Severity: rule.level ≥ 5  
+- Group By: data.srcip  
+- Threshold: Count > 5  
 
----
-
-# 📊 Detection Logic Design
-
-The detection is engineered using:
-
-- Count of SSH authentication failures  
-- 1-minute rolling time window  
-- Grouping by attacker source IP  
-- Severity filtering (rule.level ≥ 5)  
-- Threshold trigger (count > 5)
-
-This reduces noise while detecting true attack patterns.
+This ensures detection is behavior-based, not event-based.
 
 ---
 
-# 📂 Visual Setup Guide (Step-by-Step Screenshots)
-
-For full dashboard walkthrough and configuration screenshots:
-
-👉 **View the complete visual setup guide [PDF version of this project](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/02-wazuh-ssh-bruteforce-alerting-lab/Wazuh%20Alerting%20Setup%20SSH%20Brute%20Force%20Simulation.pdf)**
-
-This includes:
-
-- Slack webhook setup  
-- Wazuh monitor creation  
-- Trigger configuration  
-- Alert output validation  
-- Attack simulation screenshots  
+# 🧩 Step-by-Step Implementation
 
 ---
 
-# 🛠 Infrastructure Setup Summary
+## 🖥 Step 1: Validate SSH Log Collection
 
-You need:
+On the Ubuntu client:
 
-- Wazuh Manager (Server)  
-- Ubuntu Client (Victim + Wazuh Agent)  
-- Kali Linux (Attacker)  
-- Slack Workspace  
+```bash
+sudo tail -f /var/log/auth.log
+````
 
-All systems must be reachable via private network.
+From Kali:
 
----
+```bash
+ssh invaliduser@CLIENT_IP
+```
 
-# 🔔 Slack Integration Overview
+Confirm logs appear in `/var/log/auth.log`.
 
-Slack is configured via:
+Verify SSH events are visible in:
 
-- Incoming Webhooks  
-- Dedicated SOC channel (#soc-alerts)  
-- Wazuh notification channel  
-- Per-alert action trigger  
-
-This enables immediate analyst visibility.
+Wazuh → Security Events
+Filter: rule.id:100300
 
 ---
 
-# 🚨 Attack Simulation
+# 💬 Step 2: Slack Setup (Full Configuration Guide)
+
+### 2.1 Create Slack App
+
+1. Go to Slack API Portal
+2. Click **Create New App**
+3. Choose Workspace
+4. Name the app: `Wazuh-SOC-Alerts`
+
+---
+
+### 2.2 Enable Incoming Webhooks
+
+1. Open your Slack App
+2. Go to **Incoming Webhooks**
+3. Enable Incoming Webhooks
+4. Click **Add New Webhook to Workspace**
+5. Select channel (e.g., `#soc-alerts`)
+6. Authorize app
+7. Copy generated Webhook URL
+
+⚠ Keep webhook URL confidential.
+
+---
+
+### 2.3 Verify Slack Channel
+
+Ensure:
+
+* Dedicated SOC channel exists
+* App is authorized to post messages
+* Test message is successfully delivered
+
+---
+
+# 🔔 Step 3: Create Slack Notification Channel in Wazuh
+
+In Wazuh Dashboard:
+
+1. Go to → Alerting → Destinations / Channels
+2. Click → Create Channel
+3. Select → Slack
+4. Paste Webhook URL
+5. Click → Test
+6. Save
+
+Confirm test message appears in Slack.
+
+---
+
+# 🚨 Step 4: Create SSH Brute Force Detection Monitor
+
+Navigate:
+
+Alerting → Monitors → Create Monitor
+
+Select:
+
+* Per Bucket Monitor
+* Visual Editor
+* Run Every: 1 minute
+
+---
+
+# 📂 Step 5: Configure Data Source
+
+Set:
+
+* Cluster: Local
+* Index: wazuh-alerts-*
+* Time Field: @timestamp
+
+---
+
+# 🎯 Step 6: Configure Detection Query
+
+Metric:
+
+* Count of Documents
+
+Time Range:
+
+* Last 1 minute
+
+Filters:
+
+* rule.id = 100300
+* rule.level ≥ 5
+
+Group By:
+
+* data.srcip
+
+This groups failures per attacker IP.
+
+---
+
+# ⚡ Step 7: Configure Alert Trigger
+
+Create Trigger:
+
+* Name: SSH Brute Force Alert
+* Severity: High
+* Condition:
+  Count of documents IS ABOVE 5
+
+Meaning:
+
+If more than 5 SSH failures from same IP within 1 minute → trigger alert.
+
+---
+
+# 📢 Step 8: Attach Slack Notification Action
+
+Under Actions:
+
+* Select Slack Channel created earlier
+* Action Type: Per Alert
+* Enable Deduplication
+
+Save monitor.
+
+---
+
+# 🧪 Step 9: Simulate SSH Brute Force Attack
 
 From Kali:
 
 ```bash
 for i in {1..10}; do ssh fakeuser@CLIENT_IP; done
-````
+```
 
-Wazuh detects:
+Ubuntu logs:
 
-Invalid user fakeuser from <ATTACKER_IP>
-
-Alert triggers when:
-
-> More than 5 failures within 1 minute from same IP.
-
-Slack receives:
-
-- Alert name
-- Severity
-- Time window
-- Attacker IP
-- Alert status
+```
+Invalid user fakeuser from ATTACKER_IP
+```
 
 ---
 
-# 📈 Real-World Use Case
+# ✅ Step 10: Validate Detection
 
-This detection logic applies to:
+Check:
 
-- SSH brute force attacks
-- Credential stuffing attempts
-- Automated bot scanning
-- Internal lateral movement attempts
-- Password spraying
+Wazuh → Alerting → Alerts
 
-SOC teams use similar correlation logic in production.
+You should see:
+
+* SSH Brute Force Alert
+* Attacker IP
+* Trigger State: Active
 
 ---
 
-# 🔐 Why Grouping by Source IP Matters
+# 📲 Step 11: Confirm Slack Alert
 
-Without grouping:
-Each failed login triggers separate noise.
+Slack channel should display:
 
-With grouping:
-You detect patterns — not single events.
+* Alert Name
+* Severity
+* Time Window
+* Attacker IP
+* Alert Status
 
-This reflects real detection engineering principles.
+This confirms full pipeline.
+
+---
+
+# 📂 Visual Setup Guide (Screenshots Included)
+
+For complete dashboard walkthrough and screenshots:
+
+👉 **[View the full visual project guide (PDF)](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/02-wazuh-ssh-bruteforce-alerting-lab/Wazuh%20Alerting%20Setup%20SSH%20Brute%20Force%20Simulation.pdf)**
+
+---
+
+# 📈 Real-World SOC Use Case
+
+This detection model applies to:
+
+* SSH brute force attacks
+* Password spraying
+* Credential stuffing
+* Bot scanning activity
+* Internal reconnaissance attempts
+
+It reflects authentication abuse monitoring used in enterprise SOCs.
+
+---
+
+# 🔐 Why This Detection Design Matters
+
+Without correlation:
+Each failed login creates noise.
+
+With correlation:
+You detect patterns.
+
+This reduces false positives and alert fatigue.
 
 ---
 
 # 🏁 Final Outcome
 
-This lab successfully demonstrates:
+This lab demonstrates:
 
-- Attack simulation
-- Log ingestion
-- Alert engineering
-- Threshold tuning
-- Event correlation
-- Real-time SOC notification
-- Blue team defensive monitoring
-
-This mirrors practical SOC operations.
+* Attack simulation
+* Log ingestion
+* Detection engineering
+* Threshold tuning
+* Event correlation
+* Real-time SOC notification
+* Blue team workflow design
 
 ---
 
 # 📚 Skills Demonstrated
 
-- Wazuh SIEM configuration
-- Linux log analysis
-- SSH attack detection
-- Alert tuning & threshold logic
-- Slack webhook integration
-- SOC monitoring workflow design
+* Wazuh alert engineering
+* Linux log analysis
+* SSH attack detection
+* Time-window threshold logic
+* Slack webhook integration
+* SOC monitoring workflow
 
 ---
 
@@ -200,52 +320,26 @@ This mirrors practical SOC operations.
 
 ---
 
-# 🔗 Full Installation & Platform Setup Guides
+# 🔗 Full SOC Platform Setup
 
-For complete Wazuh installation and ecosystem setup:
+For complete ecosystem installation guides:
 
-👉 **[View the full SOC installation & integration guide here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide)**
+👉 [View the full SOC installation & integration guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/00-installation-and-setup-guide)
 
 ---
 
-# 🎓 Why This Project Matters
+# 🎓 Why This Project Stands Out
 
-Most labs show alerts.
+Most labs stop at detection.
 
 This project shows:
 
-- How alerts are engineered.
-- Why thresholds matter.
-- How noise is reduced.
-- How alerts are escalated.
-- How SOC teams monitor authentication abuse in production.
+* Detection design thinking
+* Threshold engineering
+* Noise reduction strategy
+* Pattern-based correlation
+* Real-time escalation workflow
 
-It demonstrates detection thinking — not just configuration.
-
----
-
-# 💼 Ideal For Roles
-
-- SOC Analyst
-- Blue Team Engineer
-- Detection Engineer
-- Security Operations Intern
-- Cybersecurity Analyst
-
----
-
-# 🏁 Capstone-Level Insight
-
-This project shows that effective detection is not about counting logs.
-
-It is about:
-
-- Context
-- Patterns
-- Thresholds
-- Correlation
-- Escalation
-
-That is real SOC engineering.
+This reflects real SOC practice — not just configuration.
 
 ---
