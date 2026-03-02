@@ -1,6 +1,6 @@
 # 🛡️ Sysmon for Linux + Wazuh SIEM
 
-## Endpoint Telemetry & Threat Detection Engineering (SOC-Ready)
+## Endpoint Telemetry & Threat Detection Engineering
 
 ---
 
@@ -15,24 +15,23 @@ It transforms:
 This mirrors how modern SOC teams implement Linux endpoint monitoring in production environments.
 
 📄 **Full Project Walkthrough (PDF Documentation)**
-👉 *[View the complete project PDF here]*
-(You will embed your uploaded PDF link here.)
+
+👉 **[View the complete project PDF here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/07-sysmon-linux-endpoint-detection/Sysmon%20Linux%20Wazuh%20Endpoint%20Telemetry%20and%20Detection.pdf)**
 
 ---
 
 ## 🖼 Architecture Diagram
 
-(Add your architecture image here)
+<div align="center">
 
-```html
-<img src="YOUR_ARCHITECTURE_IMAGE_LINK_HERE" width="800">
-```
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Security%20monitoring%20architecture%20diagram.png" width="800">
+
+</div>
 
 This architecture shows:
 
 * Linux Endpoint running Sysmon (eBPF-based telemetry)
-* Logs sent via Syslog/Journald
-* Wazuh Agent forwarding securely
+* Logs forwarding securely
 * Wazuh Manager decoding & applying detection rules
 * Alerts visualized in Dashboard (and optionally escalated)
 
@@ -72,11 +71,11 @@ But often lack:
 
 This project demonstrates how to:
 
-✔ Collect deep endpoint visibility
-✔ Engineer structured decoding
-✔ Reduce telemetry noise
-✔ Detect real attacker techniques
-✔ Validate detections like a SOC engineer
+- ✔ Collect deep endpoint visibility
+- ✔ Engineer structured decoding
+- ✔ Reduce telemetry noise
+- ✔ Detect real attacker techniques
+- ✔ Validate detections like a SOC engineer
 
 ---
 
@@ -272,7 +271,7 @@ Save file:
 /var/ossec/etc/rules/sysmon_linux_complete_rules.xml
 ```
 
-(Use the full production ruleset you already created above.)
+(Use the full production ruleset provided in the rules/ folder.)
 
 Validate:
 
@@ -308,8 +307,8 @@ Action taken:
 
 Result:
 
-✔ 80–90% alert reduction
-✔ High-signal detection environment
+- ✔ 80–90% alert reduction
+- ✔ High-signal detection environment
 
 ---
 
@@ -357,10 +356,10 @@ sudo touch /etc/systemd/system/evil.service
 
 Expected:
 
-✔ Rule ID triggered
-✔ Level 10 severity
-✔ MITRE mapped
-✔ Visible in Dashboard
+- ✔ Rule ID triggered
+- ✔ Level 10 severity
+- ✔ MITRE mapped
+- ✔ Visible in Dashboard
 
 ---
 
