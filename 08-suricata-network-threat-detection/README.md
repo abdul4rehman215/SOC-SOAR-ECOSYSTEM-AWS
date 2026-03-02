@@ -5,6 +5,14 @@
 ![Wazuh](https://img.shields.io/badge/SIEM-Wazuh-green)
 ![MITRE](https://img.shields.io/badge/MITRE-ATT%26CK-red)
 
+
+<div align="center">
+
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/230919-suricata-diagram5.png" width="800">
+
+</div>
+
+
 # Network Threat Detection & Detection Engineering in a SOC Ecosystem
 
 ---
@@ -76,7 +84,13 @@ IR Case Forwarding
 
 # 🏗️ Architecture
 
-(You will embed the architecture image manually using `<img src=...>`)
+<div align="center">
+
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Network%20security%20integration%20diagram.png" width="800">
+
+</div>
+
+
 
 Conceptual Flow:
 
@@ -628,9 +642,9 @@ It demonstrates hands-on capability in:
 
 Full implementation details, screenshots, validation evidence, and dashboard exports are available in:
 
-🔗 **[Suricata + Wazuh SOC Implementation PDF](ADD_YOUR_PDF_LINK_HERE)**  
+🔗 **[Suricata + Wazuh SOC Implementation PDF](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/08-suricata-network-threat-detection/docs/Implementation%20of%20Suricata%20IDS%20with%20Wazuh%20SIEM.pdf)**  
 
-🔗 **[Custom-Rule-Decoder](ADD_YOUR_PDF_LINK_HERE)**  
+🔗 **[Custom-Rule-Decoder](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/08-suricata-network-threat-detection/docs/Wazuh%20Suricata%20Custom%20Rules%20and%20Decoders.pdf)**  
 
 ---
 
