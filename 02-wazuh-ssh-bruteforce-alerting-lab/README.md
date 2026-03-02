@@ -196,7 +196,7 @@ This mirrors practical SOC operations.
 ├── architecture-notes.txt
 ├── interview_qna.md
 ├── troubleshooting.md
-└── SSH-Brute-Force-Detection-Project.pdf
+└── Wazuh-Alerting-Setup-SSH-Brute-Force-Simulation.pdf
 ```
 
 ---
