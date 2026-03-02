@@ -376,14 +376,14 @@ Credential leakage.
 
 Before escalation, verify:
 
-✔ API key valid
-✔ HTTPS working
-✔ Correct URL
-✔ Proper permissions
-✔ Filters configured correctly
-✔ Polling interval reasonable
-✔ Firewall not blocking
-✔ Certificate trusted
+- ✔ API key valid
+- ✔ HTTPS working
+- ✔ Correct URL
+- ✔ Proper permissions
+- ✔ Filters configured correctly
+- ✔ Polling interval reasonable
+- ✔ Firewall not blocking
+- ✔ Certificate trusted
 
 ---
 
