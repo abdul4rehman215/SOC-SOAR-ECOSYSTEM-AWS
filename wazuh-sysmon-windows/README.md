@@ -161,7 +161,7 @@ Event Viewer → Microsoft → Windows → Sysmon → Operational
 
 ---
 
-# 🧩 PART 4 – Custom Wazuh Rules
+# 🧩 PART 3 – Custom Wazuh Rules
 
 Location on Manager:
 
@@ -274,9 +274,6 @@ wazuh-sysmon-windows/
 ├── architecture-notes.txt
 ├── interview_qna.md
 ├── troubleshooting.md
-│
-├── sysmon/
-│   ├── sysmon_config.xml
 │
 ├── rules/
 │   ├── sysmon_custom_v1.xml
