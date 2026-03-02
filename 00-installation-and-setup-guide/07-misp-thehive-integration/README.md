@@ -75,6 +75,17 @@ This creates a **closed intelligence loop**.
 
 ---
 
+
+# 📂 Repository Structure
+```
+07-misp-thehive-integration/
+├── README.md
+├── troubleshooting.md
+├── architecture-notes.txt
+└── interview_qna.md
+```
+---
+
 # 🔐 STEP 1 – Generate API Key in MISP (GUI)
 
 TheHive connects to MISP using an API key.
