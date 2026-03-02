@@ -47,10 +47,10 @@ Traditional lab setups focus on tools individually.
 
 This project focuses on:
 
-✔ How alerts move across platforms
-✔ How intelligence adds context
-✔ How investigations are structured
-✔ How analysts work in real SOC workflows
+- ✔ How alerts move across platforms
+- ✔ How intelligence adds context
+- ✔ How investigations are structured
+- ✔ How analysts work in real SOC workflows
 
 It answers three core questions:
 
