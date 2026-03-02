@@ -1,0 +1,301 @@
+=====================================================================
+WAZUH ↔ MISP INTEGRATION – ARCHITECTURE NOTES
+Threat-Intelligence Driven File Hash Detection
+AWS SOC Lab Deployment
+=====================================================================
+
+
+1. ROLE IN SOC ECOSYSTEM
+---------------------------------------------------------------------
+
+This integration connects Detection with Threat Intelligence.
+
+Position in SOC Stack:
+
+Endpoint
+↓
+Wazuh Agent (File Integrity Monitoring)
+↓
+Wazuh Manager (Correlation Engine)
+↓
+MISP (Threat Intelligence Platform)
+↓
+Enriched Detection
+↓
+TheHive (Incident Response)
+
+This integration does NOT collect logs.
+This integration does NOT perform malware analysis.
+This integration performs intelligence correlation of file hashes.
+
+
+---------------------------------------------------------------------
+2. HIGH-LEVEL ARCHITECTURE OVERVIEW
+---------------------------------------------------------------------
+
+Integration Type:
+Custom Python Integration Script (Wazuh Integrator Module)
+
+Communication Method:
+- HTTPS REST API
+- API Key Authentication
+- JSON payload exchange
+
+Trigger Event:
+Syscheck event (Rule ID 554 – File Creation)
+
+Detection Flow:
+
+File Created
+↓
+Wazuh Agent extracts hashes
+↓
+Wazuh Manager triggers integration
+↓
+Script queries MISP
+↓
+If match found → enriched JSON returned
+↓
+Custom rule escalates alert severity
+
+
+---------------------------------------------------------------------
+3. CORE COMPONENTS
+---------------------------------------------------------------------
+
+1. Wazuh Agent
+
+- Monitors filesystem changes (FIM)
+- Calculates MD5, SHA1, SHA256
+- Sends event to Wazuh Manager
+
+2. Wazuh Manager
+
+- Receives syscheck event (ID 554)
+- Executes Integrator module
+- Passes alert JSON to custom script
+- Processes returned enrichment
+- Applies custom rules
+
+3. Custom Integration Script
+
+Location:
+ /var/ossec/integrations/custom-misp-file-hashes.py
+
+Responsibilities:
+- Extract file hashes from alert JSON
+- Query MISP REST API
+- Parse response
+- Return structured enrichment to Wazuh
+
+4. MISP Server
+
+- Stores intelligence events
+- Contains malicious hash attributes
+- Exposes REST API endpoint:
+/attributes/restSearch
+- Authenticates via API key
+
+
+---------------------------------------------------------------------
+4. DATA FLOW (DETAILED)
+---------------------------------------------------------------------
+
+Step 1:
+File created on monitored endpoint.
+
+Step 2:
+Wazuh Agent generates syscheck alert (Rule 554).
+
+Step 3:
+Wazuh Manager executes integration block:
+
+<integration>
+  name=custom-misp-file-hashes.py
+  group=syscheck
+  rule_id=554
+</integration>
+
+Step 4:
+Script extracts:
+- md5_after
+- sha1_after
+- sha256_after
+
+Step 5:
+Script sends POST request to:
+
+https://MISP_IP/attributes/restSearch
+
+Payload:
+{
+  "value": [hashes],
+  "type": [hash_types],
+  "to_ids": 1,
+  "limit": 1
+}
+
+Step 6:
+MISP returns matching attribute if exists.
+
+Step 7:
+Script sends structured message back to Wazuh:
+
+{
+  "integration": "misp_file_hashes",
+  "misp_file_hashes": {
+      "found": 1,
+      "type": "...",
+      "value": "...",
+      "event_uuid": "...",
+      "attribute_uuid": "...",
+      "permalink": "..."
+  }
+}
+
+Step 8:
+Wazuh custom rule 100802 triggers.
+
+Step 9:
+High-severity detection generated (Level 12).
+
+
+---------------------------------------------------------------------
+5. RULE ARCHITECTURE
+---------------------------------------------------------------------
+
+Base Rule:
+100800 – Detect integration execution
+
+Branch Rules:
+
+100801 – Hash Not Found
+100802 – Hash Matched (Level 12 escalation)
+100803 – Invalid API key (403)
+100804 – Rate Limit (429)
+100805 – MISP Internal Error (500)
+
+Purpose:
+Separate operational failures from detection logic.
+
+
+---------------------------------------------------------------------
+6. SECURITY ARCHITECTURE
+---------------------------------------------------------------------
+
+Trust Boundary 1:
+Between Wazuh Manager and MISP Server
+
+Secured By:
+- HTTPS
+- API Key Authentication
+- Network firewall restrictions
+
+Trust Boundary 2:
+Between Endpoint and Wazuh
+
+Secured By:
+- Agent authentication keys
+- Encrypted communication
+
+Best Practices:
+- Use dedicated MISP integration account
+- Restrict API key by IP
+- Rotate keys periodically
+- Avoid admin-level API keys
+- Monitor integrations.log
+
+
+---------------------------------------------------------------------
+7. PERFORMANCE CONSIDERATIONS
+---------------------------------------------------------------------
+
+Factors affecting performance:
+
+- File creation frequency
+- MISP server latency
+- Network RTT
+- Polling frequency
+- Attribute database size
+
+High file churn environments may:
+- Increase API requests
+- Trigger rate limiting (429)
+
+Mitigation:
+- Restrict monitored directories
+- Use to_ids=1 filter
+- Limit payload size
+- Apply rule_id filtering
+
+
+---------------------------------------------------------------------
+8. FAILURE SCENARIOS
+---------------------------------------------------------------------
+
+Scenario 1: Invalid API Key
+Result: Rule 100803 triggered
+
+Scenario 2: Rate Limit Exceeded
+Result: Rule 100804 triggered
+
+Scenario 3: MISP Server Down
+Result: No enrichment returned
+
+Scenario 4: No Hash Match
+Result: Rule 100801 triggered (no escalation)
+
+Scenario 5: Script permission error
+Result: Integration not executed
+
+
+---------------------------------------------------------------------
+9. SOC OPERATIONAL IMPACT
+---------------------------------------------------------------------
+
+Before Integration:
+
+- File creation alerts noisy
+- Manual hash lookup required
+- No intelligence context
+- Slower investigation
+
+After Integration:
+
+- Automatic hash correlation
+- Global threat intelligence enrichment
+- High-confidence detections
+- Faster triage
+- Reduced false positives
+
+This converts Wazuh from:
+
+File Monitoring Engine
+
+into:
+
+Intelligence-Aware Detection Engine
+
+
+---------------------------------------------------------------------
+10. ARCHITECTURAL SUMMARY
+---------------------------------------------------------------------
+
+Wazuh = Detection Engine
+MISP  = Intelligence Validation Layer
+TheHive = Incident Response Platform
+
+Together:
+
+File Event
+→ Hash Extraction
+→ Intelligence Correlation
+→ High-Confidence Detection
+→ Case Management
+
+This represents a modern SOC detection architecture using open-source tools.
+
+
+=====================================================================
+END OF ARCHITECTURE NOTES
+=====================================================================
