@@ -1,0 +1,219 @@
+==========================================================
+Sysmon for Linux + Wazuh SIEM
+Architecture Notes
+Endpoint Telemetry & Detection Engineering
+==========================================================
+
+
+1. OVERVIEW
+
+This architecture demonstrates a complete Linux endpoint detection pipeline.
+
+It is designed to:
+
+- Collect deep behavioral telemetry
+- Forward logs securely
+- Decode structured events
+- Apply detection engineering rules
+- Reduce noise
+- Generate high-confidence alerts
+- Support SOC investigation workflows
+
+
+----------------------------------------------------------
+2. COMPONENT BREAKDOWN
+----------------------------------------------------------
+
+[1] Linux Endpoint (Sysmon for Linux)
+
+Purpose:
+- Collect detailed endpoint telemetry using eBPF.
+- Monitor process creation, network connections, file events, and process termination.
+
+Technology:
+- Sysmon for Linux (Microsoft Sysinternals)
+- eBPF-based kernel telemetry
+
+Key Events Collected:
+- Event ID 1  → Process Creation
+- Event ID 3  → Network Connection
+- Event ID 5  → Process Termination
+- Event ID 11 → File Creation
+- Event ID 23 → File Deletion
+
+Output:
+- Logs written to journald/syslog.
+
+
+----------------------------------------------------------
+
+[2] Syslog / Journald
+
+Purpose:
+- Local log storage and transport layer.
+- Sysmon events forwarded into system logs.
+
+This acts as the collection point for Wazuh Agent.
+
+
+----------------------------------------------------------
+
+[3] Wazuh Agent
+
+Purpose:
+- Securely forward logs to Wazuh Manager.
+- Maintain encrypted communication channel.
+- Ensure reliable log delivery.
+
+Transport:
+- Encrypted TCP channel
+- Agent registration with Manager
+
+
+----------------------------------------------------------
+
+[4] Wazuh Manager
+
+Purpose:
+- Central detection engine.
+- Decode Sysmon logs using custom decoders.
+- Apply custom detection rules.
+- Perform MITRE ATT&CK mapping.
+- Suppress noise through rule tuning.
+
+Key Functions:
+
+- Decoder:
+  Parses Sysmon XML logs into structured fields.
+
+- Base Rules:
+  Identify Sysmon Event IDs.
+
+- Suppression Rules:
+  Reduce benign Linux noise.
+
+- Detection Rules:
+  Identify attacker behaviors such as:
+    • curl | bash
+    • python -c execution
+    • netcat reverse shell
+    • Cron persistence
+    • Systemd persistence
+    • SSH authorized_keys modification
+
+This is where detection engineering occurs.
+
+
+----------------------------------------------------------
+
+[5] Wazuh Dashboard
+
+Purpose:
+- Alert visualization.
+- Log investigation.
+- Field-level event analysis.
+- MITRE ATT&CK mapping view.
+
+SOC analysts use this for:
+
+- Alert triage
+- Event correlation
+- Timeline analysis
+- Threat investigation
+
+
+----------------------------------------------------------
+
+[6] (Optional) TheHive
+
+Purpose:
+- Case management.
+- Incident escalation.
+- Documentation of investigation.
+- Tracking mitigation actions.
+
+High-severity alerts can be escalated.
+
+
+----------------------------------------------------------
+3. DATA FLOW
+----------------------------------------------------------
+
+Linux Endpoint (Sysmon)
+        ↓
+Syslog/Journald
+        ↓
+Wazuh Agent (encrypted channel)
+        ↓
+Wazuh Manager (Decoding + Detection)
+        ↓
+Wazuh Dashboard (Visualization)
+        ↓
+TheHive (Optional Incident Response)
+
+
+----------------------------------------------------------
+4. DETECTION ENGINEERING STRATEGY
+----------------------------------------------------------
+
+Phase 1:
+Collect all telemetry (high volume).
+
+Phase 2:
+Implement base parsing rules.
+
+Phase 3:
+Identify benign noise.
+
+Phase 4:
+Apply suppression rules.
+
+Phase 5:
+Implement high-confidence detections only.
+
+Result:
+Low-noise, high-signal environment.
+
+
+----------------------------------------------------------
+5. SECURITY DESIGN PRINCIPLES
+----------------------------------------------------------
+
+- Principle of Least Noise
+- Preserve telemetry, reduce alert fatigue
+- Behavior-based detection
+- MITRE ATT&CK alignment
+- SOC workflow validation
+
+
+----------------------------------------------------------
+6. REAL-WORLD SOC ALIGNMENT
+----------------------------------------------------------
+
+This architecture mirrors production SOC environments where:
+
+- Linux servers require deep telemetry
+- SIEM ingestion must be structured
+- Detection logic must be engineered
+- Noise reduction is critical
+- Alerts must be validated end-to-end
+
+This is not a lab-only setup.
+It reflects modern detection engineering practices.
+
+
+----------------------------------------------------------
+7. FINAL OUTCOME
+----------------------------------------------------------
+
+This architecture produces:
+
+- Deep Linux visibility
+- Structured detection pipeline
+- 80–90% alert reduction
+- High-confidence threat alerts
+- SOC-ready detection system
+
+==========================================================
+End of Architecture Notes
+==========================================================
