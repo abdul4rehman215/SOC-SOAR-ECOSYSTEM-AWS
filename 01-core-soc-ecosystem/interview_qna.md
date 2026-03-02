@@ -246,7 +246,7 @@ This is closer to real SOC engineering than simple tool setup.
 
 This project showcases:
 
-Detection (Wazuh)  
+* Detection (Wazuh)  
 + Intelligence (MISP)  
 + Investigation (TheHive)  
 
