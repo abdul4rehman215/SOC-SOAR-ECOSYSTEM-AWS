@@ -1,15 +1,18 @@
-# 🛠️ TheHive 5.5 – Troubleshooting Guide (Docker on AWS EC2)
+# 🛠️ TheHive 5.5 – Troubleshooting Guide
+
+### Docker Deployment on AWS EC2 | SOC-SOAR Case Management Core
 
 ---
 
 # 🧪 Validation Checklist (Run First)
 
-Before troubleshooting, validate:
+Before troubleshooting anything, validate these:
 
 ### ✅ Containers Running
+
 ```bash
 docker ps
-````
+```
 
 Expected containers:
 
@@ -43,7 +46,7 @@ http://<EC2_PUBLIC_IP>:9000/
 
 ---
 
-# 🚨 Most Common Issues (Observed in Real Deployments)
+# 🚨 Most Common Issues (Real Deployment Scenarios)
 
 ---
 
@@ -51,9 +54,9 @@ http://<EC2_PUBLIC_IP>:9000/
 
 ## 🔎 Symptoms
 
-* `docker ps` shows elasticsearch restarting
-* TheHive container exits
-* Logs show permission denied errors
+* elasticsearch restarting continuously
+* thehive container exits
+* Permission denied in logs
 
 ## 📌 Root Cause
 
@@ -78,41 +81,39 @@ docker compose up -d
 
 ## 🔎 Symptoms
 
-* Browser shows timeout
-* Cannot reach TheHive UI
+* Browser timeout
+* Cannot reach TheHive
 
 ## 📌 Root Cause
 
-Security Group does not allow port 9000.
+AWS Security Group not allowing port 9000.
 
 ## ✅ Fix
 
-In AWS Security Group:
+Allow in Security Group:
 
-Allow:
-
-* Port 9000 (TCP)
-* Source: Your Admin IP
+* Port: 9000 (TCP)
+* Source: Your Admin IP or VPN only
 
 ---
 
-# 3️⃣ TheHive Container Crashes After Startup
+# 3️⃣ TheHive Container Crashes (Memory Issue)
 
 ## 🔎 Symptoms
 
-* TheHive container exits immediately
-* Logs show memory-related errors
+* Container exits
+* Logs show JVM memory errors
 
 ## 📌 Root Cause
 
-Insufficient RAM (less than 16GB recommended).
+Insufficient RAM.
 
-## ✅ Fix
+## ✅ Required Minimum
 
-Upgrade EC2 instance:
+* 4 vCPU
+* 16GB RAM
 
-* Minimum: 4 vCPU
-* Minimum: 16GB RAM
+Upgrade EC2 if below this.
 
 ---
 
@@ -120,12 +121,12 @@ Upgrade EC2 instance:
 
 ## 🔎 Symptoms
 
-* Cassandra container keeps restarting
-* TheHive fails to connect to DB
+* Cassandra restarting
+* TheHive cannot connect
 
 ## 📌 Root Cause
 
-Low memory or corrupted data volume.
+Low memory or corrupted volume.
 
 ## ✅ Fix
 
@@ -135,11 +136,131 @@ docker volume prune -f
 docker compose up -d
 ```
 
-⚠ This deletes existing data.
+⚠ This deletes stored data.
 
 ---
 
-# 5️⃣ Docker Permission Denied
+# 5️⃣ Cannot Login After First Login
+
+## 🔎 Symptoms
+
+* Password rejected
+* Login loops
+* Session expired
+
+## 📌 Root Cause
+
+Default password not changed properly
+OR
+Timezone mismatch
+
+## ✅ Fix
+
+Check time sync:
+
+```bash
+timedatectl
+sudo timedatectl set-ntp yes
+```
+
+Restart containers:
+
+```bash
+docker compose restart
+```
+
+---
+
+# 6️⃣ Org-Admin User Cannot See Cases
+
+## 🔎 Symptoms
+
+* Login successful
+* No cases visible
+* Dashboard empty
+
+## 📌 Root Cause
+
+Logged into wrong organization
+OR
+Permission profile incorrect
+
+## ✅ Fix
+
+1. Check active organization (top-right corner)
+2. Verify profile = `org-admin`
+3. Ensure profile includes:
+
+   * manageCase
+   * manageTask
+   * manageObservable
+
+---
+
+# 7️⃣ Organization Not Visible
+
+## 🔎 Symptoms
+
+* Only default org visible
+* Cannot switch organizations
+
+## 📌 Root Cause
+
+User not assigned to organization.
+
+## ✅ Fix (As Super Admin)
+
+1. Go to **Users**
+2. Edit user
+3. Add organization
+4. Assign profile
+5. Set as default org
+
+Logout and login again.
+
+---
+
+# 8️⃣ Cannot Create New User
+
+## 🔎 Symptoms
+
+* Add user button disabled
+* Permission denied
+
+## 📌 Root Cause
+
+User does not have `manageUser` permission.
+
+## ✅ Fix
+
+Use:
+
+* Global admin
+  OR
+* Org-admin with manageUser profile
+
+---
+
+# 9️⃣ Elasticsearch High CPU Usage
+
+## 🔎 Symptoms
+
+* EC2 slow
+* docker stats shows high CPU
+
+## 📌 Root Cause
+
+Heavy indexing or insufficient RAM.
+
+## ✅ Mitigation
+
+* Increase RAM
+* Restart Elasticsearch container
+* Avoid large bulk imports
+
+---
+
+# 🔟 Docker Permission Denied
 
 ## 🔎 Symptoms
 
@@ -149,7 +270,7 @@ permission denied while trying to connect to Docker daemon
 
 ## 📌 Root Cause
 
-User not added to docker group.
+User not in docker group.
 
 ## ✅ Fix
 
@@ -160,36 +281,16 @@ newgrp docker
 
 ---
 
-# 6️⃣ Time Synchronization Issues
+# 1️⃣1️⃣ Hostname Issues (Container Communication Failure)
 
 ## 🔎 Symptoms
 
-* Login sessions fail
-* Token/session errors
-
-## 📌 Root Cause
-
-Incorrect system time or timezone.
-
-## ✅ Fix
-
-```bash
-timedatectl
-sudo timedatectl set-ntp yes
-```
-
----
-
-# 7️⃣ Hostname Resolution Issues
-
-## 🔎 Symptoms
-
-* Containers cannot communicate
 * Cassandra hostname errors
+* Internal service resolution fails
 
 ## 📌 Root Cause
 
-Incorrect `/etc/hosts` configuration.
+Incorrect /etc/hosts
 
 ## ✅ Fix
 
@@ -205,28 +306,30 @@ Ensure:
 
 ---
 
-# 8️⃣ High CPU Usage
+# 1️⃣2️⃣ Session Token Errors
 
 ## 🔎 Symptoms
 
-* EC2 instance becomes slow
-* Containers lag
+* Random logout
+* Invalid session
+* API auth failures
 
 ## 📌 Root Cause
 
-Elasticsearch indexing load.
+Time skew between host and containers.
 
-## ✅ Mitigation
+## ✅ Fix
 
-* Increase instance size
-* Use production-grade instance (t3.xlarge or higher)
-* Allocate more RAM
+```bash
+timedatectl set-ntp yes
+docker compose restart
+```
 
 ---
 
-# 🧠 Advanced Debugging Commands
+# 🧠 Advanced Debugging
 
-Check system resources:
+Check system:
 
 ```bash
 htop
@@ -234,7 +337,7 @@ free -h
 df -h
 ```
 
-Check container resource usage:
+Check container usage:
 
 ```bash
 docker stats
@@ -243,26 +346,25 @@ docker stats
 Restart specific container:
 
 ```bash
-docker restart <container_name>
+docker restart thehive
 ```
 
 ---
 
-# 🔐 Security Best Practices
+# 🔐 Security Validation After Deployment
 
-After installation:
-
-* Change default admin password
-* Restrict port 9000 to VPN/Admin IP
-* Do NOT expose Elasticsearch
-* Enable reverse proxy + HTTPS in production
-* Regularly update Docker images
+- ✔ Default password changed
+- ✔ Organization created
+- ✔ Org-admin user created
+- ✔ Port 9000 restricted
+- ✔ Docker group permissions set
+- ✔ Time synchronization enabled
 
 ---
 
-# 📌 When to Rebuild Entire Stack
+# 🏗 When to Rebuild Entire Stack
 
-If corruption persists:
+If corrupted beyond recovery:
 
 ```bash
 docker compose down -v
@@ -270,28 +372,26 @@ docker volume prune -f
 docker compose up -d
 ```
 
-⚠ This removes all stored data.
+⚠ All cases will be deleted.
 
 ---
 
-# 🏁 Final Advice
+# 🏁 Final Diagnostic Order
 
-If something breaks:
+When something breaks:
 
-1. Check `docker ps`
-2. Check logs
+1. docker ps
+2. docker logs
 3. Check memory
 4. Check permissions
 5. Check security group
+6. Check organization & user role
 
-In 90% of cases, the issue is:
+90% of issues are:
 
 * Memory shortage
 * Permission misconfiguration
+* Wrong org role
 * Port blocked
-
----
-
-End of Troubleshooting Guide.
 
 ---
