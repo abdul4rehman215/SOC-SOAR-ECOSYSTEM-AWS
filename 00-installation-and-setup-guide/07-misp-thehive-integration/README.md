@@ -40,10 +40,10 @@ TheHive manages:
 
 When integrated:
 
-✔ MISP events become alerts in TheHive
-✔ Observables auto-enrich using threat intel
-✔ Cases can export IOCs back to MISP
-✔ Full intelligence lifecycle is enabled
+- ✔ MISP events become alerts in TheHive
+- ✔ Observables auto-enrich using threat intel
+- ✔ Cases can export IOCs back to MISP
+- ✔ Full intelligence lifecycle is enabled
 
 ---
 
@@ -219,6 +219,7 @@ You can configure:
 
 Add tags to imported alerts (example):
 
+`import quality threat intel feeds only`
 ```
 misp-threat-intel
 ```
