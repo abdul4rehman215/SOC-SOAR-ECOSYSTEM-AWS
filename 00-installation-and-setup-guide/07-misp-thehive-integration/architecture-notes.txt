@@ -1,0 +1,348 @@
+=====================================================================
+MISP ↔ THEHIVE INTEGRATION – ARCHITECTURE NOTES
+GUI-Based Native Connector Deployment
+AWS SOC Lab Environment
+=====================================================================
+
+1. ROLE IN SOC ECOSYSTEM
+---------------------------------------------------------------------
+
+This integration connects Threat Intelligence with Incident Response.
+
+Position in SOC Stack:
+
+MISP (Threat Intelligence Platform)
+↓
+TheHive (Case Management Core)
+↓
+SOC Analyst Investigation Workflow
+
+The integration enables:
+
+- Intelligence ingestion into investigations
+- Observable enrichment
+- Validated IOC sharing back to intelligence platform
+
+It does NOT detect threats.
+It does NOT collect logs.
+It enables intelligence-driven investigations.
+
+---------------------------------------------------------------------
+2. HIGH-LEVEL ARCHITECTURE OVERVIEW
+---------------------------------------------------------------------
+
+Integration Type:
+Native REST Connector (GUI-configured in TheHive)
+
+Communication Channel:
+- HTTPS (REST API)
+- API Key Authentication
+- JSON payload exchange
+
+Data Flow:
+
+MISP  →  TheHive   (Intelligence Import)
+TheHive → MISP     (Validated IOC Export)
+
+TheHive operates as:
+- Intelligence Consumer (pulling events)
+- Intelligence Producer (pushing confirmed indicators)
+
+---------------------------------------------------------------------
+3. LOGICAL COMPONENTS
+---------------------------------------------------------------------
+
+MISP Server (Threat Intelligence Backend)
+
+- Stores intelligence events
+- Maintains IOC attributes
+- Provides REST API endpoints
+- Issues API authentication keys
+- Enforces RBAC controls
+- Maintains correlation engine
+
+TheHive Server (Incident Response Core)
+
+- Case management engine
+- Alert ingestion framework
+- Observable enrichment engine
+- Native connector framework
+- Scheduled polling mechanism
+- Export pipeline for case-to-intel publishing
+
+SOC Analyst (Operational Layer)
+
+- Reviews imported alerts
+- Converts alerts to cases
+- Validates observables
+- Exports confirmed intelligence
+- Applies triage decisions
+
+---------------------------------------------------------------------
+4. COMMUNICATION MODEL
+---------------------------------------------------------------------
+
+Authentication:
+- API key generated inside MISP
+- Stored securely inside TheHive connector configuration
+
+Protocol:
+- HTTPS only (secure REST communication)
+- JSON structured exchange
+
+Polling Behaviour:
+- TheHive periodically queries MISP
+- Configurable polling interval
+- Retrieves new or updated events
+- Applies filtering rules before ingestion
+
+Export Behaviour:
+- Analyst-triggered export
+- Case observables converted to MISP attributes
+- New MISP event generated
+
+---------------------------------------------------------------------
+5. IMPORT WORKFLOW (MISP → THEHIVE)
+---------------------------------------------------------------------
+
+Step 1:
+Threat intelligence event created or updated in MISP.
+
+Step 2:
+TheHive connector polls MISP API.
+
+Step 3:
+Filtered events retrieved based on:
+- Maximum age
+- Allowed tags
+- Organization filters
+- Attribute limits
+
+Step 4:
+Each MISP event transformed into TheHive Alert.
+
+Step 5:
+Alert populated with:
+- Title
+- Tags
+- Observables
+- TTP references
+- Source marked as "misp"
+
+Step 6:
+Analyst triages and converts Alert → Case.
+
+---------------------------------------------------------------------
+6. ENRICHMENT WORKFLOW
+---------------------------------------------------------------------
+
+When observables are added to a case:
+
+1. TheHive queries MISP intelligence store.
+2. Matching attributes returned.
+3. Intelligence context attached to observable.
+4. Analyst gains visibility into related events.
+
+Result:
+- Faster triage
+- Context-aware investigation
+- Cross-case correlation
+
+---------------------------------------------------------------------
+7. EXPORT WORKFLOW (THEHIVE → MISP)
+---------------------------------------------------------------------
+
+Step 1:
+Analyst confirms malicious observables.
+
+Step 2:
+Case exported using GUI export function.
+
+Step 3:
+TheHive sends:
+- Case metadata
+- Confirmed IOCs
+- Tags
+- Optional reference URL
+
+Step 4:
+MISP creates new intelligence event.
+
+Step 5:
+Event becomes available for:
+- Correlation
+- Sharing
+- Intelligence reuse
+- Community distribution
+
+---------------------------------------------------------------------
+8. CONTAINER / SERVICE INTERACTION CONTEXT
+---------------------------------------------------------------------
+
+Within TheHive Docker deployment:
+
+- thehive container       (application layer)
+- cassandra container     (primary datastore)
+- elasticsearch container (index/search layer)
+
+The connector operates at application layer only.
+
+No direct database-level integration occurs between MISP and TheHive.
+All communication is API-based.
+
+---------------------------------------------------------------------
+9. SECURITY ARCHITECTURE
+---------------------------------------------------------------------
+
+Trust Boundary 1:
+Between TheHive and MISP servers.
+
+Secured By:
+- TLS encryption (HTTPS)
+- API key authentication
+- Firewall restrictions
+
+Trust Boundary 2:
+Between Analyst and Platform.
+
+Controlled By:
+- Role-Based Access Control
+- managePlatform permission for connector setup
+
+Security Best Practices:
+- Dedicated integration account
+- IP-restricted API keys
+- Routine key rotation
+- Trusted CA certificates
+- No self-signed certificates in production
+- Avoid admin-level API keys
+
+---------------------------------------------------------------------
+10. DATA GOVERNANCE MODEL
+---------------------------------------------------------------------
+
+Imported Intelligence:
+- Treated as untrusted until analyst validation
+- Appears as Alerts (not Cases)
+- Requires analyst confirmation
+
+Exported Intelligence:
+- Only confirmed indicators shared
+- Prevents intelligence pollution
+
+Filtering Controls:
+- Maximum event age
+- Tag allow/block lists
+- Organization scoping
+- Attribute count limits
+
+Purpose:
+Prevent alert flooding and maintain intelligence relevance.
+
+---------------------------------------------------------------------
+11. PERFORMANCE CONSIDERATIONS
+---------------------------------------------------------------------
+
+Key Performance Factors:
+- Polling interval configuration
+- MISP event size
+- Attribute volume per event
+- Network latency
+- CPU/RAM availability
+
+Large events (>1000 attributes) may:
+- Slow UI rendering
+- Increase Cassandra writes
+- Delay enrichment response time
+
+Mitigation:
+- Restrict maximum attributes
+- Apply strict filtering
+- Limit event age window
+- Tune polling interval
+
+---------------------------------------------------------------------
+12. FAILURE SCENARIOS
+---------------------------------------------------------------------
+
+Expired API Key:
+- Import/Export operations fail.
+
+SSL Validation Failure:
+- Connector cannot establish trusted connection.
+
+Over-Filtering:
+- No alerts ingested.
+
+Insufficient API Permissions:
+- Export to MISP denied.
+
+Firewall / Network Block:
+- Connection timeouts occur.
+
+MISP API downtime:
+- Import temporarily unavailable.
+
+---------------------------------------------------------------------
+13. SCALABILITY MODEL
+---------------------------------------------------------------------
+
+Enterprise Deployment Pattern:
+
+Central MISP Intelligence Hub
+↓
+Multiple TheHive Instances
+↓
+Regional SOC Teams
+
+Supports:
+- Multi-region SOC operations
+- Segmented intelligence sharing
+- Organization-level filtering
+- Distributed IR operations
+
+---------------------------------------------------------------------
+14. SOC OPERATIONAL IMPACT
+---------------------------------------------------------------------
+
+Before Integration:
+- Manual IOC lookup
+- Copy/paste workflows
+- Disconnected tooling
+- Slower investigations
+- Intelligence silos
+
+After Integration:
+- Automated enrichment
+- Direct alert ingestion
+- One-click intelligence export
+- Unified investigation workflow
+- Intelligence feedback loop
+
+Operational Gains:
+- Reduced MTTR
+- Stronger context awareness
+- Intelligence reuse
+- Improved collaboration
+- Intelligence lifecycle visibility
+
+---------------------------------------------------------------------
+15. FINAL ARCHITECTURE STATE
+---------------------------------------------------------------------
+
+Native connector deployed
+Secure API communication established
+Intelligence ingestion operational
+Analyst-driven export enabled
+Filtering and governance enforced
+Fully integrated into SOC-SOAR ecosystem
+
+Operational Role:
+- Intelligence ingestion layer
+- Investigation enrichment source
+- Validated IOC publishing mechanism
+- SOC intelligence feedback loop
+
+=====================================================================
+END OF ARCHITECTURE NOTES
+=====================================================================
