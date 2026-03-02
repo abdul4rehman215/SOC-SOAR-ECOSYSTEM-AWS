@@ -1,0 +1,97 @@
+<!-- ================================================= -->
+<!-- Advanced Sysmon Detection - Final Version -->
+<!-- ================================================= -->
+
+<!-- ================= BASIC LOGGING ================= -->
+
+<group name="sysmon">
+
+  <!-- Event 1 - Process Create -->
+  <rule id="101101" level="5">
+    <if_sid>61603</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 1: Process creation.</description>
+  </rule>
+
+  <!-- Event 3 - Network Connection -->
+  <rule id="101103" level="5">
+    <if_sid>61605</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 3: Network connection.</description>
+  </rule>
+
+  <!-- Event 13 - Registry Value Set -->
+  <rule id="101113" level="5">
+    <if_sid>61615</if_sid>
+    <options>no_full_log</options>
+    <description>Sysmon - Event 13: RegistryEvent (Value Set).</description>
+  </rule>
+
+  <!-- Event 22 - DNS Query -->
+  <rule id="101100" level="5">
+    <if_sid>61600</if_sid>
+    <field name="win.system.eventID">22</field>
+    <description>Sysmon - Event 22: DNS Query.</description>
+  </rule>
+
+</group>
+
+<!-- ================= CREDENTIAL ACCESS ================= -->
+
+<group name="sysmon,windows,credential_access">
+
+  <rule id="100200" level="11">
+    <if_group>sysmon_event10</if_group>
+    <field name="sysmon.targetImage">\\lsass.exe$</field>
+    <description>CRITICAL: LSASS access attempt detected</description>
+    <mitre>
+      <id>T1003</id>
+    </mitre>
+  </rule>
+
+</group>
+
+<!-- ================= DNS SUSPICIOUS ================= -->
+
+<group name="sysmon,windows,dns">
+
+  <rule id="100300" level="9">
+    <if_group>sysmon_event22</if_group>
+    <field name="sysmon.image">powershell.exe|cmd.exe|mshta.exe</field>
+    <description>Suspicious DNS query from scripting engine</description>
+    <mitre>
+      <id>T1071.004</id>
+    </mitre>
+  </rule>
+
+</group>
+
+<!-- ================= LOLBINS ================= -->
+
+<group name="sysmon,windows,lolbins">
+
+  <rule id="100400" level="10">
+    <if_group>sysmon_event1</if_group>
+    <field name="sysmon.image">certutil.exe|mshta.exe|rundll32.exe</field>
+    <description>LOLBins execution detected</description>
+    <mitre>
+      <id>T1218</id>
+    </mitre>
+  </rule>
+
+</group>
+
+<!-- ================= ENCODED POWERSHELL ================= -->
+
+<group name="sysmon,windows,powershell">
+
+  <rule id="300001" level="12">
+    <if_sid>92027</if_sid>
+    <match>encodedcommand|-enc</match>
+    <description>Encoded PowerShell command execution detected</description>
+    <mitre>
+      <id>T1059.001</id>
+    </mitre>
+  </rule>
+
+</group>
