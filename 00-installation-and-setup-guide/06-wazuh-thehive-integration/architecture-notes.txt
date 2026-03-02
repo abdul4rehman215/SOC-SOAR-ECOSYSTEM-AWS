@@ -1,0 +1,280 @@
+WAZUH ↔ THEHIVE INTEGRATION
+ARCHITECTURE NOTES
+Custom Script-Based REST Integration
+AWS SOC Deployment
+
+------------------------------------------------------------
+1. OVERVIEW
+------------------------------------------------------------
+
+This integration connects Wazuh (SIEM/XDR) with TheHive (Incident Response Platform)
+using a custom Python integration script triggered by Wazuh Manager.
+
+Architecture Model:
+Event-driven (Push-based)
+
+Data Flow:
+Wazuh → TheHive
+
+Communication:
+REST API over HTTP/HTTPS
+JSON payload
+API key authentication
+
+This integration transforms detection alerts into structured incident-ready alerts
+inside TheHive automatically.
+
+------------------------------------------------------------
+2. CORE COMPONENTS
+------------------------------------------------------------
+
+Component 1: Wazuh Manager (AWS EC2)
+- Receives logs from agents
+- Applies rules and decoders
+- Generates alerts
+- Executes integration when rule threshold met
+
+Component 2: Custom Integration Script
+Location:
+/var/ossec/integrations/custom-w2thehive.py
+
+Responsibilities:
+- Read alert JSON file
+- Parse alert fields
+- Extract artifacts (IP, URL, domain)
+- Convert alert into TheHive format
+- Send POST request to TheHive API
+- Log integration status
+
+Component 3: TheHive Server (AWS EC2)
+Recommended:
+t2.xlarge (4 vCPU, 16GB RAM)
+
+Responsibilities:
+- Receive alert via REST API
+- Create alert object
+- Store metadata
+- Allow analyst triage and case conversion
+
+------------------------------------------------------------
+3. EVENT FLOW
+------------------------------------------------------------
+
+Step 1:
+Endpoint generates security event
+
+Step 2:
+Wazuh agent forwards event to Wazuh manager
+
+Step 3:
+Wazuh rule engine matches rule
+
+Step 4:
+If rule level >= configured threshold
+Integration block in ossec.conf is triggered
+
+Step 5:
+Wazuh executes:
+custom-w2thehive (bash wrapper)
+
+Step 6:
+Wrapper executes:
+custom-w2thehive.py
+
+Step 7:
+Script sends:
+POST http://THEHIVE_IP:9000/api/v1/alert
+
+Step 8:
+TheHive creates alert object
+
+Step 9:
+Alert appears in TheHive dashboard
+
+------------------------------------------------------------
+4. INTEGRATION CONFIGURATION
+------------------------------------------------------------
+
+Configured inside:
+/var/ossec/etc/ossec.conf
+
+Example:
+
+<integration>
+  <name>custom-w2thehive</name>
+  <hook_url>http://THEHIVE_IP:9000</hook_url>
+  <api_key>YOUR_API_KEY</api_key>
+  <alert_format>json</alert_format>
+  <level>9</level>
+</integration>
+
+Important:
+The <level> parameter controls alert noise.
+Only alerts with rule level >= 9 are sent.
+
+------------------------------------------------------------
+5. DATA TRANSFORMATION
+------------------------------------------------------------
+
+Wazuh Alert Fields:
+- rule.id
+- rule.description
+- rule.level
+- agent.name
+- agent.id
+- agent.ip
+- full_log
+
+Script transforms into TheHive Alert:
+- title = rule.description
+- description = formatted markdown table
+- tags:
+  wazuh
+  rule=<id>
+  agent_name=<hostname>
+  agent_ip=<ip>
+- artifacts:
+  extracted IPs
+  URLs
+  domains
+- source = wazuh
+- type = wazuh_alert
+
+------------------------------------------------------------
+6. AUTHENTICATION MODEL
+------------------------------------------------------------
+
+Authentication Method:
+TheHive API key
+
+Best Practice:
+- Create dedicated service user in TheHive
+- Generate API key
+- Use that key inside ossec.conf
+
+Trust Boundary:
+Between Wazuh EC2 and TheHive EC2
+
+Security Controls:
+- Restrict port 9000 to Wazuh IP only
+- Use HTTPS in production
+- Do not use admin API key
+- Rotate API key periodically
+
+------------------------------------------------------------
+7. LOGGING AND OBSERVABILITY
+------------------------------------------------------------
+
+Integration Logs:
+/var/ossec/logs/integrations.log
+
+Manager Logs:
+/var/ossec/logs/ossec.log
+
+Successful message example:
+Create TheHive alert: <alert_id>
+
+Common log checks:
+tail -f /var/ossec/logs/integrations.log
+tail -f /var/ossec/logs/ossec.log
+
+------------------------------------------------------------
+8. FAILURE SCENARIOS
+------------------------------------------------------------
+
+Failure 1:
+Invalid API key
+Result:
+401 Unauthorized
+
+Failure 2:
+TheHive unreachable
+Result:
+Connection refused or timeout
+
+Failure 3:
+Wrong file permissions
+Result:
+Integration not executed
+
+Failure 4:
+Rule level below threshold
+Result:
+No alert sent
+
+Failure 5:
+Script syntax error
+Result:
+Python traceback in logs
+
+------------------------------------------------------------
+9. PERFORMANCE CONSIDERATIONS
+------------------------------------------------------------
+
+Performance influenced by:
+- Alert volume
+- Severity threshold
+- Script efficiency
+- Network latency
+- TheHive server resources
+
+High alert volume risks:
+- Alert flooding
+- Duplicate alerts
+- Database growth
+- Increased CPU usage
+
+Mitigation:
+- Increase severity threshold
+- Add filtering logic
+- Tune Wazuh rules
+- Scale TheHive instance
+
+------------------------------------------------------------
+10. SCALABILITY MODEL
+------------------------------------------------------------
+
+Small SOC:
+Agents → Wazuh → TheHive
+
+Enterprise SOC:
+Agents → Wazuh Cluster → Message Queue (optional) → TheHive Cluster
+
+For high-scale:
+- Implement alert rate limiting
+- Consider batching alerts
+- Deploy TheHive in cluster mode
+- Use load balancer
+
+------------------------------------------------------------
+11. OPERATIONAL IMPACT
+------------------------------------------------------------
+
+Without Integration:
+- Manual alert copy/paste
+- Tool switching
+- Slower investigation
+- No structured lifecycle
+
+With Integration:
+- Automatic alert ingestion
+- Immediate case readiness
+- Structured investigation workflow
+- Reduced MTTR
+
+------------------------------------------------------------
+12. ARCHITECTURAL ROLE IN SOC
+------------------------------------------------------------
+
+Wazuh = Detection Engine
+TheHive = Incident Response Brain
+
+Together they create:
+
+Detection → Alert → Case → Investigation → Closure
+
+This is the foundation of an automated SOC workflow.
+
+------------------------------------------------------------
+END OF DOCUMENT
+------------------------------------------------------------
