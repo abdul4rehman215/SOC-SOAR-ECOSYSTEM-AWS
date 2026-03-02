@@ -73,14 +73,14 @@ With MISP:
 
 ### Scenario
 
-1️⃣ Malware dropped in `/tmp`
-2️⃣ Wazuh detects file creation
-3️⃣ Hash extracted
-4️⃣ MISP queried via REST API
-5️⃣ Match found in global intelligence feed
-6️⃣ Rule 100802 triggered (Hash Match)
-7️⃣ High-confidence detection created
-8️⃣ Forwarded to TheHive for case triage
+- 1️⃣ Malware dropped in `/tmp`
+- 2️⃣ Wazuh detects file creation
+- 3️⃣ Hash extracted
+- 4️⃣ MISP queried via REST API
+- 5️⃣ Match found in global intelligence feed
+- 6️⃣ Rule 100802 triggered (Hash Match)
+- 7️⃣ High-confidence detection created
+- 8️⃣ Forwarded to TheHive for case triage
 
 ---
 
