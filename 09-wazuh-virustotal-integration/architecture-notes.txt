@@ -1,0 +1,301 @@
+============================================================
+WAZUH + VIRUSTOTAL INTEGRATION
+SOC AUTOMATION ARCHITECTURE NOTES
+============================================================
+
+PROJECT TYPE:
+Detection Engineering + Threat Intelligence Enrichment + Automated Containment
+
+============================================================
+1. HIGH-LEVEL OBJECTIVE
+============================================================
+
+Build a SOC-grade malware detection and automated removal pipeline using:
+
+- Wazuh (SIEM/XDR)
+- VirusTotal (Threat Intelligence Enrichment)
+- Wazuh Active Response (Automated Remediation)
+- TheHive (Incident Response Platform)
+
+The goal is to transition from:
+
+    Detect → Investigate → Manually Remove
+
+to:
+
+    Detect → Enrich → Confirm → Automatically Remove → Notify
+
+============================================================
+2. CORE COMPONENTS
+============================================================
+
+A. ENDPOINT (Ubuntu / Windows)
+--------------------------------
+- Monitored by Wazuh Agent
+- FIM enabled with realtime monitoring
+- Tracks executable file creation and modification
+
+B. WAZUH AGENT
+--------------------------------
+- Detects file system changes via syscheck
+- Generates alert when executable is added/modified
+- Sends event to Wazuh Manager
+
+C. WAZUH MANAGER
+--------------------------------
+Responsibilities:
+
+1. Receives FIM events
+2. Applies custom detection rules
+3. Triggers VirusTotal integration (based on rule_id)
+4. Enriches alert with:
+   - Detection count
+   - Hash values
+   - Permalink
+   - Classification
+5. Applies suppression logic
+6. Maps to MITRE ATT&CK
+7. Executes Active Response (if malicious)
+8. Forwards alerts to Dashboard + TheHive
+
+D. VIRUSTOTAL API
+--------------------------------
+- Receives SHA256 hash
+- Returns:
+  - Detection count (positives)
+  - AV engine verdicts
+  - Threat tags
+  - Permalink
+- Public API limits:
+  - 4 requests/min
+  - 500/day
+
+E. WAZUH ACTIVE RESPONSE
+--------------------------------
+- Triggered only when rule 87105 fires
+- Executes remove-threat.sh on endpoint
+- Deletes malicious file
+- Generates confirmation alert
+
+F. THEHIVE
+--------------------------------
+- Receives malware detection alerts
+- Receives active response alerts
+- Enables case creation and tracking
+
+============================================================
+3. DATA FLOW (PART 1 – DETECTION & ENRICHMENT)
+============================================================
+
+Step 1:
+User downloads or creates executable file.
+
+Step 2:
+Wazuh Agent FIM detects file change in monitored directory.
+
+Step 3:
+Agent sends event to Manager.
+
+Step 4:
+Custom rule 100027 or 100028 matches executable extension.
+
+Step 5:
+Integration block triggers VirusTotal lookup.
+
+Step 6:
+Wazuh receives enrichment data from VirusTotal.
+
+Step 7:
+Rule 100030 escalates alert if positives ≥ 5.
+
+Step 8:
+Alert enriched with:
+    data.virustotal.positives
+    data.virustotal.permalink
+    data.virustotal.sha256
+    MITRE mapping (T1059)
+
+Step 9:
+Alert visible in Dashboard + forwarded to TheHive.
+
+============================================================
+4. DATA FLOW (PART 2 – AUTOMATED CONTAINMENT)
+============================================================
+
+Step 1:
+VirusTotal confirms malicious file (rule 87105).
+
+Step 2:
+Active Response block in ossec.conf triggers command:
+    remove-threat
+
+Step 3:
+Script remove-threat.sh executes locally on endpoint.
+
+Step 4:
+Script extracts:
+    parameters.alert.data.virustotal.source.file
+
+Step 5:
+File deleted automatically.
+
+Step 6:
+Active response confirmation logged:
+    /var/ossec/logs/active-responses.log
+
+Step 7:
+Custom rule 100092 creates readable SOC alert:
+    "Active Response removed malware: /path/file"
+
+Step 8:
+Dashboard + TheHive reflect containment.
+
+============================================================
+5. RULE ENGINEERING STRATEGY
+============================================================
+
+Key Engineering Decisions:
+
+1. Executable-only filtering
+   → Prevent API overuse
+
+2. Clean result suppression (level 0)
+   → Reduce noise
+
+3. High-confidence threshold ≥ 5 detections
+   → Avoid single-engine false positives
+
+4. MITRE mapping
+   → Align detection with ATT&CK framework
+
+5. Active response only on confirmed malicious (87105)
+   → Prevent accidental file deletion
+
+============================================================
+6. MITRE ATT&CK ALIGNMENT
+============================================================
+
+Mapped Technique:
+T1059 – Command and Scripting Interpreter
+
+Why?
+
+Because executable file execution represents:
+- Script-based malware
+- Shell execution payloads
+- Dropper-based infection chains
+
+Benefits:
+- Tactical reporting
+- Threat intelligence alignment
+- SOC metrics tracking
+
+============================================================
+7. SECURITY CONSIDERATIONS
+============================================================
+
+A. Public API Rate Limits
+   Controlled using rule_id filter and suppression logic.
+
+B. False Positives
+   Threshold set to ≥ 5 AV engines.
+
+C. Accidental Deletion Risk
+   Active response tied only to confirmed malicious rule.
+
+D. Script Permissions
+   root:wazuh ownership
+   chmod 750
+
+E. Audit Trail
+   All removals logged.
+   Active response alerts generated.
+
+============================================================
+8. SOC OPERATIONAL BENEFITS
+============================================================
+
+Before:
+- Manual hash lookup
+- Tab hopping
+- Manual deletion
+- Delayed containment
+
+After:
+- Automatic enrichment
+- Automated containment
+- Clean dashboard alerts
+- Reduced analyst workload
+- Faster mean time to respond (MTTR)
+
+============================================================
+9. PERFORMANCE IMPACT
+============================================================
+
+Minimal CPU impact:
+- Hash lookup lightweight
+- API calls limited
+- Script execution brief
+
+Resource usage controlled through:
+- Executable-only monitoring
+- Suppression rules
+- Targeted FIM directories
+
+============================================================
+10. SCALABILITY CONSIDERATIONS
+============================================================
+
+For production:
+
+- Upgrade to VirusTotal Premium API
+- Expand FIM directories
+- Integrate with SOAR for quarantine actions
+- Add YARA integration
+- Add sandbox dynamic analysis
+
+============================================================
+11. AUDIT & TRACEABILITY
+============================================================
+
+Trace chain visible in:
+
+- alerts.json
+- active-responses.log
+- Dashboard alert fields
+- TheHive case timeline
+
+Every action logged.
+
+Full transparency maintained.
+
+============================================================
+12. REAL-WORLD SOC IMPACT
+============================================================
+
+This project simulates enterprise-level:
+
+- Endpoint malware detection
+- Threat intelligence enrichment
+- Automated containment
+- IR case visibility
+- Compliance traceability
+
+It mirrors production XDR behavior.
+
+============================================================
+13. FINAL ARCHITECTURAL SUMMARY
+============================================================
+
+Layer 1: Endpoint Monitoring (FIM)
+Layer 2: Detection Rules
+Layer 3: Threat Intelligence Enrichment
+Layer 4: Decision Threshold Logic
+Layer 5: Automated Response Execution
+Layer 6: SOC Visibility & IR Tracking
+
+This is a complete closed-loop detection and response system.
+
+============================================================
+END OF ARCHITECTURE NOTES
+============================================================
