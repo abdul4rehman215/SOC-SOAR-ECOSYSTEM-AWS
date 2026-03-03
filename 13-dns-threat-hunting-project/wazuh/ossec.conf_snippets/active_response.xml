@@ -1,0 +1,13 @@
+<command>
+  <name>alienvault_otx</name>
+  <executable>otx.cmd</executable>
+  <timeout_allowed>no</timeout_allowed>
+</command>
+
+<active-response>
+  <disabled>no</disabled>
+  <level>10</level>
+  <command>alienvault_otx</command>
+  <location>local</location>
+  <rules_group>dnsstat_alert</rules_group>
+</active-response>
