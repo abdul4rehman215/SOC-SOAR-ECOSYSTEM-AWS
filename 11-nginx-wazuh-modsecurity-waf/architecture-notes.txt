@@ -1,0 +1,139 @@
+NGINX + ModSecurity v3 + OWASP CRS + Wazuh SIEM
+Web Application Security Monitoring Architecture
+
+============================================================
+
+                      ┌─────────────────────┐
+                      │      Attacker       │
+                      │  (External Client)  │
+                      └──────────┬──────────┘
+                                 │
+                                 │ Malicious HTTP Request
+                                 ▼
+                    ┌──────────────────────────┐
+                    │       NGINX Server       │
+                    │   (Port 80 / 443)        │
+                    │  High-Performance Web    │
+                    │  Server & Reverse Proxy  │
+                    └──────────┬───────────────┘
+                               │
+                               │ HTTP Request
+                               ▼
+                    ┌──────────────────────────┐
+                    │     ModSecurity v3       │
+                    │  Web Application Firewall│
+                    │  (Dynamic NGINX Module)  │
+                    └──────────┬───────────────┘
+                               │
+                               │ Rule Evaluation
+                               ▼
+                    ┌──────────────────────────┐
+                    │   OWASP Core Rule Set    │
+                    │        (CRS 3.x)         │
+                    │  Detects OWASP Top 10    │
+                    └──────────┬───────────────┘
+                               │
+                 ┌─────────────┴─────────────┐
+                 │                           │
+                 ▼                           ▼
+        ┌──────────────────┐        ┌──────────────────┐
+        │  Block Request   │        │  Allow Request   │
+        │  HTTP 403        │        │  HTTP 200        │
+        └────────┬─────────┘        └────────┬─────────┘
+                 │                            │
+                 │                            │
+                 ▼                            ▼
+        ┌────────────────────────────────────────────┐
+        │            NGINX Logs Generated            │
+        │--------------------------------------------│
+        │  /var/log/nginx/error.log                  │
+        │  /var/log/nginx/access.log                 │
+        │                                            │
+        │  Contains:                                 │
+        │   - Rule ID                                │
+        │   - Severity                               │
+        │   - Matched Data                           │
+        │   - Source IP                              │
+        │   - HTTP Method                            │
+        │   - Attack Category                        │
+        └──────────────────────┬─────────────────────┘
+                               │
+                               │ Log Collection
+                               ▼
+                    ┌──────────────────────────┐
+                    │       Wazuh Agent        │
+                    │  (Installed on Endpoint) │
+                    │  Reads Local Log Files   │
+                    └──────────┬───────────────┘
+                               │
+                               │ Secure Forwarding
+                               ▼
+                    ┌──────────────────────────┐
+                    │      Wazuh Manager       │
+                    │  Log Decoding + Rules    │
+                    │  Correlation Engine      │
+                    └──────────┬───────────────┘
+                               │
+                               │ Alert Generation
+                               ▼
+                    ┌──────────────────────────┐
+                    │    Wazuh Dashboard       │
+                    │     (SIEM Interface)     │
+                    │  SOC Monitoring View     │
+                    └──────────┬───────────────┘
+                               │
+                               │ Investigation
+                               ▼
+                    ┌──────────────────────────┐
+                    │         SOC Team         │
+                    │  - Alert Review          │
+                    │  - MITRE Mapping         │
+                    │  - Incident Response     │
+                    └──────────────────────────┘
+
+
+============================================================
+
+DETECTION PIPELINE SUMMARY
+
+1. Attacker sends malicious payload
+2. NGINX receives request
+3. ModSecurity inspects traffic
+4. OWASP CRS rule matches attack pattern
+5. Request blocked (403 Forbidden)
+6. Detailed log entry written
+7. Wazuh agent collects log
+8. Wazuh manager decodes event
+9. Alert generated with severity + MITRE
+10. SOC investigates attack
+
+============================================================
+
+LAYERED SECURITY MODEL
+
+Layer 7 Protection → ModSecurity (WAF)
+Log Engineering → Wazuh Agent
+Detection & Correlation → Wazuh Manager
+Visibility & Analysis → Wazuh Dashboard
+Response Capability → SOC / Active Response
+
+============================================================
+
+SECURITY BENEFITS ADDED TO SOC ECOSYSTEM
+
+✔ Web Application Layer Monitoring
+✔ OWASP Top 10 Detection
+✔ Real-Time Blocking
+✔ Centralized SIEM Correlation
+✔ MITRE ATT&CK Mapping
+✔ Historical Attack Analysis
+✔ Forensic Log Retention
+✔ SOC Investigation Workflow
+
+============================================================
+
+This architecture mirrors real-world enterprise deployments
+where public-facing web servers are protected by WAF
+and monitored centrally through a SIEM platform.
+
+============================================================
