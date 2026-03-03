@@ -1,0 +1,240 @@
+====================================================================
+DNS THREAT HUNTING & ENRICHMENT ARCHITECTURE
+Wazuh + DNS-Stats + AlienVault OTX
+====================================================================
+
+
+1. HIGH-LEVEL OBJECTIVE
+--------------------------------------------------------------------
+Transform raw DNS queries from Windows endpoints into:
+    - Context-aware alerts
+    - Reputation-enriched intelligence
+    - Threat-validated events
+    - SOC-ready investigation artifacts
+
+
+2. COMPONENTS
+--------------------------------------------------------------------
+
+[ Windows Endpoint ]
+    - Sysmon installed
+    - Event ID 22 enabled (DNS Query logging)
+    - Wazuh Agent installed
+
+[ Wazuh Agent ]
+    - Collects Sysmon DNS telemetry
+    - Forwards logs to Wazuh Manager
+
+[ Wazuh Manager ]
+    - Decodes Sysmon DNS events
+    - Triggers DNS-Stats integration
+    - Applies detection rules
+    - Triggers AlienVault OTX enrichment
+    - Generates alerts
+    - (Optional) Triggers Active Response
+
+[ DNS-Stats Service ]
+    - Runs locally on Wazuh Manager (Port 5730)
+    - Evaluates:
+        - Domain frequency
+        - First-seen timestamp
+        - Domain age
+        - RDAP data
+        - Historical presence
+    - Returns JSON reputation analysis
+
+[ AlienVault OTX ]
+    - External Threat Intelligence platform
+    - Validates domain against:
+        - Known malicious indicators
+        - IOC pulses
+        - Community threat feeds
+    - Returns IOC match data
+
+[ Wazuh Dashboard ]
+    - Displays:
+        - DNS Query alert
+        - DNS-Stats enrichment
+        - OTX IOC match
+    - Provides:
+        - MITRE ATT&CK mapping
+        - Analyst context
+        - Timeline visibility
+
+[ Optional Active Response ]
+    - Executes script locally on endpoint
+    - Can:
+        - Log intelligence result
+        - Trigger additional investigation
+        - Automate containment logic
+
+
+3. END-TO-END DATA FLOW
+--------------------------------------------------------------------
+
+STEP 1: DNS QUERY GENERATION
+
+Windows Endpoint
+    |
+    |---> Sysmon Event ID 22 (DNS Query)
+    |
+    V
+
+STEP 2: LOG COLLECTION
+
+Wazuh Agent
+    |
+    |---> Sends event to Wazuh Manager
+    |
+    V
+
+STEP 3: INITIAL DETECTION
+
+Wazuh Manager
+    |
+    |---> Rule detects Event ID 22
+    |---> Generates base DNS alert
+    |
+    V
+
+STEP 4: DNS-STATS ENRICHMENT
+
+Wazuh Integration Script (custom-dnsstats.py)
+    |
+    |---> Extracts queried domain
+    |---> Sends HTTP request to:
+            http://127.0.0.1:5730/<domain>
+    |
+    |---> Receives:
+            - category
+            - frequency score
+            - first-seen data
+            - seen_by_web
+            - seen_by_you
+    |
+    |---> Returns enriched JSON to Wazuh
+    |
+    V
+
+STEP 5: DNS-BASED DETECTION LOGIC
+
+Wazuh Rules Evaluate:
+    |
+    |---> Is domain suspicious?
+    |---> Is frequency low?
+    |---> Is domain first-time-seen?
+    |
+    |---> If TRUE → Raise dnsstat_alert
+    |
+    V
+
+STEP 6: THREAT INTEL VALIDATION
+
+Wazuh triggers:
+    custom-alienvault.py
+    |
+    |---> Sends domain to:
+            https://otx.alienvault.com/api/v1/indicators/domain/<domain>/general
+    |
+    |---> Checks:
+            pulse_info.count
+    |
+    |---> If > 0:
+            IOC MATCH FOUND
+    |
+    V
+
+STEP 7: HIGH SEVERITY ALERT
+
+Wazuh generates:
+    - AlienVault OTX - Indicator(s) Found
+    - MITRE ATT&CK mapping
+    - Increased severity (Level 12+)
+
+    |
+    V
+
+STEP 8: DASHBOARD VISIBILITY
+
+Wazuh Dashboard
+    |
+    |---> Analyst sees:
+            - Domain queried
+            - Frequency score
+            - First seen
+            - OTX match
+            - Threat classification
+            - MITRE mapping
+    |
+    V
+
+STEP 9: OPTIONAL ACTIVE RESPONSE
+
+If configured:
+    |
+    |---> Wazuh triggers command on endpoint
+    |---> Example:
+            - Run PowerShell enrichment
+            - Log intelligence result
+            - Automated containment logic
+
+
+4. LOGICAL PIPELINE SUMMARY
+--------------------------------------------------------------------
+
+Raw DNS Query
+    ↓
+Sysmon Telemetry
+    ↓
+Wazuh Detection
+    ↓
+DNS-Stats Enrichment
+    ↓
+Suspicion Check
+    ↓
+AlienVault OTX Validation
+    ↓
+High-Confidence Alert
+    ↓
+SOC Investigation
+    ↓
+(Optional) Active Response
+
+
+5. SOC VALUE CREATED
+--------------------------------------------------------------------
+
+Before This Project:
+    - Raw DNS logs
+    - High noise
+    - Manual reputation checks
+    - No rarity detection
+    - No IOC validation
+
+After This Project:
+    - Automated domain rarity detection
+    - Automatic reputation scoring
+    - Integrated threat intelligence validation
+    - Reduced analyst pivoting
+    - Improved MTTD
+    - Improved MTTR
+    - Enterprise-grade enrichment pipeline
+
+
+6. ENTERPRISE DETECTION ENGINEERING CONCEPTS USED
+--------------------------------------------------------------------
+
+- Telemetry normalization
+- Contextual enrichment
+- IOC validation
+- Threat intelligence correlation
+- Custom Wazuh integrations
+- MITRE ATT&CK mapping
+- Multi-stage alert escalation
+- Active Response automation
+- SOC workflow optimization
+
+
+====================================================================
+END OF ARCHITECTURE DOCUMENT
+====================================================================
