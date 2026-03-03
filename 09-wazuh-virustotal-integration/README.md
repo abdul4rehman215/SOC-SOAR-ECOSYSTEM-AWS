@@ -2,6 +2,10 @@
 
 ## Real-Time Malware Detection & Automated Threat Removal (SOC Automation Project)
 
+<p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-virustotal.png" width="450"/>
+</p>
+
 ---
 
 ## 🚀 Project Overview
@@ -32,12 +36,6 @@ To build a complete:
 > Detect → Enrich → Confirm → Automatically Remove → Notify → Investigate
 
 SOC-grade malware detection and automated containment pipeline.
-
----
-
-<p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-virustotal.png" width="450"/>
-</p>
 
 ---
 
@@ -572,9 +570,13 @@ SOC Notified
 ├── interview_qna.md
 ├── troubleshooting.md
 │
+├── scripts/
+│   ├── virustotal
+│   └── virustotal.py
+|
 ├── manager/
 │   ├── ossec.conf.snippet
-│   ├── local_rules.xml
+│   └── local_rules.xml
 │
 ├── agent/
 │   ├── ubuntu_fim.conf
@@ -582,9 +584,8 @@ SOC Notified
 │   └── remove-threat.sh
 │
 └── resources/
-    ├── wazuh-virustotal.png
-    ├── wazuh-virustotal-flow-diagram.png
-    └── wazuh-virustotal-architect.png
+    ├── Wazuh VirusTotal Integration Malware Detection Project.pdf
+    └── Wazuh VirusTotal Active Response Automated Malware Removal.pdf
 ```
 
 ---
