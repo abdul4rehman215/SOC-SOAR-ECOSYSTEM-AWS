@@ -1,0 +1,266 @@
+=============================================================
+CORTEX – ARCHITECTURE NOTES
+StrangeBee Analysis & Response Engine
+AWS SOC-SOAR Ecosystem Deployment
+=============================================================
+
+1. PURPOSE IN SOC ARCHITECTURE
+-------------------------------------------------------------
+
+Cortex serves as the automation and enrichment engine in the SOC stack.
+
+Without Cortex:
+- Analysts manually check IOCs.
+- Intelligence enrichment is slow.
+- Response actions are manual.
+- No scalable automation.
+
+With Cortex:
+- Observables are enriched automatically.
+- Results are normalized and structured.
+- Automation reduces analyst workload.
+- TheHive becomes fully automated.
+
+Cortex is the intelligence execution layer between detection and response.
+
+-------------------------------------------------------------
+
+2. HIGH-LEVEL ARCHITECTURE FLOW
+-------------------------------------------------------------
+
+Observable (IP / Domain / Hash / URL / File)
+        ↓
+TheHive Case Management
+        ↓
+Cortex REST API
+        ↓
+Analyzer Container (Docker)
+        ↓
+External Intelligence Services
+        ↓
+Structured JSON Output
+        ↓
+Returned to TheHive
+
+Cortex is stateless in execution.
+Each analysis spawns a temporary Docker container.
+
+-------------------------------------------------------------
+
+3. CORE COMPONENTS
+-------------------------------------------------------------
+
+A) Cortex Application (Web + API)
+- Runs on port 9001
+- REST-based architecture
+- Multi-organization support
+- Role-based access control
+
+B) Elasticsearch Backend
+- Stores jobs
+- Stores analyzer results
+- Stores organization data
+- Indexes enrichment output
+
+C) Docker Runtime
+- Executes analyzer containers
+- Ensures isolation per job
+- Provides scalability
+- Prevents cross-job contamination
+
+-------------------------------------------------------------
+
+4. MULTI-ORGANIZATION MODEL
+-------------------------------------------------------------
+
+Cortex uses strict organizational separation:
+
+superAdmin
+- Global scope
+- Creates organizations
+- Cannot manage operational analyzers inside org
+
+orgAdmin
+- Manages users
+- Manages API keys
+- Enables analyzers
+- Configures responders
+
+analyze/read roles
+- Run analyzers
+- Retrieve reports
+- Used by TheHive integration
+
+The default organization is reserved for system administration only.
+Operational work must be performed inside a dedicated organization.
+
+-------------------------------------------------------------
+
+5. DOCKER-BASED JOB EXECUTION MODEL
+-------------------------------------------------------------
+
+When an analyzer is triggered:
+
+1. Cortex receives observable.
+2. Cortex spawns a Docker container.
+3. Analyzer executes inside isolated container.
+4. Container fetches intelligence from external APIs.
+5. Results are normalized.
+6. Output returned to Cortex.
+7. Container terminates.
+
+Benefits:
+- Security isolation
+- Clean environment per job
+- No dependency conflicts
+- Scalable horizontally
+
+Docker socket mounting is mandatory:
+    /var/run/docker.sock
+
+Without this:
+- Analyzers will not execute.
+- Jobs will fail silently.
+
+-------------------------------------------------------------
+
+6. SECURITY CONSIDERATIONS
+-------------------------------------------------------------
+
+A) Docker Socket Exposure
+Mounting docker.sock grants container control.
+This must only exist in secured SOC environments.
+
+B) Elasticsearch Security
+In lab environments:
+    xpack.security.enabled=false
+
+In production:
+    Enable authentication
+    Use TLS
+    Restrict network access
+
+C) API Keys
+API keys must:
+- Be stored securely
+- Not committed to repository
+- Rotated periodically
+
+D) Network Exposure
+Only port 9001 should be exposed.
+Elasticsearch must NOT be publicly accessible.
+
+-------------------------------------------------------------
+
+7. PERFORMANCE CONSIDERATIONS
+-------------------------------------------------------------
+
+Minimum Recommended (This Deployment):
+- 4 vCPU
+- 16GB RAM
+- SSD storage
+
+Why?
+
+- Elasticsearch indexing load
+- Concurrent analyzer execution
+- Docker container spawning
+- Large investigation workloads
+
+Memory pressure causes:
+- Container crashes
+- Analyzer failures
+- Healthcheck errors
+- Elasticsearch instability
+
+-------------------------------------------------------------
+
+8. SCALABILITY MODEL
+-------------------------------------------------------------
+
+Cortex scales in two ways:
+
+A) Vertical Scaling
+- Increase CPU
+- Increase RAM
+- Increase disk IOPS
+
+B) Horizontal Scaling (Advanced)
+- Multiple Cortex instances
+- Load balancing
+- Shared Elasticsearch cluster
+
+For enterprise SOC:
+- Dedicated Elasticsearch cluster recommended
+- Separate analyzer worker nodes possible
+
+-------------------------------------------------------------
+
+9. INTEGRATION POINTS
+-------------------------------------------------------------
+
+Primary Integrations:
+
+- TheHive
+- MISP
+- Custom REST clients
+- SOAR platforms
+- Python automation scripts
+
+Cortex communicates via REST API.
+
+Authentication:
+Authorization: Bearer <API_KEY>
+
+-------------------------------------------------------------
+
+10. DESIGN PHILOSOPHY
+-------------------------------------------------------------
+
+Cortex is designed to:
+
+- Automate intelligence enrichment
+- Reduce manual investigation
+- Normalize multi-source intelligence
+- Provide structured outputs
+- Enable automated response
+
+It is not a SIEM.
+It is not a detection tool.
+
+It is an automation execution engine.
+
+-------------------------------------------------------------
+
+11. FUTURE EXTENSIONS
+-------------------------------------------------------------
+
+Possible Enhancements:
+
+- Custom analyzers
+- Custom responders
+- EDR integration
+- Firewall auto-block workflows
+- SOAR orchestration
+- YARA integration
+- Cloud threat enrichment
+
+-------------------------------------------------------------
+
+12. ROLE IN THIS SOC ECOSYSTEM
+-------------------------------------------------------------
+
+Wazuh → Detect
+TheHive → Manage Cases
+Cortex → Enrich & Respond
+MISP → Share Intelligence
+
+Cortex transforms:
+Raw observable
+→ Contextual intelligence
+→ Actionable decision
+
+-------------------------------------------------------------
+
+END OF ARCHITECTURE NOTES
+=============================================================
