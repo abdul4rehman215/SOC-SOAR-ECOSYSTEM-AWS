@@ -1,0 +1,243 @@
+============================================================
+NGINX + ModSecurity + Fail2Ban + Wazuh + TheHive
+Automated Web Application Defense Architecture
+============================================================
+
+PROJECT PURPOSE
+---------------
+Upgrade a monitored WAF deployment into an automated
+containment security architecture.
+
+Move from:
+Detection + Logging
+
+To:
+Detection + Blocking + Containment + Correlation
+
+
+============================================================
+HIGH-LEVEL ARCHITECTURE
+============================================================
+
+                 ┌──────────────────────────┐
+                 │        ATTACKER          │
+                 │      (Kali Linux)        │
+                 └─────────────┬────────────┘
+                               │
+                               │ Malicious HTTP Request
+                               │ (XSS / SQLi / LFI / RCE)
+                               ▼
+                 ┌──────────────────────────┐
+                 │        NGINX WEB         │
+                 │        SERVER (L7)       │
+                 └─────────────┬────────────┘
+                               │
+                               │ HTTP Traffic Inspection
+                               ▼
+                 ┌──────────────────────────┐
+                 │     MODSECURITY v3       │
+                 │  (WAF Engine + OWASP CRS)│
+                 └─────────────┬────────────┘
+                               │
+                ┌──────────────┼──────────────┐
+                │                              │
+                │                              │
+         BLOCK REQUEST                   LOG EVENT
+        (HTTP 403)                  (modsec_audit.log)
+                │                              │
+                ▼                              ▼
+       Request Denied                 ┌─────────────────┐
+                                       │   FAIL2BAN      │
+                                       │  (Log Monitor)  │
+                                       └────────┬────────┘
+                                                │
+                                 Extract Attacker IP
+                                                │
+                                                ▼
+                                   ┌───────────────────┐
+                                   │ FIREWALL LAYER    │
+                                   │ (iptables/nft)    │
+                                   └────────┬──────────┘
+                                            │
+                                    BAN IP ADDRESS
+                                            │
+                                            ▼
+                                   Attacker Fully Blocked
+
+
+============================================================
+LOG COLLECTION FLOW
+============================================================
+
+1. NGINX logs:
+   - /var/log/nginx/access.log
+   - /var/log/nginx/error.log
+
+2. ModSecurity logs:
+   - /var/log/modsec_audit.log
+
+3. Fail2Ban logs:
+   - /var/log/fail2ban.log
+
+All logs collected by:
+
+        ┌─────────────────────────┐
+        │     WAZUH AGENT         │
+        │  (On Web Server Host)   │
+        └────────────┬────────────┘
+                     │
+                     ▼
+        ┌─────────────────────────┐
+        │     WAZUH MANAGER       │
+        │   (SIEM Engine Layer)   │
+        └────────────┬────────────┘
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+          ▼                     ▼
+   Wazuh Dashboard         TheHive
+  (Visualization)      (Case Management)
+
+
+
+============================================================
+DETAILED ATTACK LIFECYCLE
+============================================================
+
+Step 1:
+Attacker sends malicious payload:
+    GET /?q=<script>alert(1)</script>
+
+Step 2:
+NGINX forwards request to ModSecurity engine.
+
+Step 3:
+OWASP CRS rule matches XSS pattern.
+
+Step 4:
+ModSecurity blocks request with HTTP 403.
+
+Step 5:
+ModSecurity writes detailed log entry:
+    - Rule ID
+    - Severity
+    - Matched payload
+    - Source IP
+    - URI
+    - Timestamp
+
+Step 6:
+Fail2Ban monitors modsec_audit.log.
+
+Step 7:
+Fail2Ban regex matches:
+    "ModSecurity: Access denied with code 403"
+
+Step 8:
+After 5 failed attempts within 300 seconds:
+    IP is banned for 3600 seconds.
+
+Step 9:
+Firewall rule inserted:
+    DROP traffic from attacker IP
+
+Step 10:
+Fail2Ban logs:
+    "Ban <IP>"
+
+Step 11:
+Wazuh Agent collects:
+    - ModSecurity detection
+    - Fail2Ban ban action
+
+Step 12:
+Wazuh Manager:
+    - Decodes logs
+    - Applies custom rule
+    - Generates alert (rule.id 100200)
+
+Step 13:
+Alert visible in Wazuh Dashboard:
+    - Attack detected
+    - IP banned
+    - Rule ID
+    - Log file source
+
+Step 14:
+Alert optionally forwarded to TheHive:
+    - Case created
+    - Analyst investigation
+
+
+
+============================================================
+SECURITY LAYERS ACHIEVED
+============================================================
+
+Layer 7:
+  - Web Application Firewall (ModSecurity)
+
+Layer 4:
+  - Firewall Enforcement (Fail2Ban → iptables)
+
+Monitoring Layer:
+  - Wazuh SIEM
+
+Response Layer:
+  - Automatic IP containment
+
+Case Management:
+  - TheHive SOC Platform
+
+
+
+============================================================
+DEFENSE MODEL
+============================================================
+
+Before Project:
+
+  Attack → 403 → Attack Again → 403 → Repeat
+
+After Project:
+
+  Attack → Detection → 403 → IP Ban → No Further Access
+
+
+
+============================================================
+SOC VISIBILITY
+============================================================
+
+SOC Analyst Can See:
+
+✔ Web attack payload
+✔ WAF rule ID triggered
+✔ Severity level
+✔ MITRE ATT&CK mapping
+✔ Attacker IP address
+✔ Ban action confirmation
+✔ Ban duration
+✔ Event correlation timeline
+
+
+
+============================================================
+DEFENSE-IN-DEPTH MODEL
+============================================================
+
+    Application Layer Security
+          +
+    Intrusion Prevention
+          +
+    SIEM Correlation
+          +
+    Incident Management
+
+This represents a mature blue-team architecture.
+
+
+
+============================================================
+END OF ARCHITECTURE DOCUMENT
+============================================================
