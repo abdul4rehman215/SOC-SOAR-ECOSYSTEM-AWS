@@ -321,6 +321,7 @@ Enable selectively for production.
 ├── commands.sh
 ├── troubleshooting.md
 ├── interview_qna.md
+├── Cortex TheHive Threat Intelligence Enrichment Project.pdf
 └── architecture-notes.txt
 ```
 
