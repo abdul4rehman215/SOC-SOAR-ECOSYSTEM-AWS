@@ -1,0 +1,230 @@
+============================================================
+WAZUH + MODSECURITY (WAF) INTEGRATION ARCHITECTURE
+============================================================
+
+PROJECT: Web Application Security Monitoring
+STACK: Apache + ModSecurity + OWASP CRS + Wazuh SIEM
+
+------------------------------------------------------------
+1️⃣ HIGH-LEVEL ARCHITECTURE OVERVIEW
+------------------------------------------------------------
+
+                INTERNET
+                    |
+                    v
+               [ Attacker ]
+                    |
+                    v
+            Malicious HTTP Traffic
+                    |
+                    v
+            -----------------------
+            |  Apache Web Server |
+            -----------------------
+                    |
+                    v
+            -----------------------
+            |  ModSecurity WAF   |
+            |  (OWASP CRS Rules) |
+            -----------------------
+                    |
+            (Blocked or Logged)
+                    |
+                    v
+        --------------------------------
+        | Apache Error Log            |
+        | ModSecurity Audit Log       |
+        --------------------------------
+                    |
+                    v
+        ------------------------------
+        | Wazuh Agent (Log Collector)|
+        ------------------------------
+                    |
+                    v
+        ------------------------------
+        | Wazuh Manager (SIEM Core)  |
+        ------------------------------
+                    |
+                    v
+        ------------------------------
+        | Wazuh Dashboard (SOC View) |
+        ------------------------------
+
+------------------------------------------------------------
+2️⃣ LAYERED SECURITY MODEL
+------------------------------------------------------------
+
+Layer 1 – Web Server Layer
+Tool: Apache
+Purpose:
+- Hosts web application
+- Receives HTTP requests
+- Passes requests to ModSecurity module
+
+Layer 2 – Web Application Firewall (WAF) Layer
+Tool: ModSecurity v2
+Purpose:
+- Inspects HTTP requests
+- Applies OWASP CRS rules
+- Detects malicious payloads
+- Blocks attacks (403 response)
+- Logs attack metadata
+
+Layer 3 – Logging Layer
+Logs Generated:
+- /var/log/apache2/error.log
+- /var/log/apache2/modsec_audit.log
+
+Information Captured:
+- Rule ID
+- Matched pattern
+- Attack type
+- Severity
+- Source IP
+- Requested URL
+- HTTP method
+- Full payload (if enabled)
+
+Layer 4 – Log Collection Layer
+Tool: Wazuh Agent
+Purpose:
+- Monitors Apache & ModSecurity logs
+- Forwards logs to Wazuh Manager
+- Maintains log integrity
+- Provides endpoint visibility
+
+Layer 5 – SIEM Analysis Layer
+Tool: Wazuh Manager
+Purpose:
+- Parses ModSecurity logs
+- Applies detection rules
+- Correlates events
+- Maps to MITRE ATT&CK
+- Assigns severity level
+- Generates structured alerts
+
+Layer 6 – SOC Monitoring Layer
+Tool: Wazuh Dashboard
+Purpose:
+- Visualizes alerts
+- Displays attacker IP
+- Shows attack frequency
+- Enables filtering & investigation
+- Supports SOC workflows
+
+------------------------------------------------------------
+3️⃣ EVENT FLOW EXPLANATION (STEP-BY-STEP)
+------------------------------------------------------------
+
+Step 1:
+Attacker sends malicious HTTP request
+Example:
+  SQL Injection
+  XSS payload
+  Directory traversal
+
+Step 2:
+Apache receives request
+
+Step 3:
+ModSecurity inspects request using OWASP CRS rules
+
+Step 4:
+If rule matches:
+  - ModSecurity blocks request (403 Forbidden)
+  - Logs detailed event
+
+Step 5:
+Apache writes event to:
+  error.log
+  modsec_audit.log
+
+Step 6:
+Wazuh Agent monitors log files via <localfile> configuration
+
+Step 7:
+Logs forwarded to Wazuh Manager
+
+Step 8:
+Wazuh Manager:
+  - Decodes ModSecurity log
+  - Applies rule
+  - Assigns severity
+  - Maps MITRE ATT&CK technique
+  - Generates alert
+
+Step 9:
+Alert appears in Wazuh Dashboard
+
+------------------------------------------------------------
+4️⃣ MITRE ATT&CK MAPPING EXAMPLES
+------------------------------------------------------------
+
+SQL Injection:
+  T1190 – Exploit Public-Facing Application
+
+XSS:
+  T1059 – Command and Scripting Interpreter
+
+Directory Traversal:
+  T1083 – File and Directory Discovery
+
+Brute Force:
+  T1110 – Brute Force
+
+------------------------------------------------------------
+5️⃣ SOC VALUE PROVIDED
+------------------------------------------------------------
+
+This integration provides:
+
+- Web layer attack visibility
+- Centralized monitoring
+- Attack trend analysis
+- Source IP intelligence
+- Repeated attacker detection
+- Forensic investigation capability
+- Compliance audit logging
+- Reduced blind spots at application layer
+
+------------------------------------------------------------
+6️⃣ ENTERPRISE ARCHITECTURE COMPARISON
+------------------------------------------------------------
+
+Enterprise Equivalent:
+
+Cloudflare / F5 / Imperva → WAF
+Splunk / QRadar / Elastic → SIEM
+
+This project replicates enterprise architecture using open-source tools.
+
+------------------------------------------------------------
+7️⃣ FUTURE ARCHITECTURE EXTENSIONS
+------------------------------------------------------------
+
+- Add Wazuh Active Response to block IP via iptables
+- Add GeoIP correlation
+- Add Threat Intelligence enrichment
+- Add custom ModSecurity rules
+- Deploy reverse proxy architecture
+- Add load balancer + WAF layer
+
+------------------------------------------------------------
+ARCHITECTURE SUMMARY
+------------------------------------------------------------
+
+This design creates a layered defense model:
+
+Detect at WAF layer
+Block malicious traffic
+Log forensic data
+Forward logs to SIEM
+Generate SOC alerts
+Enable centralized monitoring
+
+This mirrors real-world production Web Application Security architectures.
+
+============================================================
+END OF ARCHITECTURE FILE
+============================================================
