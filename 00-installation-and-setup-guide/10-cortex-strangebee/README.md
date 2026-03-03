@@ -456,6 +456,20 @@ Cortex is the **automation brain** of this SOC-SOAR ecosystem.
 
 ---
 
+# 📂 Repository Structure
+
+```
+10-cortex-strangebee/
+│
+├── README.md
+├── commands.sh
+├── troubleshooting.md
+├── interview_qna.md
+└── architecture-notes.txt
+```
+
+---
+
 # 🏁 Final Deployment Checklist
 
 ✔ Docker running  
