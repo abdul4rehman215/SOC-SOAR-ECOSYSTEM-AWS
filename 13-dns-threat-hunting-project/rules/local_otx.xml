@@ -1,0 +1,12 @@
+<group name="alienvault,otx_ioc,">
+
+  <rule id="101200" level="12">
+    <field name="integration">alienvault</field>
+    <description>AlienVault OTX - Indicator(s) Found</description>
+    <group>threat_intel,</group>
+    <mitre>
+      <id>T1036</id>
+    </mitre>
+  </rule>
+
+</group>
