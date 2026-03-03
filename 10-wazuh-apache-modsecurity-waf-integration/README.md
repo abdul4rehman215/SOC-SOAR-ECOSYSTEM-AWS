@@ -451,7 +451,7 @@ You can now monitor:
 # 📁 Repository Structure
 
 ```
-10-wazuh-modsecurity-waf-integration/
+10-wazuh-apache-modsecurity-waf-integration/
 │
 ├── README.md
 ├── commands.sh
@@ -464,7 +464,7 @@ You can now monitor:
 │   └── modsecurity_engine_config.txt
 │
 └── docs/
-    └── pdf-guide-link.txt
+    └── Apache - Web Application Firewall (ModSecurity) with Wazuh Monitoring.pdf
 ```
 
 ---
@@ -473,7 +473,7 @@ You can now monitor:
 
 For screenshots and step-by-step visual documentation:
 
-👉 [Click here to view the complete PDF walkthrough guide](YOUR_PDF_LINK_HERE)
+👉 [Click here to view the complete PDF walkthrough guide]([YOUR_PDF_LINK_HERE](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/10-wazuh-apache-modsecurity-waf-integration/docs/Apache%20-%20Web%20Application%20Firewall%20(ModSecurity)%20with%20Wazuh%20Monitoring.pdf))
 
 ---
 
