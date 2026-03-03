@@ -1,0 +1,13 @@
+<group name="fail2ban,security">
+
+  <rule id="100200" level="10">
+    <match>Ban</match>
+    <description>Fail2Ban blocked an IP address</description>
+  </rule>
+
+  <rule id="100201" level="5">
+    <match>Unban</match>
+    <description>Fail2Ban unblocked an IP address</description>
+  </rule>
+
+</group>
