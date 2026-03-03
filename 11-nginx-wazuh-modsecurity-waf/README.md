@@ -1,6 +1,10 @@
 # 🛡️ Web Application Security Monitoring  
 ## NGINX 1.24 + ModSecurity v3 (WAF) + OWASP CRS 3.x + Wazuh SIEM
 
+<p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Implementing-ModSecurity-WAF-integration-with-Wazuh.png" width="500"/>
+</p>
+
 ---
 
 ## 🎯 Project Vision
@@ -20,12 +24,6 @@ It is about:
 We are adding a **Layer 7 Web Application Firewall Monitoring Layer** to our SOC ecosystem.
 
 This strengthens our security architecture by protecting and monitoring the web server layer.
-
----
-
-<p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Implementing-ModSecurity-WAF-integration-with-Wazuh.png" width="500"/>
-</p>
 
 ---
 
@@ -515,6 +513,8 @@ This mirrors real enterprise WAF + SIEM architecture used in production SOC envi
 
 ---
 
-For complete visual step-by-step screenshots and terminal walkthrough, refer to the detailed PDF implementation guide included in the repository resources folder.
+For complete visual step-by-step screenshots and terminal walkthrough,
+refer to the detailed PDF implementation guide included in the repository resources folder.
+Or [click here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/11-nginx-wazuh-modsecurity-waf/docs/Nginx%20-%20Web%20Application%20Firewall%20(ModSecurity)%20with%20Wazuh%20Monitoring.pdf)
 
 ---
