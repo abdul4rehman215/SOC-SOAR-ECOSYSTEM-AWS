@@ -1,0 +1,5 @@
+<integration>
+  <name>custom-dnsstats</name>
+  <rule_id>101100</rule_id>
+  <alert_format>json</alert_format>
+</integration>
