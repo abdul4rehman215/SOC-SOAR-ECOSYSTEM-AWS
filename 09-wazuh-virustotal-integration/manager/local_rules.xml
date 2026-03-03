@@ -31,3 +31,21 @@
   </rule>
 
 </group>
+
+<group name="virustotal,active_response">
+
+  <!-- Successful removal -->
+  <rule id="100092" level="12">
+    <if_sid>657</if_sid>
+    <match>Successfully removed threat</match>
+    <description>Active Response removed malware: $(parameters.alert.data.virustotal.source.file)</description>
+  </rule>
+
+  <!-- Failed removal -->
+  <rule id="100093" level="12">
+    <if_sid>657</if_sid>
+    <match>Error removing threat</match>
+    <description>Active Response failed to remove malware: $(parameters.alert.data.virustotal.source.file)</description>
+  </rule>
+
+</group>
