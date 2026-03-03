@@ -1,0 +1,33 @@
+<group name="syscheck,malware,virustotal">
+
+  <!-- New executable file -->
+  <rule id="100027" level="12">
+    <if_sid>550</if_sid>
+    <match>\.(exe|elf|sh|py|js|ps1|bat)$</match>
+    <description>Executable file added - allowed for VirusTotal scan</description>
+  </rule>
+
+  <!-- Modified executable file -->
+  <rule id="100028" level="12">
+    <if_sid>554</if_sid>
+    <match>\.(exe|elf|sh|py|js|ps1|bat)$</match>
+    <description>Executable file modified - allowed for VirusTotal scan</description>
+  </rule>
+
+  <!-- Suppress clean VirusTotal results -->
+  <rule id="100029" level="0">
+    <if_sid>87104</if_sid>
+    <field name="data.virustotal.positives">^0$</field>
+    <description>VirusTotal clean result - suppressed</description>
+    <options>no_log</options>
+  </rule>
+
+  <!-- High confidence malware detection -->
+  <rule id="100030" level="15">
+    <if_sid>87105</if_sid>
+    <field name="data.virustotal.positives">^[5-9]|[1-9][0-9]+$</field>
+    <description>High confidence malware detected by VirusTotal</description>
+    <mitre>T1059</mitre>
+  </rule>
+
+</group>
