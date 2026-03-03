@@ -2,8 +2,8 @@
 ### StrangeBee | Docker Deployment on AWS EC2 (SOC-SOAR Ecosystem)
 
 <p align="center">
-  <img src="https://docs.strangebee.com/assets/images/StrangeBee_Landscape.svg" width="400"/>
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Cortex_icon.svg" width="140">
+  <img src="https://docs.strangebee.com/assets/images/StrangeBee_Landscape.svg" width="300"/>
+   <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/cortex-logo-landscape.png" width="300"/>
 </p>
 
 ---
