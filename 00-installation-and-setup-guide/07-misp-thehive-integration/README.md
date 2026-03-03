@@ -14,9 +14,9 @@ This integration connects:
 
 Result:
 
-> 🧠 Threat intelligence automatically enriches investigations
-> 🔄 Cases can export indicators back to MISP
-> 📊 SOC gains bidirectional intelligence flow
+> - 🧠 Threat intelligence automatically enriches investigations
+> - 🔄 Cases can export indicators back to MISP
+> - 📊 SOC gains bidirectional intelligence flow
 
 ---
 
@@ -60,6 +60,12 @@ Example workflow:
 7. Threat shared with community
 
 This creates a **closed intelligence loop**.
+
+---
+
+<p align="center">
+    <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/thehive-misp.png"/>
+</p>
 
 ---
 
