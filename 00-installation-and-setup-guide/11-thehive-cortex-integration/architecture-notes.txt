@@ -1,0 +1,296 @@
+====================================================================
+THEHIVE ↔ CORTEX INTEGRATION
+SOC ENRICHMENT ARCHITECTURE NOTES
+====================================================================
+
+OVERVIEW
+--------------------------------------------------------------------
+
+TheHive and Cortex together form a centralized intelligence enrichment 
+and response execution architecture for SOC operations.
+
+TheHive = Case Management Brain
+Cortex  = Analysis & Response Engine
+
+This integration eliminates tab-hopping between tools and transforms
+manual enrichment into a structured, auditable workflow.
+
+====================================================================
+HIGH-LEVEL ARCHITECTURE
+====================================================================
+
+Analyst
+   │
+   ▼
+TheHive (Case Management Layer)
+   │
+   │  (API Key Authentication)
+   ▼
+Cortex (Analyzer & Responder Engine)
+   │
+   │  (Docker Job Execution)
+   ▼
+External Intelligence Services
+   ├─ URLScan
+   ├─ MaxMind GeoIP
+   ├─ MISP
+   ├─ Passive DNS
+   ├─ WHOIS
+   └─ Other APIs
+
+Results Flow:
+External Services → Cortex → TheHive → Case Timeline
+
+====================================================================
+CORE COMPONENT RESPONSIBILITIES
+====================================================================
+
+1️⃣ TheHive Responsibilities
+--------------------------------------------------
+
+- Case creation & lifecycle
+- Observable management
+- Analyst collaboration
+- Timeline & audit history
+- Triggering analyzers
+- Displaying structured reports
+- Showing raw JSON outputs
+- Tracking job status
+- Identity tracking (who ran what)
+
+TheHive DOES NOT run analyzers itself.
+It only orchestrates through Cortex via API.
+
+--------------------------------------------------
+
+2️⃣ Cortex Responsibilities
+--------------------------------------------------
+
+- Hosts analyzers & responders
+- Manages Docker job execution
+- Queries external intelligence APIs
+- Processes observable enrichment
+- Returns results in standardized format
+- Maintains job history
+- Executes responders (block, isolate, etc.)
+
+Cortex is stateless in terms of case management.
+It focuses purely on enrichment & execution.
+
+====================================================================
+INTEGRATION FLOW (DETAILED)
+====================================================================
+
+STEP 1 — Observable Added in TheHive
+--------------------------------------------------
+Analyst adds:
+IP / Domain / URL / Hash
+
+STEP 2 — Analyzer Selected
+--------------------------------------------------
+User selects one or multiple analyzers.
+
+STEP 3 — API Call to Cortex
+--------------------------------------------------
+TheHive sends:
+- Observable value
+- Observable type
+- Analyzer ID
+- User context
+- Organization context
+- TLP/PAP constraints
+
+Authorization Header:
+Authorization: Bearer <API_KEY>
+
+STEP 4 — Cortex Launches Docker Job
+--------------------------------------------------
+Cortex:
+- Spins up temporary container
+- Executes analyzer script
+- Queries external intelligence
+- Collects results
+- Formats output JSON
+
+Container name example:
+cortex-job-xxxxxxx
+
+STEP 5 — Results Returned to TheHive
+--------------------------------------------------
+TheHive receives:
+- Structured report
+- Raw JSON
+- Extracted observables
+- Job metadata
+- Execution status
+
+STEP 6 — Display in Case Timeline
+--------------------------------------------------
+TheHive:
+- Displays results inside case
+- Records timestamp
+- Records triggering user
+- Maintains audit trail
+
+====================================================================
+ANALYZER LIFECYCLE MODEL
+====================================================================
+
+1. Analyzer enabled in Cortex
+2. Analyzer configured (API key, options)
+3. Analyzer exposed to organization
+4. TheHive detects analyzer via connector
+5. User triggers analyzer
+6. Docker job executes
+7. Output parsed & returned
+8. Stored in case
+9. Archived in Cortex Job History
+
+Important SOC Behavior:
+- Some analyzers fail (rate limits)
+- Some return no data
+- Some return high-signal intelligence
+
+Production SOC Best Practice:
+Enable only high-value analyzers.
+
+====================================================================
+RESPONDER EXECUTION MODEL
+====================================================================
+
+Responders differ from analyzers.
+
+Analyzers = Read / Enrich
+Responders = Act / Execute
+
+Examples:
+- Block IP
+- Disable account
+- Quarantine host
+- Send alert
+- Trigger webhook
+
+Execution Flow:
+
+TheHive → Cortex → Responder → Action → Status returned
+
+Responders introduce SOAR-level capability.
+
+====================================================================
+AUDIT & TRACEABILITY DESIGN
+====================================================================
+
+Both platforms maintain traceability:
+
+TheHive:
+- Case ID
+- Observable
+- Analyst identity
+- Timestamp
+- Analyzer status
+
+Cortex:
+- Job ID
+- Analyzer name
+- Execution time
+- Container ID
+- Raw output
+
+This dual logging model ensures:
+✔ Compliance readiness
+✔ Forensic traceability
+✔ Incident documentation integrity
+
+====================================================================
+MULTI-ANALYZER CORRELATION MODEL
+====================================================================
+
+Running multiple analyzers on same observable reveals:
+
+- Overlap between tools
+- Data redundancy
+- Unique intelligence value
+- False positives
+- Service availability issues
+
+SOC Learning Outcome:
+Understand which analyzers are:
+- High signal
+- Redundant
+- Noisy
+- Production-worthy
+
+====================================================================
+SCALABILITY CONSIDERATIONS
+====================================================================
+
+Cortex uses Docker-based execution.
+
+Scaling options:
+- Increase CPU/RAM
+- Horizontal scale (multiple Cortex instances)
+- Dedicated analyzer worker nodes
+
+TheHive:
+- Scales independently
+- Can connect to multiple Cortex servers
+
+====================================================================
+SECURITY MODEL
+====================================================================
+
+Authentication:
+- API key based
+- Per organization
+
+Isolation:
+- Each organization isolated
+- Role-based access control
+
+Best Practice:
+- Rotate API keys
+- Restrict ports
+- Do not expose Elasticsearch
+- Use reverse proxy with HTTPS
+
+====================================================================
+REAL-WORLD SOC IMPACT
+====================================================================
+
+Before Integration:
+- Manual enrichment
+- Tab switching
+- Lost context
+- Slow triage
+
+After Integration:
+- One-click enrichment
+- Centralized context
+- Faster decisions
+- Full audit trail
+- SOAR foundation ready
+
+====================================================================
+ARCHITECTURAL SUMMARY
+====================================================================
+
+TheHive = Brain
+Cortex  = Execution Engine
+Docker  = Analyzer runtime
+External APIs = Intelligence sources
+
+Together they form:
+
+CENTRALIZED SECURITY INTELLIGENCE PROCESSING LAYER
+
+This architecture mirrors real enterprise SOC environments
+and serves as foundation for:
+
+- Automated playbooks
+- Response orchestration
+- AI-assisted triage
+- Full SOAR pipelines
+
+====================================================================
+END OF ARCHITECTURE NOTES
+====================================================================
