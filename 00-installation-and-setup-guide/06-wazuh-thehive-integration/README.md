@@ -68,6 +68,14 @@ Community script inspiration:
 
 ---
 
+<div align="center">
+
+ <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-thehive.png"/>
+
+</div>
+
+---
+
 # 🖥 Environment Used in This Deployment
 
 | Component | Deployment |
