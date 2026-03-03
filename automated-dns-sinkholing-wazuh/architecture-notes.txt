@@ -1,0 +1,256 @@
+====================================================================
+AUTOMATED DNS SINKHOLING ARCHITECTURE
+Wazuh + DNS-Stats + AlienVault OTX + Active Response
+====================================================================
+
+PROJECT OBJECTIVE
+--------------------------------------------------------------------
+Transform DNS detection pipeline into automated containment system.
+
+Move from:
+    Detection → Alerting
+
+To:
+    Detection → Validation → Automated Enforcement
+
+
+CORE COMPONENTS
+--------------------------------------------------------------------
+
+[ Windows Endpoint ]
+    - Sysmon installed
+    - DNS Query logging enabled (Event ID 22)
+    - Wazuh Agent installed
+    - PowerShell 7 installed
+    - Active Response CMD wrapper
+    - DNS Sinkhole PowerShell script
+
+[ Wazuh Agent ]
+    - Collects Sysmon logs
+    - Forwards telemetry to Wazuh Manager
+    - Executes Active Response locally when triggered
+
+[ Wazuh Manager ]
+    - Parses Sysmon DNS logs
+    - Applies detection rules
+    - Calls DNS-Stats integration
+    - Calls AlienVault OTX integration
+    - Generates alerts
+    - Triggers Active Response based on rule ID
+
+[ DNS-Stats Service ]
+    - Runs locally on Manager (Port 5730)
+    - Evaluates:
+        - Domain frequency
+        - First-seen timestamp
+        - Reputation indicators
+        - RDAP information
+    - Returns enrichment JSON
+
+[ AlienVault OTX ]
+    - External Threat Intelligence source
+    - Validates malicious domains
+    - Provides IOC confirmation
+    - Increases alert severity
+
+[ Windows HOSTS File ]
+    - Modified automatically by Active Response
+    - Redirects malicious domains to 127.0.0.1
+    - Provides persistent endpoint-level containment
+
+
+FULL END-TO-END WORKFLOW
+--------------------------------------------------------------------
+
+STEP 1 – DNS QUERY GENERATION
+
+User or malware triggers DNS request:
+    Example:
+        acmetoy.com
+
+Windows performs DNS resolution.
+
+
+STEP 2 – TELEMETRY COLLECTION
+
+Sysmon logs:
+    Event ID: 22
+    QueryName: acmetoy.com
+    QueryResults: 204.16.169.54
+
+Wazuh Agent forwards event to Manager.
+
+
+STEP 3 – BASE DETECTION
+
+Wazuh Manager:
+    Detects Event ID 22
+    Applies DNS detection rule
+    Generates base DNS alert
+
+
+STEP 4 – DNS-STATS ENRICHMENT
+
+Wazuh Integration:
+    custom-dnsstats.py
+
+Process:
+    Extract domain from alert
+    Send request to:
+        http://127.0.0.1:5730/acmetoy.com
+    Receive JSON with:
+        - category
+        - freq_score
+        - first-seen data
+        - historical presence
+
+Wazuh attaches enrichment data to alert.
+
+
+STEP 5 – SUSPICION EVALUATION
+
+Wazuh rules evaluate:
+    - Is domain first-time-seen?
+    - Is frequency score low?
+    - Is category suspicious?
+
+If yes:
+    Raise dnsstat_alert group.
+
+
+STEP 6 – THREAT INTEL VALIDATION
+
+Wazuh triggers:
+    custom-alienvault.py
+
+Process:
+    Send domain to:
+        https://otx.alienvault.com/api/v1/indicators/domain/<domain>/general
+
+If pulse_info.count > 0:
+    Domain confirmed malicious.
+
+
+STEP 7 – HIGH SEVERITY ALERT
+
+Wazuh generates:
+    Rule ID 100080
+    Group: otx_ioc
+    Level: High
+
+Alert visible in Wazuh Dashboard.
+
+
+STEP 8 – ACTIVE RESPONSE TRIGGERED
+
+Because Rule ID 100080 matches Active Response config:
+
+Wazuh Manager sends response command to Windows Agent.
+
+
+STEP 9 – ENDPOINT SCRIPT EXECUTION
+
+Windows Agent executes:
+    domains.cmd
+
+domains.cmd launches:
+    malicious_domains.ps1
+
+PowerShell script:
+    - Reads alert JSON
+    - Extracts malicious domain
+    - Appends entry to HOSTS file:
+        127.0.0.1    acmetoy.com
+
+
+STEP 10 – AUTOMATED CONTAINMENT
+
+Future DNS requests for acmetoy.com resolve to:
+    127.0.0.1
+
+Malware cannot reach attacker server.
+
+
+POST-CONTAINMENT VALIDATION
+--------------------------------------------------------------------
+
+Sysmon Event ID 22 now shows:
+    QueryResults: ::ffff:127.0.0.1
+
+Wazuh dashboard confirms:
+    - DNS detection
+    - OTX validation
+    - Active response execution
+
+Windows HOSTS file confirms:
+    127.0.0.1    acmetoy.com
+
+
+SECURITY LAYERS IMPLEMENTED
+--------------------------------------------------------------------
+
+Layer 1 – Endpoint Telemetry
+    Sysmon DNS visibility
+
+Layer 2 – SIEM Detection
+    Wazuh rule correlation
+
+Layer 3 – Behavioral Enrichment
+    DNS-Stats frequency analysis
+
+Layer 4 – Threat Intelligence Validation
+    AlienVault OTX IOC match
+
+Layer 5 – Automated Containment
+    Wazuh Active Response
+
+Layer 6 – Persistent Blocking
+    HOSTS file enforcement
+
+
+SOC VALUE DELIVERED
+--------------------------------------------------------------------
+
+Before:
+    - DNS detection only
+    - Manual analyst containment
+    - Delayed response
+
+After:
+    - Immediate containment
+    - Domain-level blocking
+    - No manual intervention
+    - Reduced MTTR
+    - Enterprise-grade SOC automation
+
+
+DETECTION ENGINEERING CONCEPTS USED
+--------------------------------------------------------------------
+
+- Telemetry normalization
+- Behavioral anomaly detection
+- IOC validation
+- Multi-stage alert correlation
+- Automated enforcement
+- Endpoint remediation
+- Threat-intel-driven response
+- Detection → Response lifecycle design
+
+
+FINAL STATE
+--------------------------------------------------------------------
+
+Raw DNS query
+    ↓
+Enriched with context
+    ↓
+Validated with global threat intelligence
+    ↓
+Automatically contained at endpoint
+    ↓
+Persistent domain blocking enforced
+
+
+====================================================================
+END OF ARCHITECTURE DOCUMENT
+====================================================================
