@@ -174,15 +174,15 @@ High Severity Alert → Active Response → Endpoint Action
 
 After implementation, your SOC can:
 
-✔ Detect rare DNS activity
-✔ Detect first-time-seen domains
-✔ Identify suspicious low-frequency domains
-✔ Validate domains against global threat intel
-✔ Automatically enrich alerts
-✔ Map to MITRE ATT&CK
-✔ Trigger automated actions
-✔ Reduce analyst triage time
-✔ Improve MTTD and MTTR
+- ✔ Detect rare DNS activity
+- ✔ Detect first-time-seen domains
+- ✔ Identify suspicious low-frequency domains
+- ✔ Validate domains against global threat intel
+- ✔ Automatically enrich alerts
+- ✔ Map to MITRE ATT&CK
+- ✔ Trigger automated actions
+- ✔ Reduce analyst triage time
+- ✔ Improve MTTD and MTTR
 
 This transforms Wazuh from log collection into a detection engineering platform.
 
@@ -575,12 +575,12 @@ This is analyst-ready intelligence.
 
 # 🏆 Project Outcome
 
-✔ Real-world DNS detection pipeline
-✔ Automatic threat enrichment
-✔ Threat intelligence validation
-✔ SOC workflow optimization
-✔ Reduced manual pivoting
-✔ Enterprise-grade SOC capability
+- ✔ Real-world DNS detection pipeline
+- ✔ Automatic threat enrichment
+- ✔ Threat intelligence validation
+- ✔ SOC workflow optimization
+- ✔ Reduced manual pivoting
+- ✔ Enterprise-grade SOC capability
 
 ---
 
