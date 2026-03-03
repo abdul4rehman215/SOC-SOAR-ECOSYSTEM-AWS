@@ -330,7 +330,7 @@ Enable selectively for production.
 
 Complete detailed project walkthrough available here:
 
-👉 [Download Full SOC Enrichment Project PDF](<sandbox:/mnt/data/Cortex TheHive Threat Intelligence Enrichment Project.pdf>) :contentReference[oaicite:0]{index=0}
+👉 [View SOC Enrichment Project PDF](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/00-installation-and-setup-guide/11-thehive-cortex-integration/Cortex%20TheHive%20Threat%20Intelligence%20Enrichment%20Project.pdf)
 
 ---
 
