@@ -594,8 +594,9 @@ SOC Notified
 
 For full implementation screenshots and validation proof:
 
-👉 **Click here to view the complete PDF implementation guide**
-(Upload your PDF file link here)
+👉 **[Click here to view the complete PDF implementation guide Part 1](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/09-wazuh-virustotal-integration/docs/Wazuh%20VirusTotal%20Integration%20Malware%20Detection%20Project.pdf)**
+
+👉 **[Click here to view the complete PDF implementation guide Part 2](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/09-wazuh-virustotal-integration/docs/Wazuhh%20VirusTotal%20Active%20Response%20Automated%20Malware%20Removal.pdf)**
 
 ---
 
