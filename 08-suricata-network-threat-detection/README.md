@@ -535,7 +535,7 @@ This project now reflects:
 │
 ├── dashboard-agent-group/        ← Part 3 (SOC Operationalization)
 │   ├── README.md
-│   ├── dashboard.json
+│   ├── Suricata Network Threat Detection Dashboard.ndjson
 │   ├── images/
 │   ├── interview_qna.md
 │   ├── troubleshooting.md
