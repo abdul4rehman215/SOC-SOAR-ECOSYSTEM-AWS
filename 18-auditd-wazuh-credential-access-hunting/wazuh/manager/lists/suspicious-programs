@@ -1,0 +1,6 @@
+nc:yellow
+ncat:yellow
+netcat:yellow
+tcpdump:orange
+strace:orange
+gdb:red
