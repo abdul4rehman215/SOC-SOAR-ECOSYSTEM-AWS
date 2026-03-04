@@ -1,0 +1,117 @@
+Zeek Network Security Monitoring + Threat Detection Integrated with Wazuh SIEM
+architecture.txt
+======================================================================
+
+Purpose
+-------
+This project adds Network Security Monitoring (NSM) visibility to the SOC ecosystem.
+Zeek passively inspects traffic and generates high-fidelity logs (DNS, TLS, connections, etc).
+Wazuh ingests those logs, applies custom rules, generates alerts, and powers SOC dashboards.
+
+Key Difference
+--------------
+- IDS alerts (like Snort) answer: "Does traffic match a known rule?"
+- Zeek answers: "What is happening on the network?" (context + behavior + metadata)
+- Wazuh answers: "How do we centralize, correlate, alert, and visualize it?"
+
+High-Level Flow
+---------------
+Network Traffic
+   |
+   v
+Zeek Sensor (passive monitoring)
+   |
+   | JSON logs written to /opt/zeek/logs/current/
+   |   - conn.log  (connections)
+   |   - dns.log   (DNS queries)
+   |   - ssl.log   (TLS/SSL metadata)
+   v
+Wazuh Agent (log collection)
+   |
+   | <localfile> json ingestion:
+   |   /opt/zeek/logs/current/*.log
+   v
+Wazuh Manager (rules + alerting)
+   |
+   v
+OpenSearch Indexing
+   |
+   v
+Wazuh Dashboard (monitoring + threat hunting)
+   |
+   v
+SOC Analyst
+
+Zeek Configuration Components
+-----------------------------
+1) node.cfg
+   - defines interface to monitor and standalone deployment
+   - path: /opt/zeek/etc/node.cfg
+
+2) networks.cfg
+   - defines internal/private networks for traffic classification
+   - path: /opt/zeek/etc/networks.cfg
+
+3) local.zeek
+   - enables JSON logs using:
+     @load policy/tuning/json-logs.zeek
+   - path: /opt/zeek/share/zeek/site/local.zeek
+
+Zeek Operations
+---------------
+- zeekctl check   -> validate scripts and config
+- zeekctl deploy  -> start/restart Zeek and generate logs
+
+Wazuh Integration Components
+----------------------------
+1) Wazuh Agent log monitoring (Zeek sensor host)
+   - /var/ossec/etc/ossec.conf
+   - localfile monitors /opt/zeek/logs/current/*.log (JSON)
+
+2) Wazuh Manager decoders (optional but used here)
+   - parse Zeek JSON fields into searchable keys used by rules
+
+3) Wazuh Manager rules
+   - transform Zeek telemetry into SOC alerts:
+     - DNS query detection
+     - Rejected connections (REJ)
+     - Port scan behavior (frequency rule)
+     - TLS anomalies (self-signed / expired)
+
+Detection Scenarios Demonstrated
+--------------------------------
+DNS Activity:
+- dig wazuh.com, dig virustotal.com
+- Zeek produces dns.log entries
+- Wazuh rule alerts on dnsquery + resolved_by fields
+
+Recon / Port Scan:
+- nc -zv across multiple ports from Kali
+- Zeek produces conn.log entries with conn_state=REJ
+- Wazuh rule alerts on REJ and escalates if repeated (frequency rule)
+
+TLS Anomalies:
+- curl -k self-signed.badssl.com, expired.badssl.com
+- Zeek produces ssl.log entries with validation status
+- Wazuh rules alert based on ssl_validation_status
+
+SOC Dashboards Enabled
+----------------------
+Dashboards provide analyst visibility across:
+- Total network events
+- Events over time
+- Protocol distribution
+- Top source and destination IPs
+- Rejected connection spikes
+- Port scan activity windows
+- TLS certificate issue listings
+- Raw events table for hunting pivots
+
+Outcome
+-------
+This integration turns Zeek network logs into:
+- searchable SIEM data
+- actionable alerts
+- SOC-ready dashboards
+
+End of architecture.txt
