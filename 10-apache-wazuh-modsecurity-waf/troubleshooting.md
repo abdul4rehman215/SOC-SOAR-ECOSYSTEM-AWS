@@ -362,5 +362,3 @@ Always validate step by step.
 End of Troubleshooting Guide.
 
 ---
-Tell me the next move.
-```
