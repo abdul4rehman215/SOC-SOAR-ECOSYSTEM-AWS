@@ -586,7 +586,10 @@ This is analyst-ready intelligence.
 
 # 📄 PDF Guide Reference
 
-Full illustrated implementation guide available in project PDF:
+Full illustrated implementation guide available in project PDF: 
+
+👉 **[Click here to view the complete PDF walkthrough guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/13-dns-threat-hunting-project/docs/Hunting%20Malicious%20DNS%20with%20Wazuh%20DNS-stats%20AlienVault%20OTX.pdf)**
+
 
 
 This includes:
