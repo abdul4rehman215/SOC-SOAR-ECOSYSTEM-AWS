@@ -524,16 +524,16 @@ This is real SOC automation architecture.
 ├── troubleshooting.md
 |
 ├── configs/
-|   ├── fail2ban/
+|   └── fail2ban/
 │       ├── jail_modsecurity.conf
-│       ├── filter_modsecurity.conf
+│       └── filter_modsecurity.conf
 │
 ├── wazuh/
 │   ├── decoder_fail2ban.xml
-│   ├── rules_fail2ban.xml
+│   └── rules_fail2ban.xml
 │
 ├── docs/
-│   ├── 
+    └── ModSecurity Fail2Ban Active Response Wazuh Web Security Integration.pdf
 ```
 
 ---
@@ -554,3 +554,9 @@ Attack → Detect → Block → Contain → Monitor → Investigate
 That is security maturity.
 
 ---
+
+For complete visual step-by-step screenshots and terminal walkthrough, refer to the detailed PDF implementation guide included in the repository resources folder. Or [click here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/12-fail2ban-modsecurity-ip-block/docs/ModSecurity%20Fail2Ban%20Active%20Response%20Wazuh%20Web%20Security%20Integration.pdf)
+
+
+
+
