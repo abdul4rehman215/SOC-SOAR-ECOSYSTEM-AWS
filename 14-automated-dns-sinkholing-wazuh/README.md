@@ -301,9 +301,9 @@ This confirms malicious resolution BEFORE response.
 
 Dashboard should show:
 
-1️⃣ Sysmon DNS Query Detected
-2️⃣ DNS-Stats – Domain Queried for First Time
-3️⃣ AlienVault OTX – Indicator(s) Found
+- 1️⃣ Sysmon DNS Query Detected
+- 2️⃣ DNS-Stats – Domain Queried for First Time
+- 3️⃣ AlienVault OTX – Indicator(s) Found
 
 Rule ID 100080 fires.
 
@@ -363,6 +363,9 @@ You should see:
 
 ---
 
+## 📂 Repository Structure
+
+```
 14-automated-dns-sinkholing-wazuh/
 │
 ├── README.md
@@ -383,6 +386,7 @@ You should see:
 │
 └── docs/
     └── automated_dns_sinkholing_visual_guide.pdf
+```
 
 ---
 
