@@ -1,0 +1,12 @@
+<!--
+wazuh/agent/ossec.conf.snippet.xml
+Purpose: Wazuh Agent snippet to ingest Zeek JSON logs.
+
+Paste inside /var/ossec/etc/ossec.conf under <ossec_config>.
+Then restart wazuh-agent.
+-->
+
+<localfile>
+  <log_format>json</log_format>
+  <location>/opt/zeek/logs/current/*.log</location>
+</localfile>
