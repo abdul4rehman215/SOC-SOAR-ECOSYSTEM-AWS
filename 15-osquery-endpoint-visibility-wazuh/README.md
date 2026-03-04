@@ -230,7 +230,7 @@ Before performing this project, the following knowledge areas are recommended.
 │   └── osquery_rules.xml
 │
 └── docs
-    └── project_pdf_guide.pdf
+    └── Osquery Exploration and Wazuh Integration Project.pdf
 
 ```
 
