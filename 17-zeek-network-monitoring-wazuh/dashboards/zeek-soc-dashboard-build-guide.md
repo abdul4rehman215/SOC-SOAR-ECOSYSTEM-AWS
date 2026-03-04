@@ -130,9 +130,9 @@ dig wazuh.com
 
 Instead of only relying on raw logs or individual alerts, this dashboard gives:
 
-✅ fast situational awareness
-✅ real-time hunting visibility
-✅ analyst-friendly pivots for investigation
+- ✅ fast situational awareness
+- ✅ real-time hunting visibility
+- ✅ analyst-friendly pivots for investigation
 
 It makes Zeek operational in a SOC environment.
 
