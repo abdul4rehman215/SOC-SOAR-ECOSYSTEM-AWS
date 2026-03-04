@@ -1,0 +1,57 @@
+Zeek Paths & Logs Reference
+==========================
+
+Core Zeek Locations
+-------------------
+Zeek binaries:
+  /opt/zeek/bin
+
+ZeekControl:
+  zeekctl
+
+Node configuration:
+  /opt/zeek/etc/node.cfg
+
+Network scope definition:
+  /opt/zeek/etc/networks.cfg
+
+Site policy:
+  /opt/zeek/share/zeek/site/local.zeek
+
+Logs directory (current):
+  /opt/zeek/logs/current/
+
+Common Zeek Log Files
+---------------------
+Connections:
+  /opt/zeek/logs/current/conn.log
+
+DNS:
+  /opt/zeek/logs/current/dns.log
+
+SSL/TLS:
+  /opt/zeek/logs/current/ssl.log
+
+HTTP (depends on traffic):
+  /opt/zeek/logs/current/http.log
+
+Operations
+----------
+Validate:
+  sudo zeekctl check
+
+Deploy/Start:
+  sudo zeekctl deploy
+
+Quick log view:
+  tail -n 20 /opt/zeek/logs/current/conn.log
+  tail -n 20 /opt/zeek/logs/current/dns.log
+  tail -n 20 /opt/zeek/logs/current/ssl.log
+
+Wazuh Integration
+-----------------
+Wazuh agent config:
+  /var/ossec/etc/ossec.conf
+
+Wazuh monitors:
+  /opt/zeek/logs/current/*.log
