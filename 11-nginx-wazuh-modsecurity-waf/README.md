@@ -515,8 +515,11 @@ This mirrors real enterprise WAF + SIEM architecture used in production SOC envi
 
 ---
 
+# 📄 PDF Guide
+
 For complete visual step-by-step screenshots and terminal walkthrough,
-refer to the detailed PDF implementation guide included in the repository resources folder.
-Or [click here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/11-nginx-wazuh-modsecurity-waf/docs/Nginx%20-%20Web%20Application%20Firewall%20(ModSecurity)%20with%20Wazuh%20Monitoring.pdf)
+refer to the detailed PDF implementation guide included in the repository resources folder, or click the link below.
+
+👉 [Click here to view the complete PDF walkthrough guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/11-nginx-wazuh-modsecurity-waf/docs/Nginx%20-%20Web%20Application%20Firewall%20(ModSecurity)%20with%20Wazuh%20Monitoring.pdf)
 
 ---
