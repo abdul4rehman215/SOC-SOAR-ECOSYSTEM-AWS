@@ -1,0 +1,129 @@
+==========================================
+architecture.txt
+==========================================
+
+Project: Hunting Linux Credential Access Attacks using Auditd + Wazuh SIEM
+Goal: Capture kernel-level credential access activity (auditd) and operationalize it into SOC alerts (Wazuh).
+
+------------------------------------------
+High-Level Data Flow
+------------------------------------------
+
+[ Linux Endpoint ]
+   |
+   |  (Kernel audit subsystem)
+   |  auditd collects security events:
+   |    - system calls (execve/open/chmod…)
+   |    - sensitive file access (passwd/shadow)
+   |    - user attribution (AUID/EUID)
+   |
+   v
+/var/log/audit/audit.log
+   |
+   |  (Wazuh Agent localfile collector reads audit.log)
+   |
+   v
+[ Wazuh Agent ]
+   |
+   |  forwards events securely to Manager
+   |
+   v
+[ Wazuh Manager ]
+   |
+   |  1) Parses audit events (audit format)
+   |  2) Enriches/classifies via CDB lists:
+   |        - audit-keys  -> categories (shadow/passwd/ssh/history/command)
+   |        - suspicious-programs -> severity labels (yellow/orange/red)
+   |  3) Applies custom detection rules:
+   |        - detect shadow access (credential access)
+   |        - detect passwd access (recon)
+   |        - detect suspicious tool execution (gdb/tcpdump/strace/netcat…)
+   |        - (optional) correlation: repeated events in time window
+   |
+   v
+[ Indexer / Storage ]
+   |
+   |  Wazuh Indexer stores alerts/events (searchable)
+   |
+   v
+[ Wazuh Dashboard ]
+   |
+   |  SOC analyst uses:
+   |    - Threat Hunting view (filters + pivots)
+   |    - Discover view (full JSON event details)
+   |    - Alert drill-down (rule IDs, fields, user attribution)
+   |
+   v
+[ SOC Analyst ]
+   |
+   |  Outcome:
+   |   - Identify credential access attempts early
+   |   - Trace "who did what and when" at kernel level
+   |   - Validate detections + support IR and compliance evidence
+
+
+------------------------------------------
+Key Telemetry Captured by auditd
+------------------------------------------
+
+1) File Activity Monitoring (FIM-like at kernel level)
+   - /etc/shadow access and modifications
+   - /etc/passwd access and modifications
+   - SSH persistence paths (home directories, sshd_config)
+   - Bash history access or tampering
+
+2) System Call Monitoring
+   - execve captures command execution:
+     - executable path
+     - arguments
+     - success/failure
+     - user attribution
+
+3) Identity Attribution
+   - AUID = original login user (tracks across sudo)
+   - EUID = effective user (e.g., root after sudo)
+   - Helps answer:
+     “Which real user triggered this event?”
+
+
+------------------------------------------
+Detection & Enrichment Logic (Wazuh)
+------------------------------------------
+
+A) CDB List: audit-keys
+   Maps audit rule keys -> categories
+   Examples:
+     shadow_access -> shadow
+     passwd_access -> passwd
+     bash_history  -> bash
+     audit-wazuh-c -> command
+
+B) CDB List: suspicious-programs
+   Maps command/tool -> risk label
+   Examples:
+     gdb -> red
+     tcpdump -> orange
+     nc/netcat -> yellow
+
+C) Custom Rules
+   - Credential access alert when shadow is accessed
+   - Recon/identity visibility when passwd is accessed
+   - High severity when suspicious tools are executed
+
+
+------------------------------------------
+Operational Use in SOC
+------------------------------------------
+
+- Real-time detections for credential access behavior (early-stage attacker activity)
+- High-fidelity audit trail usable as forensic evidence
+- Compliance-ready logging and reporting capability
+- Threat hunting pivots:
+  - find all events tied to a user (AUID)
+  - find all shadow access attempts
+  - find suspicious tooling usage
+  - correlate with SSH brute force alerts, file integrity alerts, etc.
+
+==========================================
+END
+==========================================
