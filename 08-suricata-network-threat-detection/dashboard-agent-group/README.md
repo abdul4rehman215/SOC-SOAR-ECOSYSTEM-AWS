@@ -43,8 +43,6 @@ You build:
 
 # 🏗️ Architecture Enhancement
 
-(Insert your architecture image here manually)
-
 Data Flow:
 
 Suricata Sensor  
@@ -125,9 +123,7 @@ You created the following panels:
 
 Dashboard export file:
 
-🔗 **[Suricata Dashboard JSON Export](ADD_JSON_LINK_HERE)**
-
-(Replace with actual JSON export link)
+🔗 **[Suricata Dashboard JSON Export](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/08-suricata-network-threat-detection/dashboard-agent-group/Suricata%20Network%20Threat%20Detection%20Dashboard.ndjson)**
 
 ---
 
@@ -167,21 +163,11 @@ Detection → Visualization → Investigation → Response
 
 # 🏆 Operational Benefits
 
-✔ Cleaner separation of telemetry
-✔ Reduced dashboard clutter
-✔ Scalable agent configuration
-✔ Faster incident validation
-✔ Production-style SOC deployment
-
----
-
-# 📘 Documentation
-
-Full implementation guide is available in:
-
-🔗 **[Full Suricata SOC Implementation PDF](ADD_PDF_LINK_HERE)**
-
-(Replace with your PDF link)
+- ✔ Cleaner separation of telemetry
+- ✔ Reduced dashboard clutter
+- ✔ Scalable agent configuration
+- ✔ Faster incident validation
+- ✔ Production-style SOC deployment
 
 ---
 
