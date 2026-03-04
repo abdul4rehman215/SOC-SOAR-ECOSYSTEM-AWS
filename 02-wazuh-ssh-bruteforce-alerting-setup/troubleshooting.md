@@ -247,13 +247,13 @@ Detection tuning is iterative.
 
 If detection fails, validate in this order:
 
-1️⃣ Logs exist
-2️⃣ Events visible in dashboard
-3️⃣ Rule filter matches
-4️⃣ Monitor condition satisfied
-5️⃣ Trigger fires
-6️⃣ Action executes
-7️⃣ Notification delivered
+- 1️⃣ Logs exist
+- 2️⃣ Events visible in dashboard
+- 3️⃣ Rule filter matches
+- 4️⃣ Monitor condition satisfied
+- 5️⃣ Trigger fires
+- 6️⃣ Action executes
+- 7️⃣ Notification delivered
 
 Follow the pipeline step by step.
 
