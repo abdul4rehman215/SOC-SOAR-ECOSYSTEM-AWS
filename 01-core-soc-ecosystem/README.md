@@ -6,7 +6,7 @@
 
 <div align="center">
 
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/architect_workflow.png" width="900"/>
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/architect_workflow.png" width="900"/>
 
 </div>
 
@@ -35,7 +35,7 @@ This is an operational SOC workflow that mirrors enterprise environments.
 
 <div align="center">
 
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/soc_%20tools_overview.jpeg" width="900"/>
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/soc_%20tools_overview.jpeg" width="900"/>
 
 </div>
 
