@@ -1,0 +1,12 @@
+<!--
+wazuh/agent/ossec.conf.snippet.xml
+Purpose: Wazuh Agent snippet to ingest Snort fast alert logs
+
+Paste this inside /var/ossec/etc/ossec.conf under <ossec_config>.
+Then restart wazuh-agent.
+-->
+
+<localfile>
+  <log_format>syslog</log_format>
+  <location>/var/log/snort/snort.alert.fast</location>
+</localfile>
