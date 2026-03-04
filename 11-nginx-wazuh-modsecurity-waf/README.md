@@ -470,7 +470,7 @@ You can now:
 ├── interview_qna.md
 ├── troubleshooting.md
 ├── wazuh-agent/
-|   ├── snippets-ossec.conf
+|   └── snippets-ossec.conf
 └── docs/
     └── Nginx - Web Application Firewall (ModSecurity) with Wazuh Monitoring.pdf
 ```
