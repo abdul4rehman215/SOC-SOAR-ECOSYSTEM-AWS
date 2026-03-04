@@ -114,12 +114,12 @@ This dashboard isolates network IDS alerts from endpoint telemetry.
 
 You created the following panels:
 
-1️⃣ Top Suricata Signatures
-2️⃣ MITRE Tactic Distribution
-3️⃣ MITRE Technique Frequency
-4️⃣ Alerts Over Time
-5️⃣ Top Source IPs
-6️⃣ Alerts by Severity
+- 1️⃣ Top Suricata Signatures
+- 2️⃣ MITRE Tactic Distribution
+- 3️⃣ MITRE Technique Frequency
+- 4️⃣ Alerts Over Time
+- 5️⃣ Top Source IPs
+- 6️⃣ Alerts by Severity
 
 Dashboard export file:
 
@@ -138,12 +138,12 @@ Before:
 
 After:
 
-✔ Dedicated network threat dashboard
-✔ Attack spike visibility
-✔ Top attacker IP ranking
-✔ MITRE lifecycle overview
-✔ Faster triage decisions
-✔ Structured investigation workflow
+- ✔ Dedicated network threat dashboard
+- ✔ Attack spike visibility
+- ✔ Top attacker IP ranking
+- ✔ MITRE lifecycle overview
+- ✔ Faster triage decisions
+- ✔ Structured investigation workflow
 
 ---
 
