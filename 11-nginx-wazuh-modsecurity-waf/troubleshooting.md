@@ -1,7 +1,6 @@
-# 🚨 NGINX + ModSecurity v3 + OWASP CRS + Wazuh  
-## Troubleshooting Guide
+# 🚨 Troubleshooting Guide- NGINX + ModSecurity v3 + OWASP CRS + Wazuh  
 
-This guide covers real-world issues encountered during:
+ This guide covers real-world issues encountered during:
 
 - NGINX module compilation
 - ModSecurity v3 build
