@@ -251,7 +251,7 @@ This confirms full pipeline.
 
 For complete dashboard walkthrough and screenshots:
 
-👉 **[View the full visual project guide (PDF)](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/02-wazuh-ssh-bruteforce-alerting-lab/Wazuh%20Alerting%20Setup%20SSH%20Brute%20Force%20Simulation.pdf)**
+👉 **[View the full visual project guide (PDF)](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/02-wazuh-ssh-bruteforce-alerting-setup/docs/Wazuh%20Alerting%20Setup%20SSH%20Brute%20Force%20Simulation.pdf)**
 
 ---
 
