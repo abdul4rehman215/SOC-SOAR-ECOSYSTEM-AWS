@@ -560,7 +560,7 @@ By integrating Snort with Wazuh, network-layer alerts became:
 ├── commands.sh
 ├── architecture.txt
 ├── interview_qna.md
-├── TROUBLESHOOTING.md
+├── troubleshooting.md
 ├── snort/
 │   ├── rules/
 │   │   ├── local.rules
@@ -575,7 +575,7 @@ By integrating Snort with Wazuh, network-layer alerts became:
 │   └── rules/
 │       └── snort_rules.xml
 └── docs/
-    └── snort-wazuh-integration.pdf
+    └── Snort Network Monitoring with Custom Rules and Wazuh SIEM Integration.pdf
 ```
 
 ---
@@ -584,6 +584,6 @@ By integrating Snort with Wazuh, network-layer alerts became:
 
 For the full step-by-step PDF with screenshots and validation, see:
 
-📄 **[Snort + Wazuh Integration PDF Guide](docs/snort-wazuh-integration.pdf)**
+📄 **[Snort + Wazuh Integration PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/16-snort-ids-wazuh-integration/doc/Snort%20Network%20Monitoring%20with%20Custom%20Rules%20and%20Wazuh%20SIEM%20Integration.pdf)**
 
 ---
