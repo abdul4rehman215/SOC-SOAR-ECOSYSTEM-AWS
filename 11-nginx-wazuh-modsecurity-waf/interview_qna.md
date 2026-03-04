@@ -1,5 +1,4 @@
-# 🎤 NGINX + ModSecurity v3 + OWASP CRS + Wazuh SIEM  
-## Interview Questions & Answers
+# 🎤 Interview Q&A - NGINX + ModSecurity v3 + OWASP CRS + Wazuh SIEM  
 
 ---
 
