@@ -1,4 +1,4 @@
-# 🚨 Wazuh + ModSecurity (WAF) Integration – Troubleshooting Guide
+# 🚨 Troubleshooting Guide - Wazuh + ModSecurity (WAF) Integration
 
 ---
 
