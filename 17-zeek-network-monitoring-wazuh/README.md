@@ -1,9 +1,9 @@
 # 👁️ Zeek Network Security Monitoring + Threat Detection Integrated with Wazuh SIEM
 
 <p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/zeek01.png" alt="Zeek Logo" width="150" />
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh.png" alt="Wazuh Logo" width="150" />
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/zeek01.png" alt="Zeek Logo" width="300" />
+
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh.png" alt="Wazuh Logo" width="300" />
 </p>
 
 ---
