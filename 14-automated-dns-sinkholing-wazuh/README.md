@@ -369,23 +369,20 @@ You should see:
 14-automated-dns-sinkholing-wazuh/
 │
 ├── README.md
-│
 ├── commands.sh
-├──architecture-notes.txt
+├── architecture-notes.txt
 ├── interview_qna.md
 ├── troubleshooting.md
 │
 ├── manager/
 │   ├── ossec-active-response-config.xml
-│   └── local_otx_rules.xml
 │
 ├── windows-endpoint/
 │   ├── malicious_domains.ps1
 │   └── domains.cmd
-│   └── sysmon-dns-config.xml
 │
 └── docs/
-    └── automated_dns_sinkholing_visual_guide.pdf
+    └── Automated DNS Sinkholing using Wazuh Active Response.pdf
 ```
 
 ---
@@ -437,3 +434,12 @@ You now have:
 - ✔ SOC-grade automation
 
 ---
+
+# 📄 PDF Guide Reference
+
+For complete visual step-by-step screenshots and terminal walkthrough, refer to the detailed PDF implementation guide included in the repository resources folder. Or click below.
+
+👉 **[Click here to view the complete PDF walkthrough guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/14-automated-dns-sinkholing-wazuh/docs/Automated%20DNS%20Sinkholing%20using%20Wazuh%20Active%20Response.pdf)**
+
+
+
