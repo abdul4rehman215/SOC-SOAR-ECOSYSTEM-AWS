@@ -1,0 +1,9 @@
+passwd_access:passwd
+shadow_access:shadow
+history_access:history
+ssh_access:ssh
+audit-wazuh-c:command
+bash_history:bash
+user_home_changes:home
+root_home_changes:home
+ssh_config_changes:ssh
