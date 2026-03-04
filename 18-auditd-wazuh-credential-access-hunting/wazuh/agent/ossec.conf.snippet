@@ -1,0 +1,13 @@
+<!--
+wazuh/agent/ossec.conf.snippet
+Purpose: Wazuh Agent configuration snippet to ingest Linux audit logs.
+
+Paste inside: /var/ossec/etc/ossec.conf
+(inside <ossec_config> ... </ossec_config>)
+Then restart wazuh-agent.
+-->
+
+<localfile>
+  <log_format>audit</log_format>
+  <location>/var/log/audit/audit.log</location>
+</localfile>
