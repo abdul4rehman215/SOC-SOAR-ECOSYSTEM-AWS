@@ -9,7 +9,8 @@ This project EXTENDS the DNS-Stats + AlienVault OTX detection pipeline.
 You MUST complete the previous DNS threat hunting project first:
 
 👉 **Complete the DNS-Stats + AlienVault OTX Detection Pipeline First**
-[https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS)
+
+[Guide-to-it](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS)
 
 This sinkholing project builds directly on top of:
 
@@ -22,8 +23,9 @@ This sinkholing project builds directly on top of:
 
 ## 📐 Architecture Reference
 
-👉 **View the Automated DNS Sinkholing Architecture Diagram Here**
-[https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Automated-dns-sinkholing-architecture-in-soc.png](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Automated-dns-sinkholing-architecture-in-soc.png)
+<p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Automated-dns-sinkholing-architecture-in-soc.png">
+</p>
 
 ---
 
@@ -31,10 +33,10 @@ This sinkholing project builds directly on top of:
 
 Previously we had:
 
-✔ DNS detection
-✔ Rare domain detection (DNS-Stats)
-✔ IOC validation (AlienVault OTX)
-✔ SOC alert visibility
+- ✔ DNS detection
+- ✔ Rare domain detection (DNS-Stats)
+- ✔ IOC validation (AlienVault OTX)
+- ✔ SOC alert visibility
 
 But:
 
@@ -42,10 +44,10 @@ But:
 
 Now we extend it into:
 
-✔ Automated DNS sinkholing
-✔ Endpoint-level domain blocking
-✔ Active Response automation
-✔ Detection → Validation → Enforcement lifecycle
+- ✔ Automated DNS sinkholing
+- ✔ Endpoint-level domain blocking
+- ✔ Active Response automation
+- ✔ Detection → Validation → Enforcement lifecycle
 
 ---
 
@@ -401,10 +403,10 @@ This is detection engineering maturity.
 
 You now have:
 
-✔ DNS detection
-✔ IOC validation
-✔ Automated sinkholing
-✔ Endpoint-level containment
-✔ SOC-grade automation
+- ✔ DNS detection
+- ✔ IOC validation
+- ✔ Automated sinkholing
+- ✔ Endpoint-level containment
+- ✔ SOC-grade automation
 
 ---
