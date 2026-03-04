@@ -363,6 +363,29 @@ You should see:
 
 ---
 
+14-automated-dns-sinkholing-wazuh/
+│
+├── README.md
+│
+├── commands.sh
+├──architecture-notes.txt
+├── interview_qna.md
+├── troubleshooting.md
+│
+├── manager/
+│   ├── ossec-active-response-config.xml
+│   └── local_otx_rules.xml
+│
+├── windows-endpoint/
+│   ├── malicious_domains.ps1
+│   └── domains.cmd
+│   └── sysmon-dns-config.xml
+│
+└── docs/
+    └── automated_dns_sinkholing_visual_guide.pdf
+
+---
+
 # 6️⃣ What This Enables in Your SOC
 
 * Automated containment
