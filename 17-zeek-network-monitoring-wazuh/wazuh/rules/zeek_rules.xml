@@ -1,0 +1,60 @@
+<!--
+wazuh/rules/zeek_rules.xml
+Purpose: Zeek detections inside Wazuh SIEM
+Covers:
+- DNS queries (and suppression for known benign domain)
+- Rejected connections (REJ)
+- Scan detection via frequency rule
+- TLS anomalies (self-signed / expired)
+-->
+
+<group name="zeek,">
+  <rule id="100900" level="0">
+    <decoded_as>json</decoded_as>
+    <description>Zeek alerts</description>
+  </rule>
+
+  <rule id="100901" level="5">
+    <if_sid>100900</if_sid>
+    <field name="dnsquery">\w+.</field>
+    <dstport type="pcre2">^53$</dstport>
+    <field name="resolved_by">\d+.\d+.\d+.\d+</field>
+    <description>Zeek: DNS Query $(dnsquery) attempted from source ip $(srcip) source port $(srcport) resolved to IP(s) $(resolved_by)</description>
+  </rule>
+
+  <rule id="100902" level="0">
+    <if_sid>100900</if_sid>
+    <srcport>5353</srcport>
+    <description>Zeek: Normal mDNS traffic - $(dnsquery) from source ip $(srcip). Generally benign. Investigate only if the source is unexpected.</description>
+  </rule>
+
+  <rule id="100903" level="7">
+    <if_sid>100900</if_sid>
+    <field name="connection_state">REJ</field>
+    <description>Zeek: Connection from $(srcip) to $(dstip) $(dstport) rejected</description>
+  </rule>
+
+  <rule id="100904" level="10" frequency="5" timeframe="20">
+    <if_matched_sid>100903</if_matched_sid>
+    <description>Zeek: Multiple rejected connections from $(srcip) (5+ in 20s - possible port scan activity)</description>
+  </rule>
+
+  <!-- Suppresses alerts for DNS queries to the Wazuh CTI domain. -->
+  <rule id="100905" level="0">
+    <if_sid>100900</if_sid>
+    <field name="dnsquery">cti.wazuh.com</field>
+    <description>Zeek: DNS Query $(dnsquery) exclude</description>
+  </rule>
+
+  <rule id="100906" level="8">
+    <if_sid>100900</if_sid>
+    <field name="ssl_validation_status">self signed certificate</field>
+    <description>Zeek: Client $(srcip) connected to a server with self-signed certificate $(dstip)</description>
+  </rule>
+
+  <rule id="100907" level="12">
+    <if_sid>100900</if_sid>
+    <field name="ssl_validation_status">certificate has expired</field>
+    <description>Zeek: Client $(srcip) connected to a server with expired certificate $(dstip)</description>
+  </rule>
+</group>
