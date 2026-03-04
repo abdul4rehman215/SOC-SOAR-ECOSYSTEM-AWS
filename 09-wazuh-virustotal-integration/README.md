@@ -583,7 +583,7 @@ SOC Notified
 │   ├── windows_fim.conf
 │   └── remove-threat.sh
 │
-└── resources/
+└── docs/
     ├── Wazuh VirusTotal Integration Malware Detection Project.pdf
     └── Wazuh VirusTotal Active Response Automated Malware Removal.pdf
 ```
