@@ -14,10 +14,6 @@ It transforms:
 
 This mirrors how modern SOC teams implement Linux endpoint monitoring in production environments.
 
-📄 **Full Project Walkthrough (PDF Documentation)**
-
-👉 **[View the complete project PDF here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/07-sysmon-linux-endpoint-detection/Sysmon%20Linux%20Wazuh%20Endpoint%20Telemetry%20and%20Detection.pdf)**
-
 ---
 
 ## 🖼 Architecture Diagram
@@ -395,3 +391,7 @@ Telemetry → Decoding → Detection → Noise Tuning → Validation → High-Si
 It reflects real SOC methodology and production-level endpoint detection design.
 
 ---
+
+# 📄 **Full Project Walkthrough (PDF Documentation)**
+
+👉 **[View the complete project PDF here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/07-sysmon-linux-endpoint-detection/docs/Sysmon%20Linux%20Wazuh%20Endpoint%20Telemetry%20and%20Detection.pdf)**
