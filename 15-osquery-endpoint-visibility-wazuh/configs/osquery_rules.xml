@@ -1,0 +1,21 @@
+<group name="osquery">
+
+  <rule id="200220" level="1">
+    <if_sid>1002</if_sid>
+    <decoded_as>json</decoded_as>
+    <description>Osquery messages grouped</description>
+  </rule>
+
+  <rule id="200221" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="name">bpf_socket_events</field>
+    <description>Osquery socket event detected</description>
+  </rule>
+
+  <rule id="200222" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="name">list_processes_with_hash</field>
+    <description>Osquery process inventory event</description>
+  </rule>
+
+</group>
