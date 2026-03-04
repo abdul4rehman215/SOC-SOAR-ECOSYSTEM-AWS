@@ -1,0 +1,47 @@
+###############################################################################
+# snort_custom_lab.rules
+# Purpose: Clean custom Snort rule pack for practical learning & testing
+# Coverage:
+#   - ICMP Echo Request / Reply
+#   - FTP Attempt (21)
+#   - SSH Attempt (22)
+#   - Basic Web Directory Traversal Pattern (80)
+#
+# SIDs:
+#   - Use 1,000,001+ (local/private SID range)
+###############################################################################
+
+############################
+# ICMP - Echo Request/Reply
+############################
+
+# Outbound ping from HOME_NET to anywhere (Echo Request)
+alert icmp $HOME_NET any -> any any (msg:"LAB ICMP Echo Request Detected"; itype:8; sid:1000003; rev:1;)
+
+# Inbound ping reply to HOME_NET (Echo Reply)
+alert icmp any any -> $HOME_NET any (msg:"LAB ICMP Echo Reply Detected"; itype:0; sid:1000002; rev:1;)
+
+
+############################
+# FTP - Authentication attempt
+############################
+
+# Detect FTP connection attempts to port 21
+alert tcp any any -> $HOME_NET 21 (msg:"LAB FTP Authentication Attempt"; sid:1000004; rev:1;)
+
+
+############################
+# SSH - Connection attempt (SYN)
+############################
+
+# Detect SYN packets attempting to start an SSH connection to HOME_NET
+alert tcp any any -> $HOME_NET 22 (msg:"LAB SSH Connection Attempt Detected"; flags:S; flow:to_server; sid:1000005; rev:1;)
+
+
+#################################
+# Web - Directory traversal attempt
+#################################
+
+# Detect basic directory traversal patterns in HTTP requests
+# Note: This is a learning rule; tune/suppress to reduce false positives in real environments.
+alert tcp any any -> $HOME_NET 80 (msg:"LAB Directory Traversal Attempt Detected"; flow:to_server; content:"../"; sid:1000006; rev:1;)
