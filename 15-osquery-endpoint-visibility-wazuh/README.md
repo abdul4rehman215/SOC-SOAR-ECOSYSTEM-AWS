@@ -376,6 +376,63 @@ Attackers often create cron jobs for persistence.
 
 Configuration files define **scheduled queries and telemetry collection policies**.
 
+### Create the configuration file if not.
+
+```bash
+sudo mkdir -p /etc/osquery
+sudo nano /etc/osquery/osquery.conf
+```
+
+### add configuration:
+
+```json
+{
+  "options": {
+    "config_plugin": "filesystem",
+    "logger_plugin": "filesystem",
+    "logger_path": "/var/log/osquery",
+    "log_result_events": "true",
+    "log_status": "true",
+    "schedule_splay_percent": "10",
+    "utc": "true"
+  },
+
+  "schedule": {
+    "system_info": {
+      "query": "SELECT hostname, cpu_brand, physical_memory FROM system_info;",
+      "interval": 3600
+    },
+
+    "high_load_average": {
+      "query": "SELECT period, average FROM load_average WHERE period = '15m' AND average > '0.7';",
+      "interval": 900
+    }
+  }
+}
+```
+
+### Purpose:
+
+* Automate telemetry collection
+* Run scheduled queries
+* Generate JSON logs
+
+---
+
+### Restart Osquery
+
+Restart the Osquery daemon.
+
+```bash
+sudo systemctl restart osqueryd
+```
+
+Check service status.
+
+```bash
+sudo systemctl status osqueryd
+```
+
 ---
 
 # 📄 Step 10 — Generating Osquery Logs
@@ -388,11 +445,43 @@ Osquery writes telemetry results to structured JSON logs located at:
 
 ```
 
+View logs.
+
+```bash
+sudo tail -f /var/log/osquery/osqueryd.results.log
+```
+
+Output will be JSON telemetry.
+
 ---
 
 # 🔗 Step 11 — Integrating Osquery with Wazuh
 
 The Wazuh agent configuration was modified to enable the Osquery module.
+
+### Edit the Wazuh agent configuration.
+
+```bash
+sudo nano /var/ossec/etc/ossec.conf
+```
+
+### Add the Osquery module.
+
+```xml
+<wodle name="osquery">
+  <disabled>no</disabled>
+  <run_daemon>no</run_daemon>
+  <log_path>/var/log/osquery/osqueryd.results.log</log_path>
+  <config_path>/etc/osquery/osquery.conf</config_path>
+  <add_labels>yes</add_labels>
+</wodle>
+```
+
+### Restart the agent.
+
+```bash
+sudo systemctl restart wazuh-agent
+```
 
 Once enabled, the agent forwards Osquery telemetry to the Wazuh manager.
 
@@ -401,6 +490,40 @@ Once enabled, the agent forwards Osquery telemetry to the Wazuh manager.
 # 🧠 Step 12 — Configuring Wazuh Rules
 
 Custom Wazuh rules were added to parse Osquery telemetry and convert it into security alerts.
+
+### Create rule file.
+
+```bash
+sudo nano /var/ossec/etc/rules/osquery_rules.xml
+```
+
+### add rules:
+
+```xml
+<group name="osquery">
+
+<rule id="200220" level="1">
+  <if_sid>1002</if_sid>
+  <decoded_as>json</decoded_as>
+  <description>Osquery messages grouped</description>
+</rule>
+
+<rule id="200221" level="3">
+  <decoded_as>json</decoded_as>
+  <field name="name">bpf_socket_events</field>
+  <description>Osquery socket event detected</description>
+</rule>
+
+</group>
+```
+
+### Restart Wazuh manager.
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
+
 
 ---
 
