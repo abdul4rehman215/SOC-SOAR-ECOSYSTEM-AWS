@@ -280,7 +280,7 @@ For complete step-by-step screenshots and validation:
 
 👉 **View the full implementation PDF here**
 
-[Complete AWS CloudTrail EC2 Monitoring Lab (Full PDF Guide)](docs/aws-cloudtrail-ec2-monitoring.pdf)
+[Complete AWS CloudTrail EC2 Monitoring Lab (Full PDF Guide)](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/06-aws-cloudtrail-ec2-monitoring-wazuh/docs/AWS%20CloudTrail%20EC2%20Monitoring%20Wazuh%20SIEM.pdf)
 
 ---
 
@@ -296,7 +296,8 @@ For complete step-by-step screenshots and validation:
 ├── interview_qna.md
 ├── troubleshooting.md
 │
-└── aws-cloudtrail-ec2-monitoring.pdf
+├── docs/
+    └── AWS CloudTrail EC2 Monitoring Wazuh SIEM.pdf
 ```
 
 ---
