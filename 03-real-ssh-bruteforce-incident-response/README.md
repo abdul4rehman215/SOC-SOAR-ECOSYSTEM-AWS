@@ -257,7 +257,7 @@ This represents a full incident response cycle.
 
 For full investigation screenshots and documentation:
 
-👉 **[View the complete Incident Response PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/03-real-ssh-bruteforce-incident-response/Real%20SSH%20Brute%20Force%20Incident%20Respons%20Wazuh%20TheHive%20MISP.pdf)**
+👉 **[View the complete Incident Response PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/03-real-ssh-bruteforce-incident-response/docs/Real%20SSH%20Brute%20Force%20Incident%20Respons%20Wazuh%20TheHive%20MISP.pdf)**
 
 This includes:
 
