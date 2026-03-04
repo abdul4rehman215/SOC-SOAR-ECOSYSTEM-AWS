@@ -1,0 +1,14 @@
+<!--
+wazuh/manager/ossec.conf.ruleset.snippet
+Purpose: Register CDB lists so Wazuh rules can reference them.
+
+Paste inside:
+<ossec_config>
+  <ruleset>
+    ...
+  </ruleset>
+</ossec_config>
+-->
+
+<list>etc/lists/audit-keys</list>
+<list>etc/lists/suspicious-programs</list>
