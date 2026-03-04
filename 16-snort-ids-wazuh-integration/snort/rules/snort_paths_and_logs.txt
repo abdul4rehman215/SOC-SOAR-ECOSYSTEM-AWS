@@ -1,0 +1,49 @@
+Snort Paths & Logs Reference
+============================
+
+Core Snort Files
+----------------
+Main configuration:
+  /etc/snort/snort.conf
+
+Rules directory:
+  /etc/snort/rules/
+
+Local custom rules:
+  /etc/snort/rules/local.rules
+
+Custom lab rule pack (recommended repo file):
+  /etc/snort/rules/snort_custom_lab.rules
+
+
+Logging
+-------
+Default Snort log directory:
+  /var/log/snort/
+
+Fast alert log (used for Wazuh ingestion):
+  /var/log/snort/snort.alert.fast
+
+To watch fast alerts live:
+  tail -f /var/log/snort/snort.alert.fast
+
+
+Validation / Testing
+--------------------
+Validate configuration (syntax test):
+  sudo snort -T -c /etc/snort/snort.conf
+
+Run Snort in IDS mode (console alerts):
+  sudo snort -q -A console -c /etc/snort/snort.conf -i <interface>
+
+Identify your interface:
+  ip a
+
+
+Integration with Wazuh
+----------------------
+Wazuh agent config file:
+  /var/ossec/etc/ossec.conf
+
+Wazuh reads Snort fast alert log via <localfile>:
+  /var/log/snort/snort.alert.fast
