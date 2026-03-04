@@ -1,0 +1,79 @@
+<!--
+wazuh/rules/snort_rules.xml
+Purpose:
+- Group Snort events in Wazuh
+- Assign severity based on Snort priority
+- Add friendly descriptions for custom lab SIDs
+
+Important:
+- Adjust rule IDs if your environment already uses these IDs.
+- You may tune levels based on SOC needs.
+-->
+
+<group name="snort,ids,nids,">
+
+  <!-- Base rule: Snort fast alert decoded WITH classification -->
+  <rule id="110000" level="5">
+    <decoded_as>snort-fast-with-class</decoded_as>
+    <description>Snort Alert (with classification): $(snort.msg)</description>
+    <group>snort,ids,nids</group>
+  </rule>
+
+  <!-- Base rule: Snort fast alert decoded WITHOUT classification -->
+  <rule id="110001" level="5">
+    <decoded_as>snort-fast-no-class</decoded_as>
+    <description>Snort Alert: $(snort.msg)</description>
+    <group>snort,ids,nids</group>
+  </rule>
+
+  <!-- Severity tuning by Snort Priority (common convention: lower number often more severe) -->
+  <rule id="110010" level="12">
+    <if_sid>110000</if_sid>
+    <field name="snort.priority">1</field>
+    <description>High Severity Snort Alert (Priority 1): $(snort.msg)</description>
+  </rule>
+
+  <rule id="110011" level="10">
+    <if_sid>110000</if_sid>
+    <field name="snort.priority">2</field>
+    <description>Medium Severity Snort Alert (Priority 2): $(snort.msg)</description>
+  </rule>
+
+  <rule id="110012" level="7">
+    <if_sid>110000</if_sid>
+    <field name="snort.priority">3</field>
+    <description>Low Severity Snort Alert (Priority 3): $(snort.msg)</description>
+  </rule>
+
+  <!-- Custom lab rules by SID (friendly SOC descriptions) -->
+  <rule id="110100" level="7">
+    <if_sid>110001</if_sid>
+    <field name="snort.sid">1000004</field>
+    <description>LAB: FTP Authentication Attempt from $(srcip):$(srcport) to $(dstip):$(dstport)</description>
+  </rule>
+
+  <rule id="110101" level="4">
+    <if_sid>110001</if_sid>
+    <field name="snort.sid">1000003</field>
+    <description>LAB: ICMP Echo Request $(srcip) -> $(dstip)</description>
+  </rule>
+
+  <rule id="110102" level="4">
+    <if_sid>110001</if_sid>
+    <field name="snort.sid">1000002</field>
+    <description>LAB: ICMP Echo Reply $(srcip) -> $(dstip)</description>
+  </rule>
+
+  <rule id="110103" level="9">
+    <if_sid>110001</if_sid>
+    <field name="snort.sid">1000005</field>
+    <description>LAB: SSH Connection Attempt from $(srcip):$(srcport) to $(dstip):22</description>
+  </rule>
+
+  <rule id="110104" level="10">
+    <if_sid>110001</if_sid>
+    <field name="snort.sid">1000006</field>
+    <description>LAB: Directory Traversal Attempt from $(srcip):$(srcport) to $(dstip):80</description>
+  </rule>
+
+</group>
