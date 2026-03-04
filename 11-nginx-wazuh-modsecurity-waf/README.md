@@ -385,7 +385,7 @@ Observe:
 
 ---
 
-# 1️⃣6️⃣ Integrate Logs with Wazuh
+# 1️⃣6️⃣ Integrate Logs with Wazuh (Wazuh-agent)
 
 Edit:
 
@@ -469,6 +469,8 @@ You can now:
 ├── architecture.txt
 ├── interview_qna.md
 ├── troubleshooting.md
+├── wazuh-agent/
+|   ├── snippets-ossec.conf
 └── docs/
     └── Nginx - Web Application Firewall (ModSecurity) with Wazuh Monitoring.pdf
 ```
