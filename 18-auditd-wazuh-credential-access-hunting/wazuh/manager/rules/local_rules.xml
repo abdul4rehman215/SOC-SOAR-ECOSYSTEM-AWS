@@ -1,0 +1,67 @@
+<!--
+wazuh/manager/rules/local_rules.xml
+Purpose:
+- Convert auditd telemetry into SOC alerts
+- Use CDB lists to classify audit keys & suspicious commands
+-->
+
+<group name="cred_access,linux,auditd,">
+
+  <!-- Passwd access: usually recon/user enumeration -->
+  <rule id="100110" level="7">
+    <if_group>audit</if_group>
+    <list field="audit.key" lookup="match_key_value" check_value="passwd">etc/lists/audit-keys</list>
+    <description>🟡 Auditd: /etc/passwd accessed — file: $(audit.file.name)</description>
+  </rule>
+
+  <!-- Shadow access: strong credential-access signal -->
+  <rule id="100120" level="10">
+    <if_group>audit</if_group>
+    <list field="audit.key" lookup="match_key_value" check_value="shadow">etc/lists/audit-keys</list>
+    <description>🔴 Auditd: Possible credential access — /etc/shadow accessed: $(audit.file.name)</description>
+    <mitre>
+      <id>T1003.008</id>
+    </mitre>
+  </rule>
+
+  <!-- Bash history access/tampering (investigate context) -->
+  <rule id="100130" level="6">
+    <if_group>audit</if_group>
+    <list field="audit.key" lookup="match_key_value" check_value="bash">etc/lists/audit-keys</list>
+    <description>🟠 Auditd: Bash history accessed/changed — key: $(audit.key)</description>
+  </rule>
+
+  <!-- SSH config changes (persistence or hardening changes) -->
+  <rule id="100140" level="9">
+    <if_group>audit</if_group>
+    <list field="audit.key" lookup="match_key_value" check_value="ssh">etc/lists/audit-keys</list>
+    <description>🟠 Auditd: SSH-related changes detected — key: $(audit.key)</description>
+  </rule>
+
+</group>
+
+
+<group name="audit_command,linux,auditd,">
+
+  <!-- High severity: programs classified as RED -->
+  <rule id="100210" level="12">
+    <if_group>audit</if_group>
+    <list field="audit.command" lookup="match_key_value" check_value="red">etc/lists/suspicious-programs</list>
+    <description>🔴 Auditd: HIGH-RISK tool executed — $(audit.command)</description>
+  </rule>
+
+  <!-- Medium severity: programs classified as ORANGE -->
+  <rule id="100211" level="10">
+    <if_group>audit</if_group>
+    <list field="audit.command" lookup="match_key_value" check_value="orange">etc/lists/suspicious-programs</list>
+    <description>🟠 Auditd: Suspicious tool executed — $(audit.command)</description>
+  </rule>
+
+  <!-- Lower severity: programs classified as YELLOW -->
+  <rule id="100212" level="7">
+    <if_group>audit</if_group>
+    <list field="audit.command" lookup="match_key_value" check_value="yellow">etc/lists/suspicious-programs</list>
+    <description>🟡 Auditd: Potentially suspicious tool executed — $(audit.command)</description>
+  </rule>
+
+</group>
