@@ -273,7 +273,7 @@ Expected:
 # 📁 Repository Structure
 
 ```
-wazuh-sysmon-windows/
+05-wazuh-sysmon-windows/
 │
 ├── README.md
 ├── commands.sh
@@ -299,12 +299,11 @@ Example:
 
 ```
 images/
-  01-architecture.png
-  02-sysmon-install.png
-  03-agent-connected.png
-  04-dns-event22.png
-  05-encoded-powershell.png
-  06-lsass-detection.png
+  01-sysmon-install.png
+  02-agent-connected.png
+  03-dns-event22.png
+  04-encoded-powershell.png
+  05-lsass-detection.png
 ```
 
 Reference in README like:
