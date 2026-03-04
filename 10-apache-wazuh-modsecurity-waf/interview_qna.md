@@ -1,4 +1,4 @@
-# 🧠 Wazuh + ModSecurity (WAF) Integration – Interview Q&A
+# 🧠  Interview Q&A - Wazuh + ModSecurity (WAF) Integration
 
 ---
 
