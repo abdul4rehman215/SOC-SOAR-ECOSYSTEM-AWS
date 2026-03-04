@@ -138,17 +138,20 @@ Before running this project, you should have:
 ├── architecture.txt
 ├── interview_qna.md
 ├── troubleshooting.md
-├── docs/
-|   └──
-└── wazuh/
-    ├── agent/
-    │   └── ossec.conf.snippet
-    └── manager/
-        ├── rules/
-        │   └── local_rules.xml
-        └── lists/
-            ├── audit-keys
-            └── suspicious-programs
+├── auditd/
+│   └── wazuh.rules
+├── wazuh/
+│   ├── agent/
+│   │   └── ossec.conf.snippet
+│   └── manager/
+│       ├── lists/
+│       │   ├── audit-keys
+│       │   └── suspicious-programs
+│       ├── rules/
+│       │   └── local_rules.xml
+│       └── ossec.conf.ruleset.snippet.xml
+└── docs/
+    └── Linux Auditd Wazuh Credential Access Monitoring Project.pdf
 ```
 
 ---
@@ -588,7 +591,8 @@ Monitoring actions like:
 shots and ## 📎 PDF Guide
 
 For the full step-by-step PDF with screenvalidation, see:
-📄 **[Auditd + Wazuh kernal monitoring, auditing PDF Guide](docs/zeek-wazuh-nzsm.pdf)**
+
+📄 **[Auditd + Wazuh kernal monitoring, auditing PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/18-auditd-wazuh-credential-access-hunting/docs)**
 
 ---
 
