@@ -1,0 +1,232 @@
+================================================================================
+OSQUERY + WAZUH SIEM ENDPOINT TELEMETRY MONITORING ARCHITECTURE
+================================================================================
+
+
+                        ┌──────────────────────────────┐
+                        │           ENDPOINT           │
+                        │        (Ubuntu System)       │
+                        └──────────────┬───────────────┘
+                                       │
+                                       │
+                                       ▼
+
+
+                    ┌───────────────────────────────────┐
+                    │              OSQUERY              │
+                    │-----------------------------------│
+                    │ Endpoint telemetry collection     │
+                    │                                   │
+                    │ SQL-based system monitoring       │
+                    │                                   │
+                    │ Examples of monitored data:       │
+                    │                                   │
+                    │ • Running processes               │
+                    │ • System users                    │
+                    │ • Listening network ports         │
+                    │ • Open network connections        │
+                    │ • Installed packages              │
+                    │ • Cron jobs / scheduled tasks     │
+                    │ • Kernel modules                  │
+                    │ • System configuration            │
+                    │                                   │
+                    │ Analysts query telemetry using    │
+                    │ SQL queries through osqueryi CLI  │
+                    └──────────────┬────────────────────┘
+                                   │
+                                   │
+                                   ▼
+
+
+                    ┌───────────────────────────────────┐
+                    │         OSQUERY DAEMON            │
+                    │-----------------------------------│
+                    │ Scheduled queries execute         │
+                    │ automatically based on            │
+                    │ osquery configuration             │
+                    │                                   │
+                    │ Results generated in JSON format  │
+                    │                                   │
+                    │ Log Location:                     │
+                    │                                   │
+                    │ /var/log/osquery/osqueryd.results │
+                    └──────────────┬────────────────────┘
+                                   │
+                                   │ JSON Telemetry Logs
+                                   ▼
+
+
+                    ┌───────────────────────────────────┐
+                    │           WAZUH AGENT             │
+                    │-----------------------------------│
+                    │ Endpoint security monitoring      │
+                    │                                   │
+                    │ Reads Osquery telemetry logs      │
+                    │                                   │
+                    │ Parses JSON events                │
+                    │                                   │
+                    │ Sends telemetry to Wazuh Manager  │
+                    │                                   │
+                    │ Provides endpoint-level visibility│
+                    └──────────────┬────────────────────┘
+                                   │
+                                   │
+                                   ▼
+
+
+                    ┌───────────────────────────────────┐
+                    │           WAZUH MANAGER           │
+                    │-----------------------------------│
+                    │ Central SIEM correlation engine   │
+                    │                                   │
+                    │ Responsibilities:                 │
+                    │                                   │
+                    │ • Parse incoming events           │
+                    │ • Apply detection rules           │
+                    │ • Correlate security events       │
+                    │ • Generate alerts                 │
+                    │                                   │
+                    │ Custom Osquery rules classify     │
+                    │ endpoint telemetry events         │
+                    └──────────────┬────────────────────┘
+                                   │
+                                   │
+                                   ▼
+
+
+                    ┌───────────────────────────────────┐
+                    │            OPENSEARCH             │
+                    │-----------------------------------│
+                    │ Storage and indexing engine       │
+                    │                                   │
+                    │ Responsibilities:                 │
+                    │                                   │
+                    │ • Store telemetry data            │
+                    │ • Index security events           │
+                    │ • Enable fast search              │
+                    │ • Provide analytics capabilities  │
+                    └──────────────┬────────────────────┘
+                                   │
+                                   │
+                                   ▼
+
+
+                    ┌───────────────────────────────────┐
+                    │         WAZUH DASHBOARD           │
+                    │-----------------------------------│
+                    │ Visualization and investigation   │
+                    │                                   │
+                    │ SOC analysts can:                 │
+                    │                                   │
+                    │ • Search endpoint telemetry       │
+                    │ • Investigate system activity     │
+                    │ • Detect suspicious behavior      │
+                    │ • Correlate alerts                │
+                    │                                   │
+                    │ Example queries:                  │
+                    │                                   │
+                    │ rule.groups : osquery             │
+                    │                                   │
+                    │ Analysts view telemetry events    │
+                    │ collected from endpoints          │
+                    └──────────────┬────────────────────┘
+                                   │
+                                   │
+                                   ▼
+
+
+                       ┌─────────────────────────┐
+                       │        SOC ANALYST      │
+                       │-------------------------│
+                       │ Investigates alerts     │
+                       │ Performs threat hunting │
+                       │ Monitors endpoint state │
+                       │ Detects anomalies       │
+                       │ Initiates response      │
+                       └─────────────────────────┘
+
+
+
+================================================================================
+SECURITY CAPABILITIES ENABLED BY OSQUERY + WAZUH
+================================================================================
+
+
+1. Endpoint Telemetry Monitoring
+   Analysts gain visibility into endpoint system state.
+
+2. Threat Hunting
+   SQL queries allow investigation of suspicious processes,
+   connections, and system activity.
+
+3. Centralized Monitoring
+   Endpoint telemetry is centralized in the SIEM.
+
+4. Detection Engineering
+   Wazuh rules can trigger alerts from Osquery events.
+
+5. Security Investigations
+   Analysts can reconstruct system activity.
+
+6. Compliance Monitoring
+   Osquery helps monitor system configurations.
+
+7. Digital Forensics
+   Endpoint state can be inspected during investigations.
+
+
+================================================================================
+SOC ECOSYSTEM ROLE OF THIS PROJECT
+================================================================================
+
+
+This project extends the SOC ecosystem by adding:
+
+• Endpoint telemetry monitoring
+• SQL-based threat hunting
+• Deep system visibility
+• Structured telemetry logs
+• Centralized SIEM monitoring
+
+It complements existing SOC components such as:
+
+• Wazuh SIEM
+• Suricata IDS
+• Zeek Network Monitoring
+• ModSecurity WAF
+• Threat Intelligence Platforms
+• Incident Response Platforms (TheHive)
+
+
+================================================================================
+DATA FLOW SUMMARY
+================================================================================
+
+
+Endpoint System
+      │
+      ▼
+Osquery collects system telemetry
+      │
+      ▼
+Osquery generates JSON logs
+      │
+      ▼
+Wazuh Agent reads telemetry logs
+      │
+      ▼
+Wazuh Manager parses events
+      │
+      ▼
+OpenSearch indexes telemetry
+      │
+      ▼
+Wazuh Dashboard visualizes data
+      │
+      ▼
+SOC Analyst performs monitoring and investigation
+
+
+================================================================================
+END OF ARCHITECTURE
+================================================================================
