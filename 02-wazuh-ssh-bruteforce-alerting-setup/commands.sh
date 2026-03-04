@@ -1,13 +1,3 @@
-
----
-
-# ✅ NEW commands.sh (Clean – No Installation Section)
-
-Now we give a proper categorized commands file without install guide.
-
----
-
-```bash
 #!/bin/bash
 
 #################################################################
