@@ -1,0 +1,41 @@
+# -----------------------------------------------
+# auditd rules for SOC credential access hunting
+# File: /etc/audit/rules.d/wazuh.rules
+# Purpose:
+# - Track command executions (execve)
+# - Monitor credential file access
+# - Monitor SSH persistence areas
+# - Monitor bash history access/tampering
+# -----------------------------------------------
+
+# Flush existing rules
+-D
+
+# Increase buffers for burst events (SOC-friendly tuning)
+-b 8192
+--backlog_wait_time 60000
+
+# ------------------------------------------------
+# 1) Track command execution (execve) for real users
+# ------------------------------------------------
+-a always,exit -F arch=b64 -S execve -F auid>=1000 -F auid!=-1 -k audit-wazuh-c
+-a always,exit -F arch=b32 -S execve -F auid>=1000 -F auid!=-1 -k audit-wazuh-c
+
+# ------------------------------------------------
+# 2) Credential file access monitoring
+# ------------------------------------------------
+-w /etc/passwd -p wa -k passwd_access
+-w /etc/shadow -p wa -k shadow_access
+
+# ------------------------------------------------
+# 3) SSH persistence / key and config monitoring
+# ------------------------------------------------
+-w /home -p wa -k user_home_changes
+-w /root -p wa -k root_home_changes
+-w /etc/ssh/sshd_config -p wa -k ssh_config_changes
+
+# ------------------------------------------------
+# 4) Bash history monitoring (recon / defense evasion)
+# ------------------------------------------------
+-w /home -p wa -k bash_history
+-w /root/.bash_history -p wa -k bash_history
