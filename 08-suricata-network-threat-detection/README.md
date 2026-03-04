@@ -542,8 +542,8 @@ This project now reflects:
 │   └── architecture.txt
 │ 
 └── docs/
-    ├──
-    └── Suricata_Wazuh_SOC_Project.pdf
+    ├── Implementation of Suricata IDS with Wazuh SIEM.pdf
+    └── Wazuh Suricata Custom Rules and Decoders.pdf
 ```
 
 ---
