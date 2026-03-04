@@ -1,0 +1,30 @@
+<!--
+wazuh/decoders/snort_decoders.xml
+Purpose: Decode Snort "alert_fast" formatted lines into structured fields.
+
+Example Snort fast alert line:
+02/06-19:29:15.586731  [**] [1:1000004:1] LAB FTP Authentication Attempt [**] [Priority: 0] {TCP} 3.90.189.5:47818 -> 10.0.1.214:21
+
+Notes:
+- Two variants included:
+  1) With Classification field
+  2) Without Classification field
+-->
+
+<decoder name="snort-fast-base">
+  <prematch>^\d{2}\/\d{2}-\d{2}:\d{2}:\d{2}\.\d+\s+\[\*\*\]\s+\[\d+:\d+:\d+\]</prematch>
+</decoder>
+
+<!-- Variant that includes Classification -->
+<decoder name="snort-fast-with-class">
+  <parent>snort-fast-base</parent>
+  <regex>^\d{2}\/\d{2}-\d{2}:\d{2}:\d{2}\.\d+\s+\[\*\*\]\s+\[(\d+):(\d+):(\d+)\]\s+(.+?)\s+\[\*\*\]\s+\[Classification:\s+(.+?)\]\s+\[Priority:\s+(\d+)\]\s+\{(\w+)\}\s+(\d+\.\d+\.\d+\.\d+):(\d+)\s+->\s+(\d+\.\d+\.\d+\.\d+):(\d+)</regex>
+  <order>snort.gid,snort.sid,snort.rev,snort.msg,snort.classification,snort.priority,snort.proto,srcip,srcport,dstip,dstport</order>
+</decoder>
+
+<!-- Variant without Classification -->
+<decoder name="snort-fast-no-class">
+  <parent>snort-fast-base</parent>
+  <regex>^\d{2}\/\d{2}-\d{2}:\d{2}:\d{2}\.\d+\s+\[\*\*\]\s+\[(\d+):(\d+):(\d+)\]\s+(.+?)\s+\[\*\*\]\s+\[Priority:\s+(\d+)\]\s+\{(\w+)\}\s+(\d+\.\d+\.\d+\.\d+):(\d+)\s+->\s+(\d+\.\d+\.\d+\.\d+):(\d+)</regex>
+  <order>snort.gid,snort.sid,snort.rev,snort.msg,snort.priority,snort.proto,srcip,srcport,dstip,dstport</order>
+</decoder>
