@@ -459,9 +459,8 @@ You can now monitor:
 ├── interview_qna.md
 ├── troubleshooting.md
 │
-├── configs/
-│   ├── ossec_modsecurity_log_config.xml
-│   └── modsecurity_engine_config.txt
+├── wazuh-agent/
+    └── snippets-ossec.conf
 │
 └── docs/
     └── Apache - Web Application Firewall (ModSecurity) with Wazuh Monitoring.pdf
@@ -471,9 +470,9 @@ You can now monitor:
 
 # 📄 PDF Guide
 
-For screenshots and step-by-step visual documentation:
+For complete visual step-by-step screenshots and terminal walkthrough, refer to the detailed PDF implementation guide included in the repository resources folder or click below link.
 
-👉 [Click here to view the complete PDF walkthrough guide]([YOUR_PDF_LINK_HERE](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/10-wazuh-apache-modsecurity-waf-integration/docs/Apache%20-%20Web%20Application%20Firewall%20(ModSecurity)%20with%20Wazuh%20Monitoring.pdf))
+👉 [Click here to view the complete PDF walkthrough guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/10-wazuh-apache-modsecurity-waf-integration/docs/Apache%20-%20Web%20Application%20Firewall%20(ModSecurity)%20with%20Wazuh%20Monitoring.pdf)
 
 ---
 
