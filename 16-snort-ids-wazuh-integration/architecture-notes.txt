@@ -1,1 +1,116 @@
+Snort IDS Exploration + Custom Rule Development + Wazuh SIEM Integration
+architecture.txt
+======================================================================
 
+Purpose
+-------
+This project adds a Network IDS (Snort) sensor to the SOC ecosystem and centralizes Snort alerts into Wazuh SIEM.
+
+Snort provides network-layer detection by inspecting packets in real time.
+Wazuh provides centralized SOC visibility by ingesting Snort alert logs, indexing them, and showing them in dashboards.
+
+Key Idea
+--------
+- Without Snort: Wazuh mostly sees endpoint-level events (logs, processes, file integrity, auth events).
+- With Snort: Wazuh also gets visibility into what is happening "on the wire" (network probes, scans, protocol abuse, exploit attempts hitting network services).
+
+This reduces blind spots and supports faster incident triage.
+
+Architecture (Lab Flow)
+-----------------------
+Kali Linux (Attacker)
+   |
+   | ICMP / TCP / FTP traffic
+   v
+Ubuntu EC2 (Snort IDS sensor + Wazuh Agent)
+   |
+   | Snort fast alert log:
+   |   /var/log/snort/snort.alert.fast
+   v
+Wazuh Manager (SIEM)
+   |
+   v
+OpenSearch Indexing
+   |
+   v
+Wazuh Dashboard (SOC visibility)
+   |
+   v
+SOC Analyst (Investigation & correlation)
+
+Data Flow Details
+-----------------
+1) Snort inspects network traffic on a selected interface (e.g., ens5/eth0).
+2) When a packet matches a rule, Snort generates an alert:
+   - Displayed on terminal in console mode (-A console)
+   - Written to fast alert log if enabled:
+     /var/log/snort/snort.alert.fast
+
+3) Wazuh Agent monitors the Snort alert file using <localfile>:
+   - Reads new log lines
+   - Sends them to Wazuh Manager
+
+4) Wazuh Manager:
+   - Receives Snort alerts as events
+   - Optionally decodes them into structured fields using custom decoders
+   - Applies rules for severity and grouping
+
+5) Wazuh Dashboard:
+   - Snort alerts become searchable and visible for SOC analysts
+   - Analysts correlate Snort alerts with other endpoint alerts
+
+What This Enables in the SOC
+----------------------------
+- Centralized visibility of network threats in the Wazuh dashboard
+- Correlation between network alerts and endpoint alerts
+- Faster triage because analysts can investigate from a single place
+
+Detection Capabilities Demonstrated
+-----------------------------------
+- ICMP monitoring using custom rules:
+  - Echo Request detection
+  - Echo Reply detection
+
+- TCP monitoring using custom rules:
+  - FTP authentication attempt detection (port 21)
+  - Optional SSH attempt detection (port 22)
+  - Optional web traversal attempts (port 80)
+
+Integration Points
+------------------
+Snort configuration:
+- /etc/snort/snort.conf
+- /etc/snort/rules/local.rules
+- /var/log/snort/snort.alert.fast
+
+Wazuh agent integration:
+- /var/ossec/etc/ossec.conf
+  - localfile points to Snort fast alert log
+
+Optional enhanced parsing:
+- Wazuh custom decoder parses Snort fast alert lines into:
+  - gid/sid/rev
+  - message
+  - priority
+  - protocol
+  - src/dst ip + ports
+- Wazuh rules assign severity levels and consistent groups
+
+Operational View (SOC Workflow)
+-------------------------------
+Detect:
+- Snort detects suspicious network patterns via rules
+
+Triage:
+- Alerts appear in Wazuh dashboard for quick review
+
+Investigate:
+- SOC analyst pivots on srcip/dstip/sid/message to understand behavior
+
+Validate:
+- Compare Snort terminal/log outputs with Wazuh ingested events
+
+Outcome:
+- Network IDS visibility becomes SOC-ready and centralized
+
+End of architecture.txt
