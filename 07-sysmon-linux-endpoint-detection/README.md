@@ -28,7 +28,7 @@ This mirrors how modern SOC teams implement Linux endpoint monitoring in product
 
 </div>
 
-This architecture shows:
+### This architecture shows:
 
 * Linux Endpoint running Sysmon (eBPF-based telemetry)
 * Logs forwarding securely
