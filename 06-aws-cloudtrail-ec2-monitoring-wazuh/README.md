@@ -33,7 +33,7 @@ This simulates a real-world cloud security monitoring use case.
 
 </div>
 
-Architecture Flow:
+### Architecture Flow:
 
 AWS CloudTrail  
 → Amazon S3 (Log Storage)  
