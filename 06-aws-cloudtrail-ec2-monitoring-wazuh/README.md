@@ -252,11 +252,11 @@ Each event includes:
 
 # 📊 What We Achieved
 
-✔ Centralized AWS monitoring
-✔ Real-time EC2 activity tracking
-✔ Secure IAM-based integration
-✔ CloudTrail ingestion every 60 seconds
-✔ SOC-ready detection visibility
+- ✔ Centralized AWS monitoring
+- ✔ Real-time EC2 activity tracking
+- ✔ Secure IAM-based integration
+- ✔ CloudTrail ingestion every 60 seconds
+- ✔ SOC-ready detection visibility
 
 ---
 
