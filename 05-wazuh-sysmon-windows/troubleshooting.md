@@ -1,4 +1,4 @@
-# 🛠️ Wazuh + Sysmon Troubleshooting Guide
+# 🛠️ Troubleshooting Guide: Wazuh + Sysmon 
 
 ---
 
