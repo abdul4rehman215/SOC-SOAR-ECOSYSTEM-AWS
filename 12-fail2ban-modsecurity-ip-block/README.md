@@ -555,7 +555,12 @@ That is security maturity.
 
 ---
 
-For complete visual step-by-step screenshots and terminal walkthrough, refer to the detailed PDF implementation guide included in the repository resources folder. Or [click here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/12-fail2ban-modsecurity-ip-block/docs/ModSecurity%20Fail2Ban%20Active%20Response%20Wazuh%20Web%20Security%20Integration.pdf)
+# 📄 PDF Guide
+
+For complete visual step-by-step screenshots and terminal walkthrough,
+refer to the detailed PDF implementation guide included in the repository resources folder, or click the link below.
+
+👉 [Click here to view the complete PDF walkthrough guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/12-fail2ban-modsecurity-ip-block/docs/ModSecurity%20Fail2Ban%20Active%20Response%20Wazuh%20Web%20Security%20Integration.pdf)
 
 
 
