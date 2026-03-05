@@ -1,4 +1,4 @@
-# 🎯 Interview Q&A – SSH Brute Force Detection Lab  
+# 🎯 Interview Q&A – SSH Brute Force Detection
 ### Wazuh + Slack + Detection Engineering
 
 ---
