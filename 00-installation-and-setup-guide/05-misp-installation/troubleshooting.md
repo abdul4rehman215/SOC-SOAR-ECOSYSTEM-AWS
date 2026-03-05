@@ -1,5 +1,4 @@
-# 🚨 MISP Deployment – Troubleshooting Guide
-
+# 🚨 Troubleshooting Guide - MISP Deployment
 ### AWS EC2 | Ubuntu 24.04 | LAMP Stack | Feed-Enabled SOC Deployment
 
 ---
