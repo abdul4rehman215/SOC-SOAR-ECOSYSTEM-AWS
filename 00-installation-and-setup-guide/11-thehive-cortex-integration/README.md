@@ -302,13 +302,13 @@ Enable selectively for production.
 
 # 📈 Benefits to SOC Teams
 
-✔ Faster triage  
-✔ Less tab hopping  
-✔ Better context  
-✔ Centralized evidence  
-✔ Improved collaboration  
-✔ Audit compliance  
-✔ SOAR readiness foundation  
+- ✔ Faster triage  
+- ✔ Less tab hopping  
+- ✔ Better context  
+- ✔ Centralized evidence  
+- ✔ Improved collaboration  
+- ✔ Audit compliance  
+- ✔ SOAR readiness foundation  
 
 ---
 
@@ -320,9 +320,11 @@ Enable selectively for production.
 ├── README.md
 ├── commands.sh
 ├── troubleshooting.md
+├── architecture-notes.txt
 ├── interview_qna.md
-├── Cortex TheHive Threat Intelligence Enrichment Project.pdf
-└── architecture-notes.txt
+└── docs/
+    └── Cortex TheHive Threat Intelligence Enrichment Project.pdf
+
 ```
 
 ---
@@ -331,7 +333,7 @@ Enable selectively for production.
 
 Complete detailed project walkthrough available here:
 
-👉 [View SOC Enrichment Project PDF](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/00-installation-and-setup-guide/11-thehive-cortex-integration/Cortex%20TheHive%20Threat%20Intelligence%20Enrichment%20Project.pdf)
+👉 [View SOC Enrichment Project PDF](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/00-installation-and-setup-guide/11-thehive-cortex-integration/docs/Cortex%20TheHive%20Threat%20Intelligence%20Enrichment%20Project.pdf)
 
 ---
 
