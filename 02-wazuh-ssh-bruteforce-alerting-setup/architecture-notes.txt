@@ -1,5 +1,5 @@
 SSH Brute Force Detection & Real-Time Alerting Architecture
-Wazuh + Slack + Kali Linux SOC Lab
+Wazuh + Slack + Kali Linux SOC
 
 ================================================================
 1. PURPOSE OF THIS ARCHITECTURE
