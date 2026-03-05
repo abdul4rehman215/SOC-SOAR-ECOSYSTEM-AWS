@@ -4,12 +4,12 @@
 
 
 ## ✅ Best practice order:
- 1) Zeek installs and runs  
- 2) Zeek logs are generated in `/opt/zeek/logs/current/`  
- 3) Logs are JSON formatted  
- 4) Wazuh agent reads the correct log path  
- 5) Wazuh manager decoders/rules load correctly  
- 6) Dashboard shows events with expected fields  
+1) Zeek installs and runs  
+2) Zeek logs are generated in `/opt/zeek/logs/current/`  
+3) Logs are JSON formatted  
+4) Wazuh agent reads the correct log path  
+5) Wazuh manager decoders/rules load correctly  
+6) Dashboard shows events with expected fields  
 
 ---
 
@@ -521,6 +521,3 @@ Then validate in Wazuh Dashboard by filtering:
 * `rule.groups : zeek`
 
 ---
-
-```
-```
