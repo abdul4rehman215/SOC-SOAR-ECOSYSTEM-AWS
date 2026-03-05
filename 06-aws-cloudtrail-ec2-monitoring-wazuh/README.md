@@ -342,3 +342,9 @@ This is directly applicable to:
 * Detection Engineer roles
 
 ---
+
+## 🔗 Useful Official Reference
+
+**[Official Wazuh implementation Guide](https://wazuh.com/blog/integrating-aws-cloudtrail-in-wazuh/)**
+
+---
