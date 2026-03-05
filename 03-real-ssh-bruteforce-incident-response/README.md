@@ -300,6 +300,18 @@ It reflects how real blue teams operate — not just lab simulation.
 
 ---
 
+# 📂 Repository Structure
+
+```
+03-real-ssh-bruteforce-incident-response/
+├── README.md
+├── commands.sh
+├── architecture-notes.txt
+├── interview_qna.md
+├── troubleshooting.md
+└── docs/
+    └── Real SSH Brute Force Incident Respons Wazuh TheHive MISP.pdf
+
 # 🔗 Full SOC Platform Setup
 
 Complete installation and integration guides available here:
