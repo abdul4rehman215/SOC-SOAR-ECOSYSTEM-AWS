@@ -1,4 +1,4 @@
-# 🎤 Wazuh ↔ TheHive Integration – Interview Q&A
+# 🎤 Interview Q&A - Wazuh ↔ TheHive Integration
 
 ---
 
