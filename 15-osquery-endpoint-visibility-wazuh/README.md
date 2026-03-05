@@ -234,8 +234,9 @@ Before performing this project, the following knowledge areas are recommended.
 
 ```
 
-The detailed PDF documentation with screenshots can be accessed through  
-[the complete step-by-step PDF project guide]((https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/15-osquery-endpoint-visibility-wazuh/docs/Osquery%20Exploration%20and%20Wazuh%20Integration%20Project.pdf)).
+#### The detailed PDF documentation with screenshots can be accessed through  
+
+[the complete step-by-step PDF project guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/15-osquery-endpoint-visibility-wazuh/docs/Osquery%20Exploration%20and%20Wazuh%20Integration%20Project.pdf).
 
 ---
 
