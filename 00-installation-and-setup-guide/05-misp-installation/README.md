@@ -38,6 +38,7 @@ It supports:
 - API-based integrations
 
 Official project page:  
+
 👉 **[MISP Official Website](https://www.misp-project.org/)**
 
 ---
@@ -314,9 +315,9 @@ After clicking, you should see feeds such as:
 
 For AWS t2.xlarge (16GB RAM) recommended minimal setup:
 
-✔ CIRCL OSINT
-✔ Botvrij.eu
-✔ Abuse.ch (optional)
+- ✔ CIRCL OSINT
+- ✔ Botvrij.eu
+- ✔ Abuse.ch (optional)
 
 ---
 
@@ -507,10 +508,10 @@ MISP is now operational.
 
 In Feeds page check:
 
-✔ Enabled = ✔
-✔ Caching = ✔
-✔ Not cached NOT red
-✔ Feed hits column shows numbers
+- ✔ Enabled = ✔
+- ✔ Caching = ✔
+- ✔ Not cached NOT red
+- ✔ Feed hits column shows numbers
 
 ---
 
@@ -554,11 +555,11 @@ Production-ready.
 
 # 🚫 What NOT To Do
 
-❌ Enable every feed
-❌ Fetch without timestamp filter
-❌ Skip filtering rules
-❌ Export raw feed directly to Wazuh
-❌ Ignore feed health status
+- ❌ Enable every feed
+- ❌ Fetch without timestamp filter
+- ❌ Skip filtering rules
+- ❌ Export raw feed directly to Wazuh
+- ❌ Ignore feed health status
 
 ---
 
@@ -598,12 +599,15 @@ Cache → Fetch → Done.
 To fully understand MISP capabilities:
 
 ### 📘 Features Overview
+
 👉 **[MISP Features Page](https://www.misp-project.org/features/)**
 
 ### 🏗 Installation Alternatives
+
 👉 **[Official MISP Install Methods](https://github.com/MISP/MISP/tree/2.5/INSTALL)**
 
 ### 🧩 Use Cases
+
 👉 **[Threat Intelligence Use Cases](https://www.misp-project.org/use-cases/)**
 
 ---
