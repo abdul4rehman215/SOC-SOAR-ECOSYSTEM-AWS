@@ -379,7 +379,7 @@ With TheHive:
 ├── commands.sh
 ├── architecture-notes.txt
 ├── interview_qna.md
-├── troubleshooting.md
+└── troubleshooting.md
 ```
 
 ---
