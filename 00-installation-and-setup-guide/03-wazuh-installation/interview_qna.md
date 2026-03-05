@@ -1,4 +1,4 @@
-# 🎤 Wazuh Installation – Interview Q&A
+# 🎤 Interview Q&A - Wazuh Installation
 ### AWS EC2 – All-in-One SOC Deployment
 
 ---
