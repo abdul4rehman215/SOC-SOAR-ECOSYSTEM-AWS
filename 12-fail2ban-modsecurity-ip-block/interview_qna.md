@@ -1,5 +1,4 @@
-# 🎯 NGINX + ModSecurity + Fail2Ban + Wazuh  
-## Interview Questions & Detailed Answers
+# 🎯 Interview Questions & Answers - NGINX + ModSecurity + Fail2Ban + Wazuh  
 
 ---
 
