@@ -42,6 +42,9 @@ When a file is created on a monitored endpoint:
 ├── troubleshooting.md
 ├── interview_qna.md
 │
+├── docs/
+|   └── Wazuh MISP Malware Detection Threat Intel Enrichment.pdf
+│
 ├── scripts/
 │   └── custom-misp-file-hashes.py
 │
