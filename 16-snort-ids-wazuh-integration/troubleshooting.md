@@ -364,17 +364,22 @@ sudo systemctl restart wazuh-manager
 
 Run:
 
-```bash
 # Snort
+```
 snort -V
 sudo snort -T -c /etc/snort/snort.conf
 tail -n 20 /var/log/snort/snort.alert.fast
+```
 
 # Wazuh agent
+```
 sudo systemctl status wazuh-agent
 sudo tail -n 50 /var/ossec/logs/ossec.log
+```
 
 # Wazuh manager (if applicable)
+
+```
 sudo systemctl status wazuh-manager
 sudo tail -n 50 /var/ossec/logs/ossec.log
 ```
