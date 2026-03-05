@@ -1,4 +1,4 @@
-# 🛠️ Cortex – Troubleshooting Guide
+# 🛠️ Troubleshooting Guide - Cortex
 
 > StrangeBee Analysis & Response Engine
 > Docker Deployment on AWS EC2
