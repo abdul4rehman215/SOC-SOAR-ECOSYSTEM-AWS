@@ -329,6 +329,9 @@ hostnamectl
     ├── README.md
     ├── commands.sh
     ├── scripts/
+    |   ├── baseline_hardening.sh
+    |   ├── health_check.sh
+    |   └── ufw_rules_apply.sh
     ├── interview_qna.md
     ├── troubleshooting.md
     └── architecture-notes.txt
