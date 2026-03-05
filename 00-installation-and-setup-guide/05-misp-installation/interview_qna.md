@@ -1,4 +1,4 @@
-# 🎤 MISP Deployment – Interview Q&A
+# 🎤 Interview Q&A - MISP Deployment
 ### AWS EC2 | Ubuntu 24.04 | Threat Intelligence Core | Feed-Enabled SOC
 
 ---
