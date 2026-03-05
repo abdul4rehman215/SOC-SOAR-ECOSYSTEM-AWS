@@ -1,5 +1,4 @@
-# 🚨 Troubleshooting Guide  
-## Automated DNS Sinkholing using Wazuh Active Response
+# 🚨 Troubleshooting Guide - Automated DNS Sinkholing using Wazuh Active Response
 
 ---
 
