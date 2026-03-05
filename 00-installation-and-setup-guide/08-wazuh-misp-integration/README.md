@@ -435,7 +435,7 @@ This forms a complete SOC pipeline:
 
 For the full step-by-step PDF with screenshots and validation, see:
 
-📄 **[Auditd + Wazuh kernal monitoring, auditing PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/18-auditd-wazuh-credential-access-hunting/docs)**
+📄 **[Auditd + Wazuh kernal monitoring, auditing PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/00-installation-and-setup-guide/08-wazuh-misp-integration/docs/Wazuh%20MISP%20Malware%20Detection%20Threat%20Intel%20Enrichment.pdf)**
 
 ---
 
