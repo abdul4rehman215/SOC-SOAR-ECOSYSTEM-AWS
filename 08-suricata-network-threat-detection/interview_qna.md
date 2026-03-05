@@ -1,5 +1,4 @@
-# 🎯 Suricata + Wazuh SOC Project  
-## Interview Questions & Answers
+# 🎯 Interview Questions & Answers - Suricata + Wazuh SOC Project  
 
 > This document covers technical and scenario-based interview questions based on this project.
 
