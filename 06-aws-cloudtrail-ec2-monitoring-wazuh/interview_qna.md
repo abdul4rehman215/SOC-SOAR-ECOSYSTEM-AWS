@@ -1,5 +1,4 @@
-# 🎤 AWS CloudTrail + Wazuh EC2 Monitoring  
-## Interview Questions & SOC Discussion Guide
+# 🎤 Interview Questions & SOC Discussion Guide - AWS CloudTrail + Wazuh EC2 Monitoring  
 
 ---
 
