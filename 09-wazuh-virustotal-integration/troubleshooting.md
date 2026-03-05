@@ -1,5 +1,4 @@
-
-# 🚨 Wazuh + VirusTotal Integration – Troubleshooting Guide
+# 🚨 Troubleshooting Guide - Wazuh + VirusTotal Integration 
 
 
 ## 🧪 FIRST – QUICK VALIDATION CHECKLIST
