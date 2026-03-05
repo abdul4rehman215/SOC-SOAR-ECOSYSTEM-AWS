@@ -1,4 +1,4 @@
-# 🎯 Wazuh + VirusTotal Integration – Interview Q&A
+# 🎯 Interview Q&A - Wazuh + VirusTotal Integration 
 
 
 # SECTION 1 – PROJECT OVERVIEW QUESTIONS
