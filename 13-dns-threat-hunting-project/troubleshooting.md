@@ -1,4 +1,4 @@
-# 🚨 DNS Threat Hunting Pipeline – Troubleshooting Guide  
+# 🚨 Troubleshooting Guide - DNS Threat Hunting Pipeline
 ## Wazuh + DNS-Stats + AlienVault OTX
 
 ---
