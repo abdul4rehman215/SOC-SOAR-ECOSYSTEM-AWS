@@ -338,15 +338,19 @@ Complete detailed project walkthrough available here:
 # 🌐 Official References (Recommended Exploration)
 
 Explore Cortex Documentation:
+
 👉 [Open Cortex Official Documentation](https://docs.strangebee.com/cortex/)
 
 Quick Start Guide:
+
 👉 [Open Cortex First Start Guide](https://docs.strangebee.com/cortex/user-guides/first-start/)
 
 Installation Methods:
+
 👉 [Explore Cortex Installation Options](https://docs.strangebee.com/cortex/installation-and-configuration/)
 
 Official GitHub:
+
 👉 [View Cortex GitHub Repository](https://github.com/TheHive-Project/Cortex)
 
 ---
