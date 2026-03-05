@@ -191,8 +191,12 @@ If this message appears → Docker environment is fully operational.
 └── 02-docker-installation/
     ├── README.md
     ├── commands.sh
+    ├── interview_qna.md
     ├── troubleshooting.md
-    └── architecture-notes.txt
+    ├── architecture-notes.txt
+    └── scripts/
+        └── docker_postcheck.sh
+
 ```
 
 ---
