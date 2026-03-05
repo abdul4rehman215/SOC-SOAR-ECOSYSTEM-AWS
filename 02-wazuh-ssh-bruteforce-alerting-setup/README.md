@@ -306,16 +306,17 @@ This lab demonstrates:
 
 ---
 
-# 📌 Repository Structure
+# 📂 Repository Structure
 
 ```
-02-wazuh-ssh-bruteforce-alerting-lab/
+02-wazuh-ssh-bruteforce-alerting-setup/
 ├── README.md
 ├── commands.sh
 ├── architecture-notes.txt
 ├── interview_qna.md
 ├── troubleshooting.md
-└── Wazuh-Alerting-Setup-SSH-Brute-Force-Simulation.pdf
+└── docs/
+    └── Wazuh-Alerting-Setup-SSH-Brute-Force-Simulation.pdf
 ```
 
 ---
