@@ -283,9 +283,9 @@ Expected:
 │
 ├── rules/
 │   ├── sysmon_custom_v1.xml
-│   ├── sysmon_custom_v2.xml
+│   └── sysmon_custom_v2.xml
 │
-├── images/
+└── images/
 
 ```
 
@@ -308,9 +308,9 @@ images/
 
 Reference in README like:
 
-```markdown
+`
 ![Sysmon Installed](images/02-sysmon-install.png)
-```
+`
 
 ---
 
