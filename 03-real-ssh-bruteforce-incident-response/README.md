@@ -313,6 +313,8 @@ It reflects how real blue teams operate — not just lab simulation.
     └── Real SSH Brute Force Incident Respons Wazuh TheHive MISP.pdf
 ```
 
+---
+
 # 🔗 Full SOC Platform Setup
 
 Complete installation and integration guides available here:
