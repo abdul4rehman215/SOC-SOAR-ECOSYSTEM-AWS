@@ -162,12 +162,6 @@ Wazuh Dashboard
     └── Enriched SOC Alerts
 ```
 
-Optional:
-
-```
-High Severity Alert → Active Response → Endpoint Action
-```
-
 ---
 
 # 🧱 7. What This Adds to Your SOC Ecosystem
@@ -232,12 +226,11 @@ This transforms Wazuh from log collection into a detection engineering platform.
 │       └── custom-alienvault.py
 │
 ├── windows/
-│   ├── sysmon_config.xml
 │   ├── otx.ps1
 │   └── otx.cmd
 │
 └── docs/
-    └── project
+    └── Hunting Malicious DNS with Wazuh DNS-stats AlienVault OTX.pdf
 ```
 
 ---
