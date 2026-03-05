@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################
-# SSH Brute Force Detection Lab Commands
+# SSH Brute Force Detection Commands
 # Wazuh + Slack + Kali Linux
 #################################################################
 
