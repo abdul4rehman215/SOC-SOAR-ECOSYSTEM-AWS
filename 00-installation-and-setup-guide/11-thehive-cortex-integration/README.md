@@ -315,7 +315,7 @@ Enable selectively for production.
 # 📂 Repository Structure
 
 ```
-10-cortex-strangebee/
+11-thehive-cortex-integration/
 │
 ├── README.md
 ├── commands.sh
