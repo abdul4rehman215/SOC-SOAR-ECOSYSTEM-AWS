@@ -321,9 +321,9 @@ Examples:
 
 This enables:
 
-✔ Faster triage
-✔ Context-driven investigation
-✔ Evidence-based decisions
+- ✔ Faster triage
+- ✔ Context-driven investigation
+- ✔ Evidence-based decisions
 
 ---
 
@@ -439,11 +439,11 @@ No need to:
 
 After successful setup:
 
-✔ MISP events auto-import to TheHive
-✔ Observables auto-enrich
-✔ Cases export to MISP
-✔ Intelligence loop activated
-✔ SOC collaboration improved
+- ✔ MISP events auto-import to TheHive
+- ✔ Observables auto-enrich
+- ✔ Cases export to MISP
+- ✔ Intelligence loop activated
+- ✔ SOC collaboration improved
 
 ---
 
