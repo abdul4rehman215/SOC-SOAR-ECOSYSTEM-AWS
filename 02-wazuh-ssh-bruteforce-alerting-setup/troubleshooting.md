@@ -1,4 +1,4 @@
-# 🛠 Troubleshooting Guide - SSH Brute Force Detection & Slack Alerting (Wazuh Lab)
+# 🛠 Troubleshooting Guide - SSH Brute Force Detection & Slack Alerting (Wazuh)
 
 > This document covers common issues encountered during detection engineering, alert configuration, and Slack integration.
 
