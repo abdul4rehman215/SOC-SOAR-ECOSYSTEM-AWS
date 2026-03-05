@@ -3,7 +3,7 @@
 
 <p align="center">
 
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/docker_logo.png" width="300"/>
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/docker_logo.png" width="300"/>
 
 </p>
 
