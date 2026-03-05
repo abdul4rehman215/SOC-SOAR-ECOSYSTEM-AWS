@@ -1,5 +1,4 @@
-# 🛠 Sysmon for Linux + Wazuh  
-## Troubleshooting & Detection Engineering Guide
+# 🛠 Troubleshooting & Detection Engineering Guide - Sysmon for Linux + Wazuh  
 
 > This document covers real-world issues encountered during:
 
