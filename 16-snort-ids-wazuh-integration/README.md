@@ -150,7 +150,7 @@ This gives a **network + host** monitoring layer together.
 
 ---
 
-## 🔗 Useful References (Embedded Links)
+## 🔗 Useful References
 
 - Create rules visually using **Snorpy**: **[Snorpy Rule Generator](https://www.cyb3rs3c.net/)**
 - Optional rule reference collection for further exploration: **[Snort Rule Collection Reference](https://github.com/ADORSYS-GIS/wazuh-snort/blob/main/rules/snort3.rules)**
