@@ -1,4 +1,4 @@
-# 🛠 AWS CloudTrail + Wazuh Troubleshooting Guide
+# 🛠 Troubleshooting Guide - AWS CloudTrail + Wazuh 
 
 This document covers:
 
