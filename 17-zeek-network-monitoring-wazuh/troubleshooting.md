@@ -3,13 +3,13 @@
 > This troubleshooting guide covers common issues encountered while installing Zeek, enabling JSON logs, deploying Zeek, ingesting logs into Wazuh, and validating detections + dashboards.
 
 
-> ✅ Best practice order:
-> 1) Zeek installs and runs  
-> 2) Zeek logs are generated in `/opt/zeek/logs/current/`  
-> 3) Logs are JSON formatted  
-> 4) Wazuh agent reads the correct log path  
-> 5) Wazuh manager decoders/rules load correctly  
-> 6) Dashboard shows events with expected fields  
+## ✅ Best practice order:
+ 1) Zeek installs and runs  
+ 2) Zeek logs are generated in `/opt/zeek/logs/current/`  
+ 3) Logs are JSON formatted  
+ 4) Wazuh agent reads the correct log path  
+ 5) Wazuh manager decoders/rules load correctly  
+ 6) Dashboard shows events with expected fields  
 
 ---
 
