@@ -1,4 +1,4 @@
-# 🛠️ Wazuh Installation – Troubleshooting Guide
+# 🛠️ Troubleshooting Guide - Wazuh Installation
 ### AWS EC2 – Ubuntu 24.04 – All-in-One Deployment
 
 ---
