@@ -1,5 +1,4 @@
-# 🎯 Interview Q&A  
-## Automated DNS Sinkholing using Wazuh Active Response
+# 🎯 Interview Q&A - Automated DNS Sinkholing using Wazuh Active Response
 
 ---
 
