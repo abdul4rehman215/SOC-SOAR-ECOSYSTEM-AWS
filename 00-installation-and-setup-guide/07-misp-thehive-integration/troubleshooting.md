@@ -1,4 +1,4 @@
-# 🛠 MISP ↔ TheHive Integration – Troubleshooting Guide
+# 🛠 Troubleshooting Guide - MISP ↔ TheHive Integration 
 
 ---
 
