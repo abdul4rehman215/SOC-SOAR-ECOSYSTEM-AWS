@@ -175,7 +175,7 @@ Together:
 
 ---
 
-## 🔗 Useful Official References (Embedded)
+## 🔗 Useful Official References 
 
 - Official Wazuh reference implementation: **[Network security monitoring with Wazuh and Zeek](https://wazuh.com/blog/network-security-monitoring-with-wazuh-and-zeek/)**
 - Zeek official installation documentation (alternative methods): **[Zeek installation options](https://docs.zeek.org/en/current/install.html)**
@@ -671,6 +671,7 @@ This project helped me move from **detecting attacks** to **understanding networ
 ## 📎 PDF Guide
 
 For the full step-by-step PDF with screenshots and validation, see:
+
 📄 **[Zeek + Wazuh NSM PDF Guide](docs/zeek-wazuh-nsm.pdf)**
 
 ---
