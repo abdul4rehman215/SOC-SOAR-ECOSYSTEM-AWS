@@ -247,7 +247,7 @@ This confirms full pipeline.
 
 ---
 
-# 📂 Visual Setup Guide (Screenshots Included)
+# 📂 Visual Setup Guide 
 
 For complete dashboard walkthrough and screenshots:
 
