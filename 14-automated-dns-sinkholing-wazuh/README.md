@@ -375,7 +375,7 @@ You should see:
 ├── troubleshooting.md
 │
 ├── manager/
-│   ├── ossec-active-response-config.xml
+│   └── ossec-active-response-config.xml
 │
 ├── windows-endpoint/
 │   ├── malicious_domains.ps1
