@@ -1,4 +1,4 @@
-# 🎤 Interview Q&A — Project 02: Docker Installation Guide (Ubuntu / AWS EC2)
+# 🎤 Interview Q&A — Docker Installation Guide (Ubuntu / AWS EC2)
 
 ---
 
