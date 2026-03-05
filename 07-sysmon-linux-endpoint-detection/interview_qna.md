@@ -1,5 +1,5 @@
-# 🎤 Sysmon for Linux + Wazuh  
-## Interview Questions & Answers  
+# 🎤  Interview Questions & Answers - Sysmon for Linux + Wazuh  
+
 ### Detection Engineering & SOC Focus
 
 ---
