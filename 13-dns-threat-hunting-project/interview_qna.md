@@ -1,4 +1,4 @@
-# 🎯 DNS Threat Hunting Project – Interview Questions & Answers  
+# 🎯 Interview Questions & Answers - DNS Threat Hunting Project  
 ## Wazuh + DNS-Stats + AlienVault OTX Integration
 
 ---
