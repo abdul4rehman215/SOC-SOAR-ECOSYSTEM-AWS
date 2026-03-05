@@ -431,6 +431,14 @@ This forms a complete SOC pipeline:
 
 ---
 
+## 📎 PDF Guide
+
+For the full step-by-step PDF with screenshots and validation, see:
+
+📄 **[Auditd + Wazuh kernal monitoring, auditing PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/18-auditd-wazuh-credential-access-hunting/docs)**
+
+---
+
 # 🚀 Conclusion
 
 This integration transforms Wazuh from a log monitoring platform into an:
