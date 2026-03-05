@@ -1,4 +1,4 @@
-# 🎤 Interview Q&A — Project 01: AWS EC2 Foundation Setup (SOC / SOAR Ecosystem)
+# 🎤 Interview Q&A — AWS EC2 Foundation Setup (SOC / SOAR Ecosystem)
 
 ---
 
