@@ -1,5 +1,4 @@
-# 🚨 Troubleshooting Guide  
-## NGINX + ModSecurity + Fail2Ban + Wazuh SIEM
+# 🚨 Troubleshooting Guide - NGINX + ModSecurity + Fail2Ban + Wazuh SIEM
 
 This guide covers real-world issues encountered during:
 
