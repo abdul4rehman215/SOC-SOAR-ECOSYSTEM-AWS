@@ -1,6 +1,10 @@
 # 🛡️ AWS CloudTrail EC2 Monitoring with Wazuh SIEM  
 ## Real-World SOC Cloud Monitoring Implementation
 
+<p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/monitor-aws-activity-with-aws-cloudtrail-and-wazuh-diagram.png">
+</p>
+
 ---
 
 # 📌 Project Overview
