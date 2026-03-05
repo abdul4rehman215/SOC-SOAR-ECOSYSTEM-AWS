@@ -1,4 +1,4 @@
-# 🎓 Cortex – Interview Questions & Answers  
+# 🎓 Interview Questions & Answers - Cortex
 
 > StrangeBee Analysis & Response Engine  
 > AWS SOC-SOAR Ecosystem Deployment
