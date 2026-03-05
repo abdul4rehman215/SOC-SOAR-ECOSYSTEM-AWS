@@ -1,4 +1,4 @@
-# 🛠️ Troubleshooting Guide — Project 02: Docker Installation Guide (Ubuntu / AWS EC2)
+# 🛠️ Troubleshooting Guide — Docker Installation Guide (Ubuntu / AWS EC2)
 
 > This guide covers common Docker installation and runtime issues on Ubuntu (especially on AWS EC2).  
 > Focus is on **GPG key issues, repository issues, daemon issues, permissions, and network/DNS problems**.
