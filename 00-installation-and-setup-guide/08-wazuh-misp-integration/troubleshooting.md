@@ -1,6 +1,4 @@
-# 🛠 Troubleshooting Guide  
- 
-### Wazuh ↔ MISP File Hash Integration  
+# 🛠 Troubleshooting Guide - Wazuh ↔ MISP File Hash Integration  
 ### AWS SOC Lab Deployment
 
 ---
@@ -252,12 +250,12 @@ systemctl restart wazuh-manager
 
 ### Checklist:
 
-✔ Hash added in MISP
-✔ Attribute marked `to_ids=1`
-✔ Event distribution allows your user
-✔ API key user has event visibility
-✔ Hash type correct (md5)
-✔ MISP event saved
+- ✔ Hash added in MISP
+- ✔ Attribute marked `to_ids=1`
+- ✔ Event distribution allows your user
+- ✔ API key user has event visibility
+- ✔ Hash type correct (md5)
+- ✔ MISP event saved
 
 ---
 
@@ -278,37 +276,37 @@ If no output and no error → script working.
 
 # 🔎 12. Common Configuration Mistakes
 
-❌ Using wrong integration name
-❌ Not restarting manager
-❌ Wrong file permissions
-❌ Wrong rule_id
-❌ API key with insufficient privileges
-❌ Monitoring too many directories
-❌ MISP event not marked IDS
+- ❌ Using wrong integration name
+- ❌ Not restarting manager
+- ❌ Wrong file permissions
+- ❌ Wrong rule_id
+- ❌ API key with insufficient privileges
+- ❌ Monitoring too many directories
+- ❌ MISP event not marked IDS
 
 ---
 
 # 🔎 13. AWS-Specific Issues
-
+-
 If deployed on AWS EC2:
 
-✔ Security Group allows HTTPS
-✔ MISP EC2 reachable from Wazuh EC2
-✔ No NACL blocking
-✔ Correct private/public IP usage
-✔ Proper DNS resolution
+- ✔ Security Group allows HTTPS
+- ✔ MISP EC2 reachable from Wazuh EC2
+- ✔ No NACL blocking
+- ✔ Correct private/public IP usage
+- ✔ Proper DNS resolution
 
 ---
 
 # 📊 Quick Health Checklist
 
-✔ Script permissions correct
-✔ Integration block correct
-✔ Custom rules loaded
-✔ API key valid
-✔ HTTPS reachable
-✔ EICAR test successful
-✔ Rule 100802 triggered
+- ✔ Script permissions correct
+- ✔ Integration block correct
+- ✔ Custom rules loaded
+- ✔ API key valid
+- ✔ HTTPS reachable
+- ✔ EICAR test successful
+- ✔ Rule 100802 triggered
 
 ---
 
