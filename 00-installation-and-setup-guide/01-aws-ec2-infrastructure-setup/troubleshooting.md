@@ -1,4 +1,4 @@
-# 🚨 AWS EC2 Infrastructure Setup – Troubleshooting Guide  
+# 🚨 Troubleshooting Guide - AWS EC2 Infrastructure Setup
 ### SOC-SOAR Ecosystem Foundation
 
 ---
