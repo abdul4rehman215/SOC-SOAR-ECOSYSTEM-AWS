@@ -1,4 +1,4 @@
-# 🛠 Wazuh ↔ TheHive Integration Troubleshooting Guide
+# 🛠 Troubleshooting Guide - Wazuh ↔ TheHive Integration
 
 > This guide covers the most common issues observed when integrating **Wazuh Manager** with **TheHive 5.5** on AWS EC2.
 
@@ -237,13 +237,13 @@ Adjust accordingly.
 
 # 🏁 Final Validation Checklist
 
-✔ thehive4py installed  
-✔ Scripts executable  
-✔ API key valid  
-✔ ossec.conf configured  
-✔ Wazuh restarted  
-✔ Security group allows 9000  
-✔ TheHive running  
+- ✔ thehive4py installed  
+- ✔ Scripts executable  
+- ✔ API key valid  
+- ✔ ossec.conf configured  
+- ✔ Wazuh restarted  
+- ✔ Security group allows 9000  
+- ✔ TheHive running  
 
 ---
 
