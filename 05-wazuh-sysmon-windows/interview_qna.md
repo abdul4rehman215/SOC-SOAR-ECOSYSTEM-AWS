@@ -1,4 +1,4 @@
-# 🎯 Interview Q&A: Wazuh + Sysmon 
+# 🎯 Interview Q&A - Wazuh + Sysmon 
 
 ---
 
