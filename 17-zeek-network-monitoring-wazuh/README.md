@@ -663,7 +663,7 @@ This project helped me move from **detecting attacks** to **understanding networ
 │   ├── Zeek – Network Security Monitoring & Threat Hunting.ndjson
 │   └── zeek-soc-dashboard-build-guide.md
 └── docs/
-    └── zeek-wazuh-nsm.pdf
+    └── Zeek Wazuh Network Security Monitoring Project.pdf
 ```
 
 ---
