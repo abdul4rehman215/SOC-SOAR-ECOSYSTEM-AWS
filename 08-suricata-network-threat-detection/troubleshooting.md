@@ -1,5 +1,4 @@
-# 🛠 Suricata + Wazuh SOC Project  
-## Troubleshooting & Real-World Debugging Guide
+# 🛠 Troubleshooting & Real-World Debugging Guide - Suricata + Wazuh SOC Project  
 
 > This document covers common issues encountered during:
 
