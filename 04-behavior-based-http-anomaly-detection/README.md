@@ -310,6 +310,22 @@ As summarized in the final section of the project PDF , this demonstrates a full
 
 ---
 
+# 📂 Repository Structure
+
+```
+04-behavior-based-http-anomaly-detection/
+├── README.md
+├── commands.sh
+├── architecture-notes.txt
+├── diagramtic-flow.md
+├── interview_qna.md
+├── troubleshooting.md
+└── docs/
+    └── Behavior Based HTTP Anomaly Detection Wazuh & TheHive.pdf
+```
+
+---
+
 # 📄 Full Visual Walkthrough
 
 👉 **[View the complete step-by-step project PDF with screenshots](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/04-behavior-based-http-anomaly-detection/docs/Behavior%20Based%20HTTP%20Anomaly%20Detection%20Wazuh%20%26%20TheHive.pdf)**
