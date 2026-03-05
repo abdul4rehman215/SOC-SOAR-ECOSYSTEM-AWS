@@ -234,10 +234,6 @@ Before performing this project, the following knowledge areas are recommended.
 
 ```
 
-#### The detailed PDF documentation with screenshots can be accessed through  
-
-[the complete step-by-step PDF project guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/15-osquery-endpoint-visibility-wazuh/docs/Osquery%20Exploration%20and%20Wazuh%20Integration%20Project.pdf).
-
 ---
 
 # ⚙️ Implementation Workflow
@@ -597,6 +593,14 @@ When combined with Wazuh SIEM, it creates a powerful platform for:
 - centralized endpoint monitoring
 - threat detection
 - incident investigation
+
+---
+
+# 📄 PDF Guide Reference
+
+For complete visual step-by-step screenshots and terminal walkthrough, refer to the detailed PDF implementation guide included in the repository resources folder. Or click below.
+ 
+[the complete step-by-step PDF project guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/15-osquery-endpoint-visibility-wazuh/docs/Osquery%20Exploration%20and%20Wazuh%20Integration%20Project.pdf).
 
 ---
 
