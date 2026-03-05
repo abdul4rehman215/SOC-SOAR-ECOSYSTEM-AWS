@@ -296,7 +296,7 @@ For complete step-by-step screenshots and validation:
 ├── interview_qna.md
 ├── troubleshooting.md
 │
-├── docs/
+└── docs/
     └── AWS CloudTrail EC2 Monitoring Wazuh SIEM.pdf
 ```
 
