@@ -1,4 +1,4 @@
-# 🛠️ TheHive 5.5 – Troubleshooting Guide
+# 🛠️ Troubleshooting Guide - TheHive 5.5
 
 ### Docker Deployment on AWS EC2 | SOC-SOAR Case Management Core
 
