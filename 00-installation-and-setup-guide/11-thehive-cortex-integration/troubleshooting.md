@@ -1,4 +1,4 @@
-# TheHive ↔ Cortex Integration – Advanced Troubleshooting Guide
+# Advanced Troubleshooting Guide - TheHive ↔ Cortex Integration 
 ### AWS EC2 | Docker Deployment | SOC Enrichment Architecture
 
 ---
@@ -497,16 +497,16 @@ Failure handling is part of SOC maturity.
 
 # 🏁 Final Integration Health Checklist
 
-✔ TheHive UI accessible
-✔ Cortex UI accessible
-✔ API key valid
-✔ Connector status green
-✔ Analyzers enabled
-✔ Analyzer visible in TheHive
-✔ Analyzer job container spawns
-✔ Results visible in case
-✔ Job recorded in Cortex
-✔ Resource usage stable
+- ✔ TheHive UI accessible
+- ✔ Cortex UI accessible
+- ✔ API key valid
+- ✔ Connector status green
+- ✔ Analyzers enabled
+- ✔ Analyzer visible in TheHive
+- ✔ Analyzer job container spawns
+- ✔ Results visible in case
+- ✔ Job recorded in Cortex
+- ✔ Resource usage stable
 
 If all above pass →
 Your enrichment pipeline is production-ready.
