@@ -1,4 +1,4 @@
-# 🎤 TheHive 5.5 Deployment – Interview Q&A
+# 🎤 Interview Q&A - TheHive 5.5 Deployment
 ### Docker on AWS EC2 | SOC-SOAR Case Management Core
 
 ---
