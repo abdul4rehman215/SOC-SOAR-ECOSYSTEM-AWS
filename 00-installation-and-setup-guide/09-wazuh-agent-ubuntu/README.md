@@ -131,6 +131,21 @@ In Dashboard:
 
 ---
 
+
+# 📁 Repository Structure
+
+```
+09-wazuh-agent-ubuntu/
+├── README.md
+├── commands.sh
+├── wazuh_agent.conf
+├── troubleshooting.md
+├── architecture-notes.txt
+└── interview_qna.md
+```
+
+---
+
 # 📘 Official Documentation References
 
 [Wazuh Agent Installation Guide](documentation.wazuh.com/current/installation-guide/wazuh-agent/index.html)
