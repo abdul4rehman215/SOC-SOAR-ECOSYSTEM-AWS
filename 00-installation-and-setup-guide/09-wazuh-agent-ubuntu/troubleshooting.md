@@ -1,4 +1,4 @@
-# 🚨 Wazuh Agent – Troubleshooting Guide
+# 🚨 Troubleshooting Guide - Wazuh Agent
 
 ### Ubuntu 24.04 | SOC Endpoint Monitoring
 
