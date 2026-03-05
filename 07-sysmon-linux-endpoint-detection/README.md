@@ -382,6 +382,23 @@ Expected:
 
 ---
 
+# 📁 Repository Structure
+
+```
+07-sysmon-linux-endpoint-detection/
+│
+├── README.md
+├── commands.sh
+├── architecture-notes.txt
+├── interview_qna.md
+├── troubleshooting.md
+│
+└── docs/
+    └── Sysmon Linux Wazuh Endpoint Telemetry and Detection.pdf
+```
+
+---
+
 # 🏁 Final Conclusion
 
 This project demonstrates a complete Linux detection engineering pipeline:
