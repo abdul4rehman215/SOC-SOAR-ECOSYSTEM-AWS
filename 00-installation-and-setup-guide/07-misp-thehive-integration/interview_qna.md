@@ -1,4 +1,4 @@
-# 🎯 MISP ↔ TheHive Integration – Interview Q&A
+# 🎯 Interview Q&A - MISP ↔ TheHive Integration
 
 ---
 
@@ -352,10 +352,10 @@ You can answer:
 
 This prepares you for:
 
-✔ SOC Analyst interviews
-✔ Threat Intelligence roles
-✔ IR Engineer interviews
-✔ Blue Team discussions
-✔ Security Engineer technical rounds
+- ✔ SOC Analyst interviews
+- ✔ Threat Intelligence roles
+- ✔ IR Engineer interviews
+- ✔ Blue Team discussions
+- ✔ Security Engineer technical rounds
 
 ---
