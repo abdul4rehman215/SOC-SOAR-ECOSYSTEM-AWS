@@ -369,14 +369,14 @@ Outbound:
 
 Always troubleshoot in this order:
 
-1️⃣ Local Interface
-2️⃣ Gateway Reachability
-3️⃣ External IP Reachability
-4️⃣ DNS Resolution
-5️⃣ Security Groups
-6️⃣ Route Table
-7️⃣ Internet Gateway
-8️⃣ NACL
+- 1️⃣ Local Interface
+- 2️⃣ Gateway Reachability
+- 3️⃣ External IP Reachability
+- 4️⃣ DNS Resolution
+- 5️⃣ Security Groups
+- 6️⃣ Route Table
+- 7️⃣ Internet Gateway
+- 8️⃣ NACL
 
 Never install software before network validation is 100% successful.
 
