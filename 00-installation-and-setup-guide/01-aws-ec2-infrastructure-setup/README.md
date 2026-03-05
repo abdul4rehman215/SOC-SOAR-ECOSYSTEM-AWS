@@ -3,7 +3,7 @@
 
 <p align="center">
 
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/icons/aws_logo.webp" width="100"/>
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/aws_logo.webp" width="100"/>
 
 </p>
 
