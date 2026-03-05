@@ -1,4 +1,4 @@
-# 🧠 TheHive ↔ Cortex Integration – Interview Q&A
+# 🧠 Interview Q&A - TheHive ↔ Cortex Integration 
 
 This section prepares you for:
 
