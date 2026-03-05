@@ -592,7 +592,7 @@ Monitoring actions like:
 
 For the full step-by-step PDF with screenshots and validation, see:
 
-📄 **[Auditd + Wazuh kernal monitoring, auditing PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/18-auditd-wazuh-credential-access-hunting/docs)**
+📄 **[Auditd + Wazuh kernal monitoring, auditing PDF Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/18-auditd-wazuh-credential-access-hunting/docs/Linux%20Auditd%20Wazuh%20Credential%20Access%20Monitoring%20Project.pdf)**
 
 ---
 
