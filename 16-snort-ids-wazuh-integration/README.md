@@ -1,7 +1,7 @@
 # 🐷 Snort IDS Exploration + Custom Rule Development + Wazuh SIEM Integration
 
 <p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/what-is-snort.jpg" alt="Snort IDS" width="720" />
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-snort-logo.png" alt="Wazuh-Snort Logo" />
 </p>
 
 ---
@@ -81,6 +81,12 @@ Before doing this project, it helps to know:
 ---
 
 ## 🏗️ Architecture Overview
+
+### 🖼️ Snort Architecture
+
+<p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/what-is-snort.jpg" alt="Snort IDS" width="720" />
+</p>
 
 ### 🖼️ Snort → Wazuh SOC Flow Diagram
 <p align="center">
