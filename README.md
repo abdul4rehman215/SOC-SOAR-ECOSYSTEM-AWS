@@ -6,9 +6,13 @@
   <img src="./resources/soc-soar-all-in-one-logo-line.png" alt="SOC SOAR Ecosystem" width="950">
 </p>
 
+<p align="center">
+  
 ### A complete **self-built, hands-on SOC/SOAR ecosystem portfolio on AWS** demonstrating practical blue-team capability across **detection, triage, investigation, response, threat intelligence, automation, and security visualization**.
 
 ### This repository is **not a collection of isolated labs** — it is a **connected security operations environment** built from scratch to show how modern SOC workflows operate across multiple integrated projects.
+
+</p>
 
 <!--
 <p align="center">
@@ -57,9 +61,10 @@
 
 <!-- ===================== SCOPE & STATUS ===================== -->
 
-![Projects](https://img.shields.io/badge/Projects-24-43A047?style=for-the-badge)
+![Projects](https://img.shields.io/badge/Projects-38-43A047?style=for-the-badge)
+![Installations](https://img.shields.io/badge/INSTALLATIONS-11-546E7A?style=for-the-badge)
 ![Capstones](https://img.shields.io/badge/Capstones-2-8E24AA?style=for-the-badge)
-![Dashboards Count](https://img.shields.io/badge/Dashboards-3-0277BD?style=for-the-badge)
+![Dashboards Count](https://img.shields.io/badge/Dashboards-6-0277BD?style=for-the-badge)
 ![Explorations](https://img.shields.io/badge/Learning%20Explorations-4-F57C00?style=for-the-badge)
 ![Portfolio](https://img.shields.io/badge/Portfolio-Project%20Based-00C853?style=for-the-badge)
 ![Build Style](https://img.shields.io/badge/Built%20From-Scratch-2E7D32?style=for-the-badge)
@@ -185,7 +190,7 @@ flowchart TD
     D --> E
     F --> E
     E --> I["🚨 Investigation • Containment • Eradication • Recovery"]
-    I --> J["🔁 Validated IOC Sharing / Reporting / Lessons Learned"]
+    I --> J["🔁 MISP Validated IOC Sharing / Reporting / Lessons Learned"]
 ```
 
 ---
@@ -273,33 +278,6 @@ The repository includes practical projects around:
 
 ---
 
-# 🗂️ Repository Structure
-
-```text
-SOC-SOAR-ECOSYSTEM-AWS/
-│
-├── 00-installation-and-setup-guide/        # Full stack deployment and integrations
-├── 01-core-soc-ecosystem/                  # High-level SOC architecture and workflow
-├── 02-18/                                  # Detection engineering, monitoring, hunting, response projects
-├── 19-capstone-soc-soar-malware-incident-response/
-│   ├── part01-windows-malware-detection-and-analysis/
-│   └── part02-incident-response-case-management-threat-intel/
-├── 20-ai-driven-soc-alert-triage-automation/
-├── 21-dashboards/
-│   ├── 01-soc-threat-monitoring-dashboard/
-│   ├── 02-soc-mitre-attack-coverage-dashboard/
-│   └── 03-soc-compliance-cis-benchmark-dashboard/
-├── 22-learning-projects/
-│   ├── 01-it-hygiene-module-exploration/
-│   ├── 02-threat-hunting-module-exploration/
-│   ├── 03-exploring-discovery-indexes/
-│   └── 04-vulnerability-detection-module-exploration/
-├── 23-other-projects/
-└── resources/                              # Shared diagrams, logos, architecture images, visuals
-```
-
----
-
 # 🗂️ Project Index
 
 > Click any lab title to jump directly to its folder.
@@ -310,7 +288,18 @@ SOC-SOAR-ECOSYSTEM-AWS/
 
 ## 🧱 Section 1: Platform Buildout & Core SOC Architecture
 
-**Focus:** AWS deployment, open-source SOC stack setup, cross-platform integrations, analyst workflow design.
+<div align="left">
+
+![Category](https://img.shields.io/badge/Category-Platform%20Buildout-455A64?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-AWS%20Infrastructure-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![Focus](https://img.shields.io/badge/Focus-SOC%20Stack-1976D2?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Integration%20Engineering-7B1FA2?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Architecture%20Design-00897B?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Analyst%20Workflow-C62828?style=for-the-badge)
+
+</div>
+
+Buildout of the full AWS-based SOC/SOAR foundation, covering infrastructure deployment, stack integration, and core workflow design.
 
 | ID | Project | Focus Area | What It Covers |
 |---|---|---|---|
@@ -328,7 +317,20 @@ SOC-SOAR-ECOSYSTEM-AWS/
 
 ## 🛡️ Section 2: Detection Engineering, Monitoring & Threat Validation
 
-**Focus:** authentication abuse, anomaly detection, endpoint telemetry, network IDS, cloud monitoring, enrichment, and alert validation.
+<div align="left">
+
+![Category](https://img.shields.io/badge/Category-Detection%20Engineering-AD1457?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Alert%20Logic-C62828?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Endpoint%20Visibility-3949AB?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Authentication%20Abuse-C62828?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Network%20Detection%20Monitoring-1565C0?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Cloud%20Security-455A64?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Threat%20Intel%20Enrichment-8E24AA?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Alert%20Validation-2E7D32?style=for-the-badge)
+
+</div>
+
+Detection-focused projects covering alert logic, telemetry engineering, monitoring pipelines, enrichment, and validation across multiple sources.
 
 | ID | Project | Focus Area | What It Covers |
 |---|---|---|---|
@@ -354,7 +356,19 @@ SOC-SOAR-ECOSYSTEM-AWS/
 
 ## 🌐 Section 3: Web Security, Threat Hunting & Active Response
 
-**Focus:** WAF monitoring, Layer 7 visibility, automated blocking, DNS-based hunting, endpoint context, NSM, and Linux credential-access hunting.
+<div align="left">
+
+![Category](https://img.shields.io/badge/Category-Web%20%26%20Threat%20Operations-2E7D32?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Web%20Security-C62828?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Threat%20Hunting-3949AB?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Active%20Response-5E35B1?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-DNS%20Security-00897B?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Network%20Visibility-1565C0?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Credential%20Access%20Hunting-6A1B9A?style=for-the-badge)
+
+</div>
+
+Projects focused on WAF monitoring, hunting workflows, automated containment, DNS-driven investigation, endpoint context, and NSM-style visibility.
 
 | ID | Project | Focus Area | What It Covers |
 |---|---|---|---|
@@ -379,15 +393,29 @@ SOC-SOAR-ECOSYSTEM-AWS/
 
 ---
 
-## 🚀 Section 4: Capstones, Automation, Dashboards & Extended Portfolio Work
+## 🚀 Section 4: Capstones, Automation, Dashboards & Portfolio Extensions
 
-**Focus:** end-to-end SOC/SOAR operations, AI-assisted triage, security visualization, learning-focused exploration, and supporting research.
+<div align="left">
+
+![Category](https://img.shields.io/badge/Category-Flagship%20Work-F57C00?style=for-the-badge)
+![Category](https://img.shields.io/badge/Category-Capstone%20%26%20Portfolio%20Highlights-F57C00?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-End--to--End%20Incident%20Response-C62828?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-SOAR%20Automation-7B1FA2?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-AI%20Triage-AD1457?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Dashboard%20Engineering-00897B?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Feature%20Exploration-3949AB?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Portfolio%20Depth-455A64?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Learning%20Depth-3949AB?style=for-the-badge)
+
+</div>
+
+Flagship portfolio work covering end-to-end SOC/SOAR execution, AI-assisted automation, dashboarding, platform exploration, and supporting security research.
 
 | ID | Project | Focus Area | What It Covers |
 |---|---|---|---|
 | 19 | [SOC + SOAR Malware Incident Response Capstone](./19-capstone-soc-soar-malware-incident-response/) | Full IR lifecycle | Detection, case management, Cortex enrichment, MISP sharing, reporting |
 | 20 | [AI-Driven SOC Alert Triage Automation](./20-ai-driven-soc-alert-triage-automation/) | SOAR-style automation | Wazuh → n8n → Gemini → analyst-ready email triage workflow |
-| 21 | [Wazuh Dashboard Engineering & Security Visualization](./21-dashboards/) | Dashboard engineering | Threat monitoring, ATT&CK visibility, compliance dashboarding |
+| 21 | [Wazuh Dashboard Engineering & Security Visualization](./21-dashboards/) | Dashboard engineering | Dedicated dashboards for threat monitoring, ATT&CK coverage, and compliance, plus additional project-embedded dashboards in SSH brute-force, Suricata, and Zeek workflows |
 | 22 | [Wazuh Module Exploration & Learning Projects](./22-learning-projects/) | Structured feature exploration | IT hygiene, threat hunting, discover indices, vulnerability detection exploration |
 | 23 | [Other Projects](./23-other-projects/) | Supporting research & tuning work | Supplementary PDFs around rule tuning and detection refinement |
 
@@ -403,14 +431,45 @@ SOC-SOAR-ECOSYSTEM-AWS/
 
 # 🧩 Subproject Highlights
 
-## 📂 Dashboard Subprojects
+## 📂 Dashboard & Visualization Projects
+
+This repository includes both **dedicated dashboard engineering projects** and **project-specific operational dashboards** built inside specific detection and incident-response workflows.
+
+Some dashboards live inside their related project folders because they are tightly coupled to the telemetry, use case, and operational scenario of that project.
+
+### 1) Dedicated Dashboard Engineering Project
 Inside **[21-dashboards](./21-dashboards/)**:
 
 - [01 — SOC Threat Monitoring Dashboard](./21-dashboards/01-soc-threat-monitoring-dashboard/)
 - [02 — SOC MITRE ATT&CK Coverage Dashboard](./21-dashboards/02-soc-mitre-attack-coverage-dashboard/)
 - [03 — SOC Compliance & CIS Benchmark Dashboard](./21-dashboards/03-soc-compliance-cis-benchmark-dashboard/)
 
-## 📚 Learning Exploration Subprojects
+### Additional Dashboards Embedded in Projects
+These dashboards are stored inside individual project folders because they support that specific detection, monitoring, or incident-response workflow:
+
+- [03 — SOC SSH Brute Force Incident Analysis Dashboard (NDJSON)](./03-real-ssh-bruteforce-incident-response/SOC%20%E2%80%93%20SSH%20Brute%20Force%20Incident%20Analysis.ndjson)
+- [08 — Suricata Network Threat Detection Dashboard](./08-suricata-network-threat-detection/dashboard-agent-group/)
+- [17 — Zeek Network Security Monitoring & Threat Hunting Dashboard](./17-zeek-network-monitoring-wazuh/dashboards/)
+
+### 🧠 What These Dashboards Cover
+
+Across the repository, dashboard work supports:
+
+- **SOC threat monitoring and alert visibility**
+- **MITRE ATT&CK coverage visualization**
+- **Compliance and CIS benchmark monitoring**
+- **Suricata-based network threat visibility**
+- **Zeek-based network security monitoring and threat hunting**
+- **SSH brute-force incident analysis and operational visibility**
+
+> This gives the portfolio both **centralized dashboard engineering depth** and **use-case-specific operational dashboards** embedded directly inside relevant projects.
+
+---
+
+## 📚 Learning Exploration Projects
+
+These projects extend the portfolio beyond implementation by focusing on **feature understanding, analyst thinking, platform depth, and practical use-case exploration**.
+
 Inside **[22-learning-projects](./22-learning-projects/)**:
 
 - [01 — IT Hygiene Module Exploration](./22-learning-projects/01-it-hygiene-module-exploration/)
@@ -418,7 +477,143 @@ Inside **[22-learning-projects](./22-learning-projects/)**:
 - [03 — Discover Indices Exploration](./22-learning-projects/03-exploring-discovery-indexes/)
 - [04 — Vulnerability Detection Module Exploration](./22-learning-projects/04-vulnerability-detection-module-exploration/)
 
+### 🧠 What These Learning Projects Cover
+
+Across this section, the learning projects support:
+
+- **Deeper Wazuh platform understanding**
+- **Analyst-focused feature exploration**
+- **Threat hunting visibility and workflow awareness**
+- **Security data discovery and index-level understanding**
+- **Vulnerability detection module exploration and practical value**
+- **Better appreciation of underused but high-impact SOC capabilities**
+
+> This gives the portfolio not only **implementation depth**, but also **feature-level platform understanding** that strengthens analyst reasoning, investigation quality, and overall SOC maturity.
+
 ---
+
+# 🏁 Flagship Capstone Projects
+
+These two projects represent the **strongest end-to-end portfolio work** in this repository.  
+Together, they show practical capability across **SOC operations, detection engineering, case management, threat intelligence, automation, and analyst-ready reporting**.
+
+## 🚨 Flagship Capstone 01 — End-to-End SOC + SOAR Malware Incident Response (Project 19)
+
+<div align="center">
+
+`Detect` ➜ `Analyze` ➜ `Escalate` ➜ `Enrich` ➜ `Investigate` ➜ `Contain` ➜ `Share IOCs`
+
+</div>
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/🖥️%20Detect%20on%20Endpoint-3F51B5?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🔎%20Analyze%20Telemetry-5E35B1?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/📂%20Create%20Case-00897B?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🧠%20Enrich%20Observables-7B1FA2?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🛡️%20Investigate%20%26%20Contain-C62828?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/📤%20Share%20to%20MISP-1565C0?style=flat-square"/>
+
+</div>
+
+### 🧩 Integrated Components Used
+
+- **Windows Endpoint + Sysmon** for malware-behavior telemetry
+- **Wazuh** for detection, correlation, and alert generation
+- **TheHive** for case creation, incident tracking, and analyst workflow
+- **Cortex** for observable enrichment and investigation support
+- **MISP** for IOC sharing and threat intelligence feedback loop
+- **Structured notes, timelines, IOC tracking, and response documentation** for full case lifecycle handling
+
+### 🎯 What This Capstone Simulates
+
+This capstone represents a **realistic SOC-to-IR escalation workflow** where suspicious endpoint activity is:
+
+- detected through endpoint telemetry
+- validated and triaged as a true security event
+- escalated into structured case management
+- enriched with investigation context and observables
+- mapped into the incident response lifecycle
+- converted into intelligence that can be shared back into the ecosystem
+
+It is a full **Detect → Investigate → Respond → Share Intelligence** portfolio implementation.
+
+### ✅ Outcome Statement
+
+This project demonstrates the ability to execute a **complete SOC + SOAR malware incident response workflow** from endpoint detection to investigation, containment, documentation, and validated IOC sharing.
+
+**Project link:** [19-capstone-soc-soar-malware-incident-response](./19-capstone-soc-soar-malware-incident-response/)
+
+---
+
+## 🤖 Flagship Capstone 02 — AI-Driven SOC Alert Triage Automation (Project 20)
+
+<div align="center">
+
+`Receive Alert` ➜ `Normalize` ➜ `Orchestrate` ➜ `AI Triage` ➜ `Format Report` ➜ `Notify Analyst`
+
+</div>
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/🚨%20Receive%20Wazuh%20Alert-C62828?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🧹%20Normalize%20Payload-3949AB?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/⚙️%20n8n%20Orchestration-00897B?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🧠%20Gemini%20AI%20Triage-7B1FA2?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/📧%20Generate%20HTML%20Report-F57C00?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/📨%20Send%20Analyst%20Notification-1565C0?style=flat-square"/>
+
+</div>
+
+### 🧩 Integrated Components Used
+
+- **Wazuh custom integration** for forwarding alerts
+- **n8n workflow automation** for orchestration
+- **JavaScript normalization logic** for structured payload cleanup
+- **Gemini AI prompt engineering** for security-focused triage summarization
+- **HTML report formatting** for analyst-friendly severity-based output
+- **SMTP / email delivery pipeline** for direct notification workflow
+
+### 🎯 What This Capstone Simulates
+
+This project represents a **modern SOC automation workflow** where raw alerts are transformed into analyst-ready intelligence by:
+
+- receiving live security alerts from Wazuh
+- cleaning and structuring the alert payload
+- routing the event through an automation workflow
+- generating AI-assisted triage summaries
+- converting analysis into readable HTML reporting
+- delivering concise actionable output to the analyst
+
+It is a full **Alert → Context → Triage → Reporting** automation pipeline.
+
+### ✅ Outcome Statement
+
+This project demonstrates the ability to build a **practical AI-assisted SOC alert triage workflow** that reduces analyst effort, improves context delivery, and shows strong security automation thinking.
+
+**Project link:** [20-ai-driven-soc-alert-triage-automation](./20-ai-driven-soc-alert-triage-automation/)
+
+---
+
+## 🌟 Why These Two Projects Matter
+
+Together, these flagship projects show:
+
+- **traditional SOC depth** through detection, investigation, incident response, and intelligence sharing
+- **modern SOC capability** through automation, orchestration, and AI-assisted analyst support
+- **portfolio-level execution** across both defensive operations and workflow engineering
+
+They are the strongest proof in this repository that the portfolio goes beyond tool setup and demonstrates **end-to-end security operations capability**.
 
 # 🛠️ Tools & Technologies Used Across This Repository
 
@@ -485,6 +680,8 @@ Inside **[22-learning-projects](./22-learning-projects/)**:
 
 # 🧠 Hands-On Skills Demonstrated Across the Portfolio
 
+<div align="center">
+
 | Skill Area | Practical Capability Demonstrated |
 |---|---|
 | SOC Architecture | Building and integrating a full open-source SOC/SOAR ecosystem on AWS |
@@ -501,104 +698,421 @@ Inside **[22-learning-projects](./22-learning-projects/)**:
 | Dashboard Engineering | Threat monitoring, ATT&CK coverage views, compliance posture visualization |
 | Documentation Discipline | Commands, architecture notes, troubleshooting, interview Q&A, project walkthroughs |
 
----
-
-# 🧾 How to Navigate This Repository
-
-### Recommended reading path
-
-1. Start with **[00-installation-and-setup-guide](./00-installation-and-setup-guide/)**  
-   to understand how the environment and core tools were deployed.
-
-2. Continue to **[01-core-soc-ecosystem](./01-core-soc-ecosystem/)**  
-   to understand the high-level architecture and SOC workflow.
-
-3. Explore **projects 02–18** based on your area of interest:
-   - endpoint detection
-   - network monitoring
-   - web security
-   - cloud monitoring
-   - threat hunting
-   - active response
-
-4. Review **[19-capstone-soc-soar-malware-incident-response](./19-capstone-soc-soar-malware-incident-response/)**  
-   for the strongest end-to-end SOC + SOAR case workflow in the portfolio.
-
-5. Review **[20-ai-driven-soc-alert-triage-automation](./20-ai-driven-soc-alert-triage-automation/)**  
-   for modern automation and AI-assisted SOC operations.
-
-6. Use **[21-dashboards](./21-dashboards/)** and **[22-learning-projects](./22-learning-projects/)**  
-   to explore visibility engineering and deeper platform understanding.
+</div>
 
 ---
 
-# 📚 Documentation Style Across Projects
 
-Many projects in this repository include one or more of the following:
+# 🗂️ Repository Structure
 
-- `README.md` for implementation, architecture, and outcomes
-- `commands.sh` for executed commands and build steps
-- `architecture-notes.txt` for workflow and design thinking
-- `troubleshooting.md` for validation and fixes
-- `interview_qna.md` for interview-oriented explanation
-- `scripts/`, `configs/`, `rules/`, or `notes/` folders for practical implementation assets
-- `artifacts/` or PDF walkthroughs for visual proof and documentation depth
+This repository is organized as a **connected SOC/SOAR portfolio ecosystem** — progressing from **platform buildout**, to **detection engineering**, to **incident response**, **automation**, **dashboarding**, and **extended learning projects**.
 
-This makes the repository useful not just as a showcase, but also as a **repeatable learning and reference resource**.
+```text
+SOC-SOAR-ECOSYSTEM-AWS/
+│
+├── 00-installation-and-setup-guide/                  # AWS setup, Docker, Wazuh, TheHive, MISP, Cortex, integrations
+├── 01-core-soc-ecosystem/                            # Core SOC/SOAR architecture, workflow, and stack overview
+│
+├── 02-wazuh-ssh-bruteforce-alerting-setup/           # Authentication abuse detection and alerting
+├── 03-real-ssh-bruteforce-incident-response/         # Full SSH brute-force investigation and response workflow
+├── 04-behavior-based-http-anomaly-detection/         # OpenSearch ML-based HTTP anomaly detection
+├── 05-wazuh-sysmon-windows/                          # Windows endpoint monitoring and detection engineering
+├── 06-aws-cloudtrail-ec2-monitoring-wazuh/           # AWS CloudTrail + EC2 security visibility
+├── 07-sysmon-linux-endpoint-detection/               # Sysmon for Linux + Wazuh detection engineering
+├── 08-suricata-network-threat-detection/             # Suricata IDS integration and network detection
+├── 09-wazuh-virustotal-integration/                  # IOC enrichment and file reputation validation
+│
+├── 10-apache-wazuh-modsecurity-waf/                  # Apache + ModSecurity + Wazuh web security monitoring
+├── 11-nginx-wazuh-modsecurity-waf/                   # NGINX + ModSecurity + Wazuh web security monitoring
+├── 12-fail2ban-modsecurity-ip-block/                 # Automated IP blocking and containment workflow
+├── 13-dns-threat-hunting-project/                    # DNS hunting, enrichment, and suspicious domain analysis
+├── 14-automated-dns-sinkholing-wazuh/                # Automated DNS sinkholing and active response
+├── 15-osquery-endpoint-visibility-wazuh/             # Osquery-based endpoint visibility and telemetry expansion
+├── 16-snort-ids-wazuh-integration/                   # Snort IDS + Wazuh correlation pipeline
+├── 17-zeek-network-monitoring-wazuh/                 # Zeek network monitoring and NSM-style visibility
+├── 18-auditd-wazuh-credential-access-hunting/        # Linux credential-access hunting with auditd
+│
+├── 19-capstone-soc-soar-malware-incident-response/   # Flagship end-to-end SOC + SOAR malware IR capstone
+│   ├── part01-windows-malware-detection-and-analysis/
+│   └── part02-incident-response-case-management-threat-intel/
+│
+├── 20-ai-driven-soc-alert-triage-automation/         # Wazuh → n8n → Gemini analyst triage automation
+│
+├── 21-dashboards/                                    # Security visualization and dashboard engineering
+│   ├── 01-soc-threat-monitoring-dashboard/
+│   ├── 02-soc-mitre-attack-coverage-dashboard/
+│   └── 03-soc-compliance-cis-benchmark-dashboard/
+│
+├── 22-learning-projects/                             # Wazuh module exploration and feature deep-dives
+│   ├── 01-it-hygiene-module-exploration/
+│   ├── 02-threat-hunting-module-exploration/
+│   ├── 03-exploring-discovery-indexes/
+│   └── 04-vulnerability-detection-module-exploration/
+│
+├── 23-other-projects/                                # Supplementary security work and supporting PDFs
+├── resources/                                        # Shared logos, diagrams, screenshots, and architecture visuals
+└── README.md
+````
+
+---
+
+# 🧱 Portfolio Structure at a Glance
+
+```text
+SOC-SOAR-ECOSYSTEM-AWS/
+├── 🔹 Platform Buildout & Core SOC Architecture
+├── 🔹 Detection Engineering, Monitoring & Threat Validation
+├── 🔹 Web Security, Threat Hunting & Active Response
+├── 🔹 Capstones, Automation, Dashboards & Portfolio Extensions
+└── README.md
+```
+
+---
+
+# 🧾 Common Project Structure
+
+Most implementation-heavy folders in this repository follow a **practical project documentation pattern** like this:
+
+```text
+project-name/
+├── README.md                 # Project overview, architecture, implementation flow, outcomes
+├── commands.sh               # Commands executed during setup, testing, and validation
+├── architecture-notes.txt    # Design logic, workflow thinking, and project structure
+├── troubleshooting.md        # Fixes, validation notes, and common issues
+├── interview_qna.md          # Interview-focused explanation of the project
+├── configs/                  # Tool configs, rules, XML, JSON, YAML, or agent settings
+├── scripts/                  # Python, Bash, PowerShell, or JavaScript automation
+├── rules/                    # Detection rules, decoders, or custom monitoring logic
+├── notes/                    # Analyst notes, timelines, lessons learned, IOC tracking
+├── artifacts/                # Evidence files, outputs, screenshots, or generated reports
+└── images/                   # Diagrams, validation screenshots, and supporting visuals
+```
+
+> Not every folder contains every item above, but this reflects the **overall documentation and implementation style** used throughout the portfolio.
+
+---
+
+# 🎓 Learning Outcomes Across This Portfolio
+
+By working through this repository, the portfolio demonstrates the ability to:
+
+- Build and integrate a complete **AWS-based SOC/SOAR ecosystem**
+- Engineer detections across **endpoint, network, web, and cloud** telemetry
+- Perform **alert triage, investigation, and escalation** in realistic SOC workflows
+- Use **TheHive, Cortex, and MISP** for case management, enrichment, and intelligence sharing
+- Develop **active response and automation pipelines** for containment and analyst support
+- Improve visibility with **dashboards, MITRE mapping, and compliance-oriented monitoring**
+- Apply **threat hunting and behavioral analysis** using high-context telemetry sources
+- Document implementations clearly through configs, scripts, notes, troubleshooting, and interview-ready explanations
+
+---
+
+# 📈 Professional Relevance
+
+This portfolio reflects practical capability relevant to roles such as:
+
+- **SOC Analyst (Tier 1 / Tier 2)**
+- **Detection Engineer**
+- **SIEM / SOC Engineer**
+- **Incident Response / DFIR Analyst**
+- **Threat Hunting Analyst**
+- **Security Automation / SOAR Engineer**
+
+It demonstrates strengths in:
+
+- **Detection engineering and alert tuning**
+- **Multi-source log correlation and security visibility**
+- **Case management and incident lifecycle execution**
+- **Threat intelligence enrichment and IOC validation**
+- **Security automation and workflow design**
+- **Operational documentation and technical communication**
 
 ---
 
 # 🌍 Real-World Alignment
 
-This portfolio was built to reflect practical enterprise-style security operations work such as:
+These projects simulate real security operations workflows including:
 
-- alert monitoring and triage
-- detection engineering and alert tuning
-- endpoint and network telemetry correlation
-- incident response lifecycle execution
-- IOC validation and intelligence sharing
-- active response automation
-- dashboard-driven monitoring and visibility improvement
-- reducing analyst fatigue through better context and automation
+- **Endpoint, network, cloud, and web telemetry monitoring**
+- **Alert triage and investigation across multiple data sources**
+- **Detection validation, false-positive reduction, and rule tuning**
+- **Incident escalation into structured response workflows**
+- **Threat intelligence enrichment, correlation, and sharing**
+- **Automated containment actions such as IP blocking and DNS sinkholing**
+- **Analyst reporting, dashboarding, and operational visibility improvement**
 
-The focus is consistently on **operational security engineering**, not just tool screenshots or theoretical summaries.
+This portfolio is designed to reflect **practical SOC operations**, not isolated theory or tool-only setup work.
+
+---
+
+# 🧪 Real-World Simulation Model
+
+All projects were built in **controlled lab environments** to simulate realistic blue-team and SOC engineering work.
+
+The portfolio models workflows such as:
+
+- **Detect → Triage → Investigate → Respond → Recover**
+- **Enrich → Correlate → Validate → Share Intelligence**
+- **Tune → Automate → Visualize → Improve Operations**
+
+It represents **hands-on implementation from scratch** using open-source security tooling on AWS, with emphasis on realistic analyst workflow, detection depth, and operational integration.
+
+---
+
+# 📊 Security Skills Heatmap
+
+This heatmap reflects **hands-on implementation across a full AWS-based SOC/SOAR ecosystem portfolio** covering:
+
+**SOC Operations • SOC Analyst Workflows • Detection Engineering • Incident Response • Threat Intelligence • SOAR Automation • Security Visualization**
+
+> Exposure bars represent practical implementation depth across the projects in this repository.
+
+| Skill Area | Exposure Level | Practical Depth | Tools / Frameworks Used |
+|---|---:|---|---|
+| 🛡️ SOC Stack Integration | ██████████ **100%** | End-to-end platform buildout, multi-tool integration, workflow design | Wazuh, TheHive, Cortex, MISP, Docker, AWS |
+| 📡 SIEM Operations & Alert Triage | █████████░ **90%** | Alert monitoring, triage flow, escalation logic, analyst visibility | Wazuh, dashboards, Slack, rules, alerts |
+| 🧠 Detection Engineering | ██████████ **100%** | Custom rules, decoders, thresholds, tuning, MITRE-aligned detections | Wazuh rules, decoders, Sysmon, auditd |
+| 💻 Endpoint Telemetry & EDR-Like Visibility | █████████░ **90%** | Process, network, file, DNS, and credential-access visibility | Sysmon Windows, Sysmon Linux, Osquery, auditd |
+| 🌐 Network Security Monitoring | █████████░ **90%** | IDS/NSM integration, alert parsing, behavior visibility, correlation | Suricata, Snort, Zeek, Wazuh |
+| 🌍 Web Security Monitoring & WAF Visibility | ████████░░ **80%** | Web attack logging, WAF monitoring, request-level detection, blocking workflows | Apache, NGINX, ModSecurity, Fail2Ban |
+| ☁️ Cloud Security Monitoring | ████████░░ **80%** | Cloud activity monitoring, log visibility, infrastructure event tracking | AWS CloudTrail, EC2, Wazuh |
+| 🔎 Threat Hunting & IOC Analysis | █████████░ **90%** | DNS hunting, behavioral analysis, IOC enrichment, suspicious activity validation | DNS telemetry, OTX, VirusTotal, Wazuh |
+| 🚨 Incident Response & Case Management | ██████████ **100%** | Triage → investigation → containment → recovery → lessons learned | TheHive, Cortex, Wazuh, case notes, response workflow |
+| 🧬 Threat Intelligence Operations | █████████░ **90%** | Enrichment, observable analysis, IOC validation, intelligence sharing | MISP, VirusTotal, AlienVault OTX, Cortex |
+| ⚙️ SOAR & Security Automation | █████████░ **90%** | Automated enrichment, workflowing, active response, orchestration | Wazuh integrations, n8n, Python, Bash, PowerShell |
+| 🤖 AI-Assisted SOC Operations | ████████░░ **80%** | Alert normalization, AI triage prompting, analyst-ready summaries | n8n, Gemini, JavaScript, HTML email formatting |
+| 📈 Dashboard Engineering & Security Visualization | ████████░░ **80%** | Threat dashboards, ATT&CK visibility, compliance monitoring | Wazuh Dashboard, OpenSearch visualizations |
+| 🧾 Security Documentation & Reporting | ██████████ **100%** | Architecture notes, commands, troubleshooting, interview Q&A, project reporting | Markdown, JSON, configs, screenshots, notes |
+
+## 🔍 Proficiency Scale
+
+- ██████████ = Implemented **end-to-end with strong operational depth**
+- █████████░ = **Advanced practical implementation** with workflow context
+- ████████░░ = **Strong working implementation** with applied portfolio depth
+- ███████░░░ = **Foundational + applied exposure**
+
+This heatmap reflects **project-level security engineering capability**, not isolated tool usage — covering:
+
+> **Detect → Triage → Investigate → Enrich → Respond → Share Intelligence → Automate → Visualize**
+
+---
+
+# 🧪 How To Use
+
+```bash
+# Clone the repository
+git clone https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS.git
+cd SOC-SOAR-ECOSYSTEM-AWS
+````
+
+This repository is best explored as a **connected portfolio**, not as random standalone folders.
+
+**Best approach:**
+
+* Start with the **setup and core architecture**
+* Move into the **implementation projects**
+* Finish with the **capstone, automation, and dashboards**
+
+> Each major folder is readable on its own, but together they show the full SOC/SOAR ecosystem workflow.
+
+---
+
+# 🧾 How to Navigate This Repository
+
+### Recommended reading order
+
+1. **[00-installation-and-setup-guide](./00-installation-and-setup-guide/)**
+   Build and understand the core infrastructure, deployments, and integrations.
+
+2. **[01-core-soc-ecosystem](./01-core-soc-ecosystem/)**
+   Understand the overall SOC/SOAR architecture, tool roles, and workflow model.
+
+3. **[02–18 project folders](./)**
+   Explore the hands-on implementation projects across:
+
+   * endpoint detection
+   * network monitoring
+   * web security
+   * cloud visibility
+   * threat hunting
+   * active response
+
+4. **[19-capstone-soc-soar-malware-incident-response](./19-capstone-soc-soar-malware-incident-response/)**
+   Review the main end-to-end SOC + SOAR incident workflow.
+
+5. **[20-ai-driven-soc-alert-triage-automation](./20-ai-driven-soc-alert-triage-automation/)**
+   Review the automation and AI-assisted analyst triage pipeline.
+
+6. **[21-dashboards](./21-dashboards/)** and **[22-learning-projects](./22-learning-projects/)**
+   Explore visibility engineering, dashboarding, and feature/module exploration.
+
+---
+
+# 📚 Documentation Style Across Projects
+
+Most folders follow a practical documentation pattern so the work is easy to review.
+
+Common files include:
+
+* `README.md` → project overview, implementation flow, architecture, and results
+* `commands.sh` → commands executed during setup, testing, or validation
+* `architecture-notes.txt` → design logic, workflow thinking, and project structure
+* `troubleshooting.md` → fixes, validation notes, and common issues
+* `interview_qna.md` → interview-style explanation of the project
+* `scripts/`, `configs/`, `rules/`, `notes/` → implementation assets and supporting material
+* `artifacts/`, PDFs, or images → screenshots, outputs, diagrams, and supporting evidence
+
+This structure keeps the repository useful as both a **portfolio showcase** and a **technical reference**.
+
+---
+
+# 🔐 Execution Environment
+
+All projects in this repository were built and tested in **controlled AWS-based lab environments** designed to simulate realistic SOC, detection engineering, incident response, and security automation workflows.
+
+**Environment characteristics:**
+
+- **AWS EC2 lab infrastructure** for hosting the SOC/SOAR stack and test systems
+- **Ubuntu Linux servers** for Wazuh, TheHive, Cortex, MISP, Docker, and supporting services
+- **Windows and Linux endpoints** for endpoint telemetry, malware-behavior simulation, and investigation workflows
+- **Containerized deployments** where required for repeatable setup and integration
+- **Isolated monitoring and simulation workflows** for endpoint, network, web, and cloud security visibility
+- **Structured outputs and evidence artifacts** including configs, logs, dashboards, scripts, notes, and response documentation
+
+This portfolio was built to reflect **practical analyst and engineering execution quality**, not just tool installation.
+
+---
+
+# 🎯 Intended Use
+
+This repository is designed to support:
+
+- **SOC analyst skill development**
+- **Detection engineering practice**
+- **Incident response and case management learning**
+- **Threat intelligence enrichment and sharing workflows**
+- **Blue-team security monitoring and alert triage**
+- **SOAR and security automation portfolio development**
+- **Open-source SOC/SOAR architecture learning on AWS**
+
+The projects are intended for **defensive security education, portfolio demonstration, workflow understanding, and professional skill development**.
 
 ---
 
 # ⚖️ Ethical & Responsible Use
 
-All simulations, detections, and attack-like validations represented in this repository were performed in **controlled lab environments** for defensive security learning, detection engineering, and incident response development.
+All simulations, detections, and validation activities in this repository were conducted:
 
-This repository is intended for:
+- In **controlled lab environments**
+- Against **self-built, test, or intentionally safe systems**
+- For **defensive security, detection engineering, incident response, and educational purposes**
+- Using **authorized data, generated telemetry, or lab-safe simulations**
 
-- defensive security learning
-- SOC engineering practice
-- blue-team skill development
-- portfolio demonstration
-- security monitoring and response education
+This repository does **not** promote unauthorized access, misuse, or testing against real-world systems without permission.
+
+The techniques and workflows shown here are intended strictly for:
+
+- **Blue-team training**
+- **SOC engineering practice**
+- **Detection and monitoring improvement**
+- **Incident response education**
+- **Responsible security portfolio development**
+
+Use everything here **ethically, legally, and only in approved environments**.
 
 ---
 
-# 👨‍💻 Author
+# 🎯 Open to Roles
 
-**Abdul Rehman**  
-SOC • SIEM • Detection Engineering • Incident Response • Threat Intelligence • Security Automation
+This portfolio is aligned with roles involving **security monitoring, detection engineering, incident response, threat intelligence, and security automation**.
+
+### Suitable Roles
+
+- **SOC Analyst (Tier 1 / Tier 2)**
+- **Detection Engineer**
+- **SIEM / SOC Engineer**
+- **Incident Response Analyst**
+- **DFIR Analyst**
+- **Threat Hunting Analyst**
+- **Security Automation / SOAR Engineer**
+- **Blue Team Security Engineer**
+- **Security Operations Engineer**
+- **Junior-to-Mid Security Engineer** focused on defensive operations
+
+---
+
+# 🧠 What This Portfolio Demonstrates
+
+This portfolio demonstrates the ability to:
+
+- Build and integrate a full **open-source SOC/SOAR ecosystem on AWS**
+- Work across **endpoint, network, web, and cloud** security telemetry
+- Perform **alert triage, investigation, escalation, and incident response**
+- Engineer and tune detections using **rules, decoders, thresholds, and enrichment**
+- Use **Wazuh, TheHive, Cortex, and MISP** in connected operational workflows
+- Enrich and validate IOCs using **threat intelligence sources**
+- Design **active response and automation workflows**
+- Create **dashboard-driven security visibility**
+- Document projects clearly with **configs, scripts, notes, troubleshooting, and analyst-style reporting**
+
+---
+
+# 🛠️ Core Practical Strengths
+
+Key strengths shown through this repository include:
+
+- **SOC operations and analyst workflow execution**
+- **Detection engineering and alert tuning**
+- **SIEM integration and monitoring pipeline design**
+- **Incident response lifecycle understanding**
+- **Threat intelligence enrichment and sharing**
+- **SOAR-style workflow automation**
+- **Security dashboarding and operational visibility**
+- **Hands-on project execution from setup to validation**
+
+> This repository is meant to show not just tool familiarity, but the ability to contribute to **real security operations workflows** in a practical, implementation-focused role.
 
 ---
 
 # ⭐ Final Note
 
-This repository reflects **real hands-on project work** across a complete SOC/SOAR ecosystem.
+This repository reflects **real hands-on SOC/SOAR project work** — not isolated tool setup and not theoretical notes.
 
-It demonstrates the ability to:
+It demonstrates practical capability across a full security operations workflow:
 
-**Detect → Correlate → Investigate → Respond → Enrich → Automate → Visualize**
+> **Detect → Correlate → Investigate → Respond → Enrich → Automate → Visualize**
 
-If you are reviewing this portfolio, the strongest sections to start with are:
+The portfolio is designed to show how modern blue-team environments operate through **integrated detection, incident response, threat intelligence, automation, and security visibility**.
+
+If you are reviewing this portfolio, the best places to start are:
 
 - **[19-capstone-soc-soar-malware-incident-response](./19-capstone-soc-soar-malware-incident-response/)**
 - **[20-ai-driven-soc-alert-triage-automation](./20-ai-driven-soc-alert-triage-automation/)**
 - **[21-dashboards](./21-dashboards/)**
 - **[00-installation-and-setup-guide](./00-installation-and-setup-guide/)**
 
-Happy building and defending. 🚀🛡️
+If this portfolio adds value, consider starring the repository ⭐
+
+---
+
+# 👨‍💻 Author
+
+**Abdul Rehman**  
+
+SOC • SIEM • Detection Engineering • Incident Response • Threat Intelligence • Security Automation
+
+Building practical security operations projects focused on **real workflow execution, technical depth, and portfolio-grade implementation**.
+
+### 📧 Reach Out
+
+  <a href="https://github.com/abdul4rehman215">
+    <img src="https://img.shields.io/badge/Follow-181717?style=for-the-badge&logo=github&logoColor=white" alt="Follow" />
+  </a>  
+  <a href="https://linkedin.com/in/abdul4rehman215">
+     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white&v=1" />
+  </a>
+  <a href="mailto:abdul4rehman215@gmail.com">
+    <img src="https://img.shields.io/badge/Email-EE0000?style=for-the-badge&logo=gmail&logoColor=white" />
+  </a>
+
+---
