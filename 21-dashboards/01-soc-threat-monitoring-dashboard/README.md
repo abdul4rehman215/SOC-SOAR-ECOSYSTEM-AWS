@@ -241,7 +241,9 @@ This project focuses on:
 ├── architecture.txt
 ├── interview_qna.md
 ├── troubleshooting.md
-└── soc-threat-monitoring-dashboard.json
+└── resources/
+    ├── SOC – Wazuh Threat Monitoring Dashboard.ndjson
+    └── images
 ```
 
 ---
@@ -698,28 +700,25 @@ This layout balances:
 
 > **Place dashboard overview image here**
 
-```text
-[IMAGE PLACEHOLDER: full-dashboard-view]
-Suggested file name: images/soc-threat-monitoring-dashboard-overview.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/3.png"/>
+</div>
 
 ### High Severity Attack Timeline
 
 > **Place attack timeline image here**
 
-```text
-[IMAGE PLACEHOLDER: high-severity-attack-timeline]
-Suggested file name: images/soc-threat-monitoring-attack-timeline.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/4.png"/>
+</div>
 
 ### Attack Source Geo Map
 
 > **Place geo map image here**
 
-```text
-[IMAGE PLACEHOLDER: attack-source-geo-map]
-Suggested file name: images/soc-threat-monitoring-geo-map.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/5.png"/>
+</div>
 
 You can later replace these placeholders with embedded image references after uploading the image assets.
 
@@ -860,8 +859,10 @@ Through this project, I strengthened my understanding of:
 This project also includes the exported dashboard JSON file:
 
 ```text
-soc-threat-monitoring-dashboard.json
+SOC – Wazuh Threat Monitoring Dashboard.ndjson
 ```
+
+- or **[click here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/SOC%20%E2%80%93%20Wazuh%20Threat%20Monitoring%20Dashboard.ndjson)**
 
 This makes it possible to preserve and re-import the same dashboard layout and visualization structure later.
 
