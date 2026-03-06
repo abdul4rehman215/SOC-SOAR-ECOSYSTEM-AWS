@@ -18,6 +18,28 @@ This project turns raw SCA findings into a centralized, visual dashboard that ma
 
 ---
 
+## 🖼️ Dashboard Screenshots
+
+### Visualization Listing View
+
+<div align="center">
+<img src="://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/03-soc-compliance-cis-benchmark-dashboard/resources/2.png"/>
+</div>
+
+### Full Dashboard View
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/03-soc-compliance-cis-benchmark-dashboard/resources/3.png"/>
+</div>
+
+### Top Failed CIS Checks View
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/03-soc-compliance-cis-benchmark-dashboard/resources/4.png"/>
+</div>
+
+---
+
 ## 🎯 Project Objective
 
 The objective of this project was to build a **Wazuh-based compliance and CIS benchmark dashboard** that helps security teams:
@@ -725,48 +747,6 @@ This layout gives:
 
 ---
 
-## 🖼️ Dashboard Screenshots
-
-### Full Dashboard View
-
-> **Place compliance dashboard overview image here**
-
-```text
-[IMAGE PLACEHOLDER: compliance-dashboard-overview]
-Suggested file name: images/soc-compliance-cis-benchmark-dashboard-overview.png
-```
-
-### Top Failed CIS Checks View
-
-> **Place failed-checks image here**
-
-```text
-[IMAGE PLACEHOLDER: top-failed-cis-checks]
-Suggested file name: images/soc-compliance-top-failed-cis-checks.png
-```
-
-### Dashboard Listing View
-
-> **Optional placeholder for saved dashboard list**
-
-```text
-[IMAGE PLACEHOLDER: compliance-dashboard-listing]
-Suggested file name: images/soc-compliance-dashboard-listing.png
-```
-
-### Visualization Listing View
-
-> **Optional placeholder for visualization list**
-
-```text
-[IMAGE PLACEHOLDER: compliance-visualizations-list]
-Suggested file name: images/soc-compliance-visualizations-list.png
-```
-
-You can replace these placeholders later with your actual embedded image references.
-
----
-
 ## 📈 Dashboard Analysis
 
 Once built, this dashboard provides strong visibility into configuration posture.
@@ -894,9 +874,11 @@ Through this project, I strengthened my understanding of:
 
 This project also includes the exported dashboard JSON file:
 
-```text
-soc-compliance-cis-benchmark-dashboard.json
-```
+`
+SOC – Compliance & CIS Benchmark Dashboard.ndjson
+`
+
+- or [click here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/03-soc-compliance-cis-benchmark-dashboard/resources/SOC%20%E2%80%93%20Compliance%20%26%20CIS%20Benchmark%20Dashboard.ndjson)
 
 This makes it possible to preserve and re-import the same dashboard layout later.
 
