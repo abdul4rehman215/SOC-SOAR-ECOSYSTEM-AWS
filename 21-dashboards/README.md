@@ -30,7 +30,7 @@ This main project was created to:
 - organize dashboard development into structured project folders
 - document the learning, use cases, and operational value of dashboarding
 - create reusable dashboard subprojects for hands-on learning and future import/export use
-- maintain both **learning-focused documentation** and **practical dashboard JSON exports** for portfolio and implementation purposes
+- maintain both **learning-focused documentation** and **practical dashboard export files** for portfolio and implementation purposes
 
 ---
 
@@ -178,14 +178,15 @@ It provides the overall dashboard-engineering context and organizes three separa
 2. **SOC MITRE ATT&CK Coverage Dashboard**
 3. **SOC Compliance & CIS Benchmark Dashboard**
 
-Each subfolder will contain its own:
+Each subfolder includes:
 
 - `README.md`
 - `architecture.txt`
 - `interview_qna.md`
 - `troubleshooting.md`
-- exported dashboard `.json` file
-- any additional implementation-specific notes or supporting files if needed
+- dashboard export file for re-import
+- image assets / screenshots
+- any additional implementation-specific notes if needed
 
 This structure allows each dashboard to be understood both as:
 
@@ -208,7 +209,7 @@ This structure allows each dashboard to be understood both as:
 │   ├── troubleshooting.md
 │   └── resources/
 │       ├── SOC – Wazuh Threat Monitoring Dashboard.ndjson
-│       └── images
+│       └── images/
 ├── 02-soc-mitre-attack-coverage-dashboard/
 │   ├── README.md
 │   ├── architecture.txt
@@ -216,7 +217,7 @@ This structure allows each dashboard to be understood both as:
 │   ├── troubleshooting.md
 │   └── resources/
 │       ├── SOC – MITRE ATT&CK Coverage Dashboard.ndjson
-│       └── images
+│       └── images/
 └── 03-soc-compliance-cis-benchmark-dashboard/
     ├── README.md
     ├── architecture.txt
@@ -224,7 +225,7 @@ This structure allows each dashboard to be understood both as:
     ├── troubleshooting.md
     └── resources/
         ├── SOC – Compliance & CIS Benchmark Dashboard.ndjson
-        └── images
+        └── images/
 ````
 
 ---
@@ -274,6 +275,12 @@ This dashboard focuses on security posture and benchmark-oriented visibility, su
 
 This is useful for hardening visibility, security posture awareness, and compliance-related monitoring discussions.
 
+Together, these three dashboards represent **three different SOC visibility layers**:
+
+* **threat activity visibility**
+* **ATT&CK behavior visibility**
+* **compliance and posture visibility**
+
 ---
 
 ## ⚙️ What This Main Folder Demonstrates
@@ -311,13 +318,13 @@ Determine which alerts, modules, rule groups, or indexed data fields are useful 
 
 Plan charts, metrics, tables, and visual layouts that are useful for analysts instead of just being visually attractive.
 
-### Step 4 — Create exportable dashboards
+### Step 4 — Create reusable dashboard exports
 
-Maintain dashboard exports as `.json` files so they can be re-imported and reused later.
+Maintain dashboard export files so they can be re-imported and reused later.
 
 ### Step 5 — Document the dashboard properly
 
-Each dashboard subproject includes learning-focused documentation so the work is understandable even without importing the JSON directly.
+Each dashboard subproject includes learning-focused documentation so the work is understandable even without importing the dashboard export directly.
 
 ---
 
@@ -332,7 +339,7 @@ It is also about documenting them in a way that helps with:
 * preserving the dashboard for future import
 * making the project portfolio-ready and reproducible
 
-That is why every dashboard subfolder will include both:
+That is why every dashboard subfolder includes both:
 
 * the actual exported dashboard file
 * detailed supporting documentation
@@ -391,8 +398,8 @@ By completing this project structure and dashboard exploration:
 
 * I organized Wazuh dashboard work into reusable project folders
 * I documented the purpose and value of dashboard engineering in a SOC
-* I prepared three dashboard subprojects for separate detailed implementation
-* I aligned visualization work with practical SOC analyst use cases
+* I completed three dashboard subprojects for separate practical use cases
+* I aligned visualization work with practical SOC analyst needs
 * I preserved both the learning context and the reusable dashboard export model
 
 ---
@@ -416,12 +423,12 @@ The three dashboard subprojects inside this folder extend that vision further by
 
 ## 🔗 Related Internal Dashboard Subprojects
 
-This main folder is the parent directory for:
+This main folder is the parent directory for the following completed dashboard subprojects:
 
 * **[SOC Threat Monitoring Dashboard](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/21-dashboards/01-soc-threat-monitoring-dashboard)**
 * **[SOC MITRE ATT&CK Coverage Dashboard](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard)**
 * **[SOC Compliance & CIS Benchmark Dashboard](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/21-dashboards/03-soc-compliance-cis-benchmark-dashboard)**
 
-Each of these subprojects will be documented individually with its own guide, architecture, interview Q&A, troubleshooting, and reusable JSON export.
+Each subproject contains its own implementation guide, architecture, troubleshooting guide, interview Q&A, and reusable dashboard export.
 
 ---
