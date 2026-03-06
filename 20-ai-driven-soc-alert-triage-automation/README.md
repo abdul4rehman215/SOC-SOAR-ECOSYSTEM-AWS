@@ -132,11 +132,12 @@ This was not “just setup”. It included:
 │   ├── custom-n8n-ai                 # Wazuh integration script (forward alerts to n8n)
 │   ├── normalize_wazuh_alert.js      # JS snippet used in n8n "Normalize" node
 │   ├── format_soc_email_report.js    # JS snippet used in n8n email formatter node
-│   └── ai_soc_prompt.txt             # production-grade prompt (strict format + no hallucinations)
+│   ├── ai_soc_prompt.txt             # production-grade prompt (strict format + no hallucinations)
+│   └── N8N Wazuh Alert Workflow.json # Importable n8n workflow (nodes + prompt + formatter + email flow)
 ├── configs/
 │   └── ossec_integration_block.xml   # ossec.conf integration block snippet
 └── docs/
-│   └── AI-Driven SOC Triage Automation Using Wazuh and n8n.pdf  # Full PDF guide (screenshots + full walkthrough)
+   └── AI-Driven SOC Triage Automation Using Wazuh and n8n.pdf  # Full PDF guide (screenshots + full walkthrough)
 
 ````
 
@@ -278,6 +279,64 @@ tail -f /var/ossec/logs/integrations.log
 * In n8n workflow: open execution panel
 * Use “Listen for test event” (for test URL) OR activate workflow (for production URL)
 * Confirm webhook node receives JSON payload
+
+---
+
+---
+
+# 🔁 Option A — Import the Full n8n Workflow (Fastest)
+
+If you want the **exact same workflow** (nodes, prompt, formatting logic, email structure) without building manually, you can import the included workflow JSON:
+
+✅ **Workflow File:** [`scripts/N8N Wazuh Alert Workflow.json`](scripts/N8N%20Wazuh%20Alert%20Workflow.json)
+
+### ✅ How to Import in n8n
+1. Open n8n in your browser:
+   - `http://<EC2_PUBLIC_IP>:5678`
+2. Click **Workflows** → **Import from File**
+3. Select:
+   - `N8N Wazuh Alert Workflow.json`
+4. The entire workflow will be imported with:
+   - Webhook trigger
+   - Normalize node
+   - AI triage agent prompt (Gemini)
+   - Email formatter (HTML report)
+   - SMTP email send node
+
+### ⚠️ Important Notes After Import
+Even after importing, you must still configure:
+
+✅ **1) Credentials**
+- Gemini API credential (Google Gemini / PaLM)
+- SMTP credential (Gmail App Password)
+
+✅ **2) Webhook URL**
+- Confirm webhook path is still:
+  - `/webhook/custom-n8n-ai`
+
+✅ **3) Wazuh Side Integration**
+n8n import does NOT configure Wazuh.
+You still must do:
+- `/var/ossec/integrations/custom-n8n-ai`
+- `ossec.conf` integration block (level 7)
+- restart Wazuh Manager
+
+---
+
+# 🧱 Option B — Build Manually (Best for Learning)
+
+If you want to learn how the workflow was engineered step-by-step, build it manually:
+
+1) Webhook Trigger Node  
+2) Normalize Wazuh Alert (JavaScript)  
+3) AI SOC Triage Engine (Gemini)  
+4) Format SOC Email Report (JavaScript)  
+5) Send SOC Alert Email (SMTP)
+
+✅ All code and prompt content are available in:
+- [`scripts/normalize_wazuh_alert.js`](scripts/normalize_wazuh_alert.js)
+- [`scripts/ai_soc_prompt.txt`](scripts/ai_soc_prompt.txt)
+- [`scripts/format_soc_email_report.js`](scripts/format_soc_email_report.js)
 
 ---
 
