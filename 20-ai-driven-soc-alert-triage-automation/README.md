@@ -2,9 +2,8 @@
 ## 🔗 Integrating **Wazuh + n8n + AI Agent (Gemini)** for Intelligent Security Operations
 
 <p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh.png" alt="Wazuh" width="160" />
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/N8n-logo-new.svg.png" alt="n8n" width="160" />
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-n8n-logo.png" alt="Wazuh-n8n" />
+
 </p>
 
 This capstone project demonstrates a **production-style SOC automation pipeline** where **Wazuh SIEM alerts** are forwarded into **n8n**, triaged/enriched by an **AI Agent (Google Gemini)**, and delivered to analysts as a **clean, severity-colored, analyst-ready email report**.
