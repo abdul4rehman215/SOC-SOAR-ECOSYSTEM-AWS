@@ -2,7 +2,7 @@
 ## 🔗 Integrating **Wazuh + n8n + AI Agent (Gemini)** for Intelligent Security Operations
 
 <p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-n8n-logo.png" alt="Wazuh-n8n" />
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-n8n-logo.png" alt="Wazuh-n8n" width="300" />
 
 </p>
 
