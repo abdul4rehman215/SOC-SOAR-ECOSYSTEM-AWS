@@ -83,6 +83,7 @@ This ensures:
 
 ---
 
+
 ## 2️⃣ Docker Installed
 
 TheHive requires Docker Engine + Docker Compose plugin.
