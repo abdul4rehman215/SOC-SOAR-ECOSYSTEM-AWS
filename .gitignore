@@ -1,0 +1,268 @@
+# ============================================================
+# SOC-SOAR-ECOSYSTEM-AWS — Root .gitignore
+# Purpose:
+# - keep repo clean from OS/editor junk
+# - avoid committing secrets, keys, env files, dumps, logs
+# - ignore local runtime data from SOC/SOAR services
+# - ignore Python / JS / container / temp build artifacts
+#
+# Note:
+# This repository intentionally tracks documentation assets such as
+# Markdown, screenshots, PDFs, NDJSON dashboards, configs, and rules.
+# Those are NOT ignored here.
+# ============================================================
+
+# ------------------------------------------------------------
+# OS / file explorer junk
+# ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+._*
+
+# ------------------------------------------------------------
+# Editors / IDEs
+# ------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+*.temp
+*~
+
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.py,cover
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+.eggs/
+*.egg-info/
+venv/
+.venv/
+env/
+ENV/
+
+# ------------------------------------------------------------
+# Node / JavaScript (for n8n helpers or local tooling)
+# ------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.parcel-cache/
+.next/
+out/
+
+# ------------------------------------------------------------
+# Logs / local runtime output
+# ------------------------------------------------------------
+*.log
+logs/
+log/
+tmp/
+temp/
+.cache/
+.cache-loader/
+*.pid
+*.seed
+*.stackdump
+
+# ------------------------------------------------------------
+# Secrets / credentials / local env files
+# ------------------------------------------------------------
+.env
+.env.*
+*.env
+*.secret
+*.secrets
+secrets/
+secret/
+credentials/
+creds/
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.kdbx
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+known_hosts
+authorized_keys
+*.ovpn
+
+# Common secret-like filenames
+*password*
+*passwd*
+*token*
+*apikey*
+*api_key*
+*secret*
+*credential*
+
+# Keep documented examples if you ever add them
+!.env.example
+!example.env
+!*.example
+
+# ------------------------------------------------------------
+# TLS / certificates / PKI material
+# ------------------------------------------------------------
+certs/
+certificates/
+*.crt
+*.cer
+*.csr
+*.der
+*.ca-bundle
+
+# ------------------------------------------------------------
+# Databases / local service state
+# ------------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+*.mdb
+*.ldif
+*.bak
+*.backup
+*.old
+*.orig
+
+# ------------------------------------------------------------
+# Large / sensitive security evidence generated locally
+# (safe to ignore by default; force-add only if you intentionally
+# want a sanitized sample in the repo)
+# ------------------------------------------------------------
+*.pcap
+*.pcapng
+*.cap
+*.evtx
+*.etl
+*.dmp
+*.dump
+*.core
+*.raw
+*.bin
+*.img
+*.iso
+*.vhd
+*.vhdx
+*.qcow2
+*.ova
+*.vmdk
+*.mem
+*.vmem
+*.hprof
+
+# ------------------------------------------------------------
+# Archives / packaged exports
+# ------------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+
+# ------------------------------------------------------------
+# Docker / container local artifacts
+# ------------------------------------------------------------
+.docker/
+docker-data/
+volumes/
+
+# ------------------------------------------------------------
+# SOC stack runtime data / service directories
+# Ignore only live local copies, not documented configs stored in repo
+# ------------------------------------------------------------
+var/
+run/
+
+# Wazuh / Elastic / OpenSearch / Filebeat / Kibana live paths
+var/ossec/
+etc/filebeat/
+etc/wazuh-indexer/
+etc/wazuh-dashboard/
+etc/opensearch/
+etc/kibana/
+usr/share/wazuh-indexer/
+usr/share/wazuh-dashboard/
+
+# TheHive / Cortex / MISP / supporting services live paths
+opt/thehive/
+opt/cortex/
+opt/misp/
+var/lib/postgresql/
+var/lib/mysql/
+var/lib/redis/
+var/lib/elasticsearch/
+var/lib/opensearch/
+var/lib/docker/
+
+# ------------------------------------------------------------
+# Cloud / Terraform / IaC local state (future-safe)
+# ------------------------------------------------------------
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# ------------------------------------------------------------
+# Test output / reports generated locally
+# ------------------------------------------------------------
+coverage.xml
+junit.xml
+report.html
+report.json
+
+# ------------------------------------------------------------
+# Preserve intentionally tracked content types used by this repo
+# ------------------------------------------------------------
+!*.md
+!*.txt
+!*.sh
+!*.py
+!*.ps1
+!*.cmd
+!*.c
+!*.js
+!*.json
+!*.ndjson
+!*.xml
+!*.conf
+!*.cfg
+!*.rules
+!*.zeek
+!*.snippet
+!*.virustotal
+!*.audit-keys
+!*.suspicious-programs
+!*.png
+!*.jpg
+!*.jpeg
+!*.webp
+!*.svg
+!*.pdf
