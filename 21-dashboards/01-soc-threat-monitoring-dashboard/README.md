@@ -696,9 +696,13 @@ This layout balances:
 
 ## 🖼️ Dashboard Screenshots
 
-### Full Dashboard View
+### Visualization Listing View
 
-> **Place dashboard overview image here**
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/2.png"/>
+</div>
+
+### Full Dashboard View
 
 <div align="center">
 <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/3.png"/>
@@ -706,21 +710,15 @@ This layout balances:
 
 ### High Severity Attack Timeline
 
-> **Place attack timeline image here**
-
 <div align="center">
 <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/4.png"/>
 </div>
 
 ### Attack Source Geo Map
 
-> **Place geo map image here**
-
 <div align="center">
 <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/5.png"/>
 </div>
-
-You can later replace these placeholders with embedded image references after uploading the image assets.
 
 ---
 
