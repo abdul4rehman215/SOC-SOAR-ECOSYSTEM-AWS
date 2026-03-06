@@ -1,0 +1,372 @@
+Wazuh Dashboard Engineering & Security Visualization
+Parent Project Architecture
+
+============================================================
+1. HIGH-LEVEL PURPOSE
+============================================================
+
+This parent dashboards project sits on top of the Wazuh monitoring layer
+and focuses on turning security telemetry into analyst-friendly visual
+visibility for triage, monitoring, ATT&CK mapping, and compliance review.
+
+The project is organized into three dashboard subprojects:
+
+1. SOC Threat Monitoring Dashboard
+2. SOC MITRE ATT&CK Coverage Dashboard
+3. SOC Compliance & CIS Benchmark Dashboard
+
+Each dashboard is designed to support a different SOC visibility need
+while still using the same Wazuh-driven security data foundation.
+
+============================================================
+2. SOC ECOSYSTEM CONTEXT
+============================================================
+
+AWS Infrastructure / Monitored Environment
+        |
+        v
+Monitored Endpoints / Servers / Security Data Sources
+        |
+        v
+Wazuh Agents / Integrated Security Telemetry
+        |
+        v
+Wazuh Manager
+  - alert generation
+  - rule matching
+  - event parsing
+  - indexing pipeline
+        |
+        v
+Wazuh Dashboard
+  - search
+  - filter
+  - visualize
+  - analyze
+  - investigate
+        |
+        v
+Custom Security Dashboards
+  - Threat Monitoring
+  - MITRE ATT&CK Coverage
+  - Compliance & CIS Benchmark
+        |
+        v
+SOC Analyst
+  - triage
+  - prioritization
+  - investigation
+  - reporting
+  - visibility improvement
+  - detection engineering feedback
+
+============================================================
+3. DATA FLOW OVERVIEW
+============================================================
+
+Security Events / Logs / Alerts
+        |
+        v
+Collected from:
+  - endpoints
+  - servers
+  - integrations
+  - cloud logs
+  - security tools
+        |
+        v
+Processed by Wazuh
+  - rule matching
+  - alert enrichment
+  - categorization
+  - indexing
+        |
+        v
+Stored / Queried through Wazuh Dashboard layer
+        |
+        v
+Dashboard Visualizations
+  - tables
+  - bar charts
+  - pie charts
+  - trend charts
+  - metrics
+  - filters
+        |
+        v
+Analyst Decisions
+  - identify spikes
+  - investigate hosts
+  - review ATT&CK patterns
+  - observe compliance posture
+  - tune noisy detections
+  - prioritize incidents
+
+============================================================
+4. PARENT PROJECT STRUCTURE LOGIC
+============================================================
+
+dashboards/
+|
+|-- README.md
+|     Main project explanation
+|     Purpose of dashboards in SOC operations
+|     Use cases of visualization
+|     Folder-level guidance
+|
+|-- architecture.txt
+|     Parent-level architecture and relationship mapping
+|
+|-- interview_qna.md
+|     Dashboard engineering and Wazuh visualization Q&A
+|
+|-- 01-soc-threat-monitoring-dashboard/
+|     Dashboard focused on operational alert monitoring
+|
+|-- 02-soc-mitre-attack-coverage-dashboard/
+|     Dashboard focused on ATT&CK visibility and coverage
+|
+|-- 03-soc-compliance-cis-benchmark-dashboard/
+|     Dashboard focused on compliance/security posture views
+
+============================================================
+5. SUBPROJECT RELATIONSHIP MODEL
+============================================================
+
+                         dashboards/
+                              |
+        -------------------------------------------------
+        |                       |                       |
+        v                       v                       v
+01-soc-threat-          02-soc-mitre-            03-soc-compliance-
+monitoring-dashboard    attack-coverage-         cis-benchmark-
+                        dashboard                dashboard
+
+Purpose:                Purpose:                 Purpose:
+Operational SOC         ATT&CK-based             Security posture
+visibility              detection visibility     and benchmark visibility
+
+Focus:                  Focus:                   Focus:
+- alert severity        - tactics                - assessment results
+- alert trends          - techniques             - benchmark checks
+- top agents            - ATT&CK mapping         - failing controls
+- active alerts         - coverage patterns      - posture trends
+- triage support        - detection perspective  - compliance awareness
+
+============================================================
+6. THREAT MONITORING DASHBOARD ROLE
+============================================================
+
+SOC Threat Monitoring Dashboard helps answer:
+
+- What alerts are active right now?
+- Which alert severities are increasing?
+- Which agents are generating the most alerts?
+- Which rule groups are most active?
+- Are there sudden event spikes that need investigation?
+- Where should the analyst begin triage?
+
+Operational value:
+- daily SOC visibility
+- shift monitoring
+- quick triage
+- priority identification
+- alert trend awareness
+
+============================================================
+7. MITRE ATT&CK COVERAGE DASHBOARD ROLE
+============================================================
+
+SOC MITRE ATT&CK Coverage Dashboard helps answer:
+
+- Which ATT&CK tactics are being observed?
+- Which techniques appear most frequently?
+- Which detections are mapped to ATT&CK?
+- Where is visibility stronger or weaker?
+- How does security activity align with attacker behavior models?
+
+Operational value:
+- ATT&CK-aligned monitoring
+- detection engineering support
+- reporting and communication
+- gap awareness
+- attacker behavior perspective
+
+============================================================
+8. COMPLIANCE & CIS BENCHMARK DASHBOARD ROLE
+============================================================
+
+SOC Compliance & CIS Benchmark Dashboard helps answer:
+
+- Which compliance-related findings are visible?
+- Which endpoints are failing checks?
+- What posture trends are developing?
+- Are benchmark-related issues improving or worsening?
+- Which systems need hardening attention first?
+
+Operational value:
+- posture awareness
+- hardening visibility
+- benchmark tracking
+- compliance-oriented reporting
+- security configuration review
+
+============================================================
+9. ANALYST WORKFLOW MODEL
+============================================================
+
+SOC Analyst opens Wazuh Dashboard
+        |
+        v
+Selects relevant dashboard based on need
+        |
+        +--> Threat Monitoring
+        |      for active alert triage and monitoring
+        |
+        +--> MITRE ATT&CK Coverage
+        |      for attacker-behavior visibility and detection review
+        |
+        +--> Compliance & CIS Benchmark
+               for posture review and hardening awareness
+        |
+        v
+Uses filters, charts, tables, and time ranges
+        |
+        v
+Identifies trends / anomalies / priorities
+        |
+        v
+Drills into alert details or raw events when needed
+        |
+        v
+Takes security action
+  - triage
+  - escalate
+  - investigate
+  - tune detections
+  - report findings
+  - improve visibility
+
+============================================================
+10. DASHBOARD ENGINEERING WORKFLOW
+============================================================
+
+Monitoring Need Identified
+        |
+        v
+Define dashboard purpose
+        |
+        v
+Select Wazuh data fields / alerts / modules
+        |
+        v
+Create meaningful visual panels
+        |
+        v
+Organize dashboard layout for analyst usability
+        |
+        v
+Validate usefulness with real security data
+        |
+        v
+Export dashboard as reusable JSON
+        |
+        v
+Document implementation for learning and reuse
+
+============================================================
+11. REUSABILITY MODEL
+============================================================
+
+Each dashboard subfolder contains both:
+
+A. Documentation
+   - README.md
+   - architecture.txt
+   - interview_qna.md
+   - troubleshooting.md
+
+B. Reusable dashboard object
+   - exported dashboard JSON
+
+This supports two goals at the same time:
+
+1. Learning purpose
+   Someone can understand how and why the dashboard was created.
+
+2. Practical reuse purpose
+   Someone can import the JSON and reproduce the dashboard layout.
+
+============================================================
+12. SECURITY VISIBILITY BENEFITS
+============================================================
+
+The dashboard layer improves the SOC ecosystem by providing:
+
+- faster alert interpretation
+- reduced dependency on raw event review
+- visual security trend analysis
+- operationally useful summaries
+- better analyst prioritization
+- stronger monitoring maturity
+- improved communication of security posture
+
+============================================================
+13. PLAIN-TEXT MASTER FLOW
+============================================================
+
+Security Telemetry
+  |
+  v
+Wazuh Ingestion and Alerting
+  |
+  v
+Wazuh Dashboard Platform
+  |
+  v
+Dashboard Engineering Project
+  |
+  +--> SOC Threat Monitoring Dashboard
+  |       |
+  |       v
+  |    alert visibility and triage
+  |
+  +--> SOC MITRE ATT&CK Coverage Dashboard
+  |       |
+  |       v
+  |    ATT&CK mapping and detection perspective
+  |
+  +--> SOC Compliance & CIS Benchmark Dashboard
+          |
+          v
+       compliance/posture visibility
+  |
+  v
+SOC Analyst Action
+  - monitor
+  - prioritize
+  - investigate
+  - report
+  - improve detections
+
+============================================================
+14. FINAL ARCHITECTURE SUMMARY
+============================================================
+
+This parent dashboards project represents the visualization and
+analyst-operations layer of the Wazuh-based SOC ecosystem.
+
+It connects:
+
+raw security telemetry
+        ->
+Wazuh alerting and indexed data
+        ->
+dashboard engineering
+        ->
+analyst visibility
+        ->
+better triage, monitoring, reporting, and security decision-making
+
+It acts as the umbrella project for three focused dashboard use cases:
+threat monitoring, ATT&CK coverage, and compliance/CIS benchmark visibility.
