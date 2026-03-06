@@ -1,0 +1,434 @@
+Wazuh Discover Indices Exploration
+Architecture Notes
+
+============================================================
+1. EXPLORATION PURPOSE
+============================================================
+
+This project explores the Wazuh Discover index patterns that are often
+ignored in day-to-day SOC workflows.
+
+The goal is not to focus only on alerts.
+
+The goal is to understand how different Wazuh index families provide
+different layers of visibility such as:
+
+- security alerts
+- raw event history
+- agent health
+- pipeline performance
+- endpoint inventory
+- point-in-time host state
+- services, ports, processes, and packages
+- vulnerability and posture-related context
+
+This exploration treats Discover as more than an alert search page.
+It treats it as a broader investigation and visibility surface.
+
+============================================================
+2. HIGH-LEVEL CONCEPT
+============================================================
+
+Most SOC users spend the majority of their time in:
+
+  wazuh-alerts-*
+
+That makes sense because alerts are where investigations usually begin.
+
+But alerts only show a part of the story.
+
+The other index families help answer questions like:
+
+- Was the agent online when this happened?
+- Did the pipeline drop events?
+- What was installed on the endpoint?
+- Which processes were running?
+- Which ports were open?
+- Which services existed?
+- Did raw logs contain clues that never triggered alerts?
+
+This means the different indices are not duplicate data.
+They are separate operational and investigative visibility layers.
+
+============================================================
+3. ARCHITECTURE POSITION IN THE SOC
+============================================================
+
+Monitored Endpoints / Infrastructure / Security Sources
+        |
+        v
+Wazuh Agent + Integrated Telemetry Sources
+        |
+        v
+Wazuh Manager
+  - collection
+  - parsing
+  - decoding
+  - rule matching
+  - indexing
+        |
+        v
+Wazuh Indexer
+        |
+        v
+Wazuh Dashboard / Discover
+        |
+        v
+Multiple Index Families
+  - wazuh-alerts-*
+  - wazuh-archives-*
+  - wazuh-monitoring-*
+  - wazuh-statistics-*
+  - wazuh-states-*
+  - wazuh-states-inventory-*
+        |
+        v
+SOC Analyst / Threat Hunter / Detection Engineer / Platform Engineer
+        |
+        v
+Stronger Investigation, Validation, and Root Cause Analysis
+
+============================================================
+4. WHY THIS MATTERS
+============================================================
+
+These indices matter because alerts alone do not always explain:
+
+- whether telemetry was complete
+- whether the agent was healthy
+- what the endpoint state looked like
+- whether raw logs contained missed clues
+- whether a pipeline issue affected visibility
+- why an event happened on that host
+- why an expected alert may not have fired
+
+The value of these indices is context.
+
+They help move the analyst from:
+  "an alert fired"
+
+to:
+  "I understand the operational, host, and telemetry conditions
+   around that alert"
+
+============================================================
+5. MAIN INDEX FAMILIES EXAMINED
+============================================================
+
+A. wazuh-alerts-*
+   - security alerts
+   - rule-triggered findings
+   - daily SOC incident-facing data
+
+B. wazuh-archives-*
+   - raw logs
+   - events that may not have triggered rules
+   - deeper forensic and pre-alert visibility
+
+C. wazuh-monitoring-*
+   - agent health and status
+   - keepalive and reporting continuity
+   - connection visibility
+
+D. wazuh-statistics-*
+   - server and pipeline metrics
+   - event processing status
+   - drops, queues, and internal performance signals
+
+E. wazuh-states-*
+   - point-in-time state datasets
+   - state-oriented visibility rather than only event streams
+
+F. wazuh-states-inventory-*
+   - inventory and endpoint context
+   - hardware, packages, ports, processes, services, users, etc.
+
+============================================================
+6. ROLE OF EACH INDEX FAMILY
+============================================================
+
+wazuh-alerts-*
+  - answers: What detections triggered?
+  - supports: alert triage, incident response, rule-based analysis
+
+wazuh-archives-*
+  - answers: What raw events existed even if rules did not fire?
+  - supports: forensics, missed detection review, raw-log hunting
+
+wazuh-monitoring-*
+  - answers: Was the agent healthy and reporting?
+  - supports: telemetry validation, coverage checks, uptime review
+
+wazuh-statistics-*
+  - answers: Was the Wazuh pipeline healthy?
+  - supports: performance analysis, event-drop validation,
+              capacity planning, telemetry trust checks
+
+wazuh-states-*
+  - answers: What was the current state of the endpoint or dataset?
+  - supports: posture and inventory understanding
+
+wazuh-states-inventory-*
+  - answers: What packages, services, processes, interfaces, or ports
+             existed on the endpoint?
+  - supports: root cause analysis, asset visibility, host-state review,
+              threat hunting, baseline validation
+
+============================================================
+7. WHY THEY ARE OFTEN IGNORED
+============================================================
+
+These index families are often ignored because:
+
+- alerts are faster to action
+- most SOC workflows are ticket-driven
+- monitoring/statistics data feels operational
+- archives can be noisy or large
+- inventory/state data is often viewed only through prebuilt modules
+- many analysts are not trained to use Discover beyond alerts
+
+In short:
+
+alerts provide conclusions
+other indices provide context
+
+And under pressure, teams tend to choose conclusions first.
+
+============================================================
+8. WHY THEY SHOULD BE USED MORE
+============================================================
+
+These indices should be used more because they support:
+
+- root cause analysis
+- telemetry trust validation
+- false negative investigation
+- endpoint state understanding
+- inventory-led hunting
+- service and process validation
+- port exposure review
+- pipeline troubleshooting
+- detection tuning and engineering
+
+They are especially useful when an analyst needs to answer:
+
+- Did the data exist?
+- Was the host reporting?
+- What did the host look like at the time?
+- Was this visibility gap caused by infrastructure or by detection logic?
+
+============================================================
+9. ANALYST WORKFLOW MODEL
+============================================================
+
+SOC Analyst / Engineer opens Wazuh Discover
+        |
+        v
+Starts from alert context or investigation question
+        |
+        +--> wazuh-alerts-*
+        |      review triggered detections
+        |
+        +--> wazuh-monitoring-*
+        |      validate agent health and reporting continuity
+        |
+        +--> wazuh-statistics-*
+        |      validate pipeline health and dropped events
+        |
+        +--> wazuh-archives-*
+        |      search raw logs and undetected activity
+        |
+        +--> wazuh-states-inventory-*
+               inspect host packages, ports, processes, services,
+               interfaces, or hardware state
+        |
+        v
+Builds investigation context
+        |
+        v
+Answers:
+  - what happened
+  - what existed on the host
+  - whether telemetry was complete
+  - whether there were missed signals
+        |
+        v
+Improves triage, hunting, root cause analysis, and tuning
+
+============================================================
+10. INVENTORY / STATE INVESTIGATION MODEL
+============================================================
+
+The state and inventory family is especially important because it
+captures what the endpoint looked like at a point in time.
+
+Examples include:
+
+- wazuh-states-inventory-hardware-*
+- wazuh-states-inventory-hotfixes-*
+- wazuh-states-inventory-interfaces-*
+- wazuh-states-inventory-networks-*
+- wazuh-states-inventory-packages-*
+- wazuh-states-inventory-ports-*
+- wazuh-states-inventory-processes-*
+- wazuh-states-inventory-protocols-*
+- wazuh-states-inventory-system-*
+- wazuh-states-inventory-services-*
+- wazuh-states-inventory-users-*
+- wazuh-states-inventory-groups-*
+- wazuh-states-inventory-browser-extensions-*
+
+These help answer practical host-state questions such as:
+
+- what package version is installed?
+- what port is listening?
+- what process is running?
+- what service is enabled?
+- what interface is up or down?
+- what hardware or memory context exists?
+
+============================================================
+11. MONITORING AND STATISTICS VALUE
+============================================================
+
+The monitoring and statistics families are critical because they help
+validate telemetry trust.
+
+Monitoring index value:
+- shows whether endpoints were online and reporting
+- supports coverage verification during incident windows
+- helps identify disconnect patterns or agent sync issues
+
+Statistics index value:
+- shows internal Wazuh processing health
+- helps detect event drops and queue pressure
+- supports capacity planning and performance troubleshooting
+- explains why visibility or detections may have gaps
+
+Without these indices, analysts may trust a telemetry picture that was
+never complete.
+
+============================================================
+12. ARCHIVES VALUE
+============================================================
+
+The archives family is one of the strongest but most ignored visibility
+layers.
+
+Its main value is that it can contain logs that were received even when
+they did not trigger alerts.
+
+This supports:
+
+- deep forensic investigation
+- pre-alert review
+- raw event searching
+- rule tuning
+- false negative investigation
+- compliance-oriented all-log retention
+
+It answers a question alerts cannot answer well:
+
+  "What was received but not promoted into an alert?"
+
+============================================================
+13. DISCOVER AS AN INVESTIGATION WORKSPACE
+============================================================
+
+This exploration shows that Discover should not be seen only as:
+
+  "the place where I look at alerts"
+
+It should also be seen as:
+
+  "the place where I pivot across telemetry layers"
+
+That includes moving between:
+
+- alerts
+- archives
+- monitoring
+- statistics
+- inventory
+- state
+
+This cross-index pivoting is what makes Discover powerful for mature
+security operations.
+
+============================================================
+14. HIGH-LEVEL PLAIN-TEXT FLOW
+============================================================
+
+Security Telemetry
+        |
+        v
+Wazuh Collection / Processing / Indexing
+        |
+        v
+Different Index Families
+        |
+        +--> alerts
+        +--> archives
+        +--> monitoring
+        +--> statistics
+        +--> states
+        +--> inventory
+        |
+        v
+Discover Exploration
+        |
+        v
+Analyst Context Building
+        |
+        v
+Better Investigation, Root Cause Analysis,
+Telemetry Validation, and Threat Hunting
+
+============================================================
+15. DECISION VALUE TO THE ANALYST
+============================================================
+
+These Discover indices help analysts answer practical questions like:
+
+- Did the alert come from a healthy reporting endpoint?
+- Did the pipeline process everything correctly?
+- Was there raw data before the alert?
+- What packages were installed?
+- What services existed?
+- Which ports were listening?
+- Was the host state consistent with the alert?
+- Are we missing detections because of data loss or weak logic?
+
+This shifts the analyst from:
+  "I only see the alert result"
+
+to:
+  "I understand the data, host state, and pipeline conditions behind it"
+
+============================================================
+16. FINAL SUMMARY
+============================================================
+
+This exploration shows that the different Wazuh Discover indices are
+not background clutter or rarely useful technical leftovers.
+
+They are essential visibility layers for:
+
+- alert context
+- raw log review
+- telemetry health
+- pipeline health
+- inventory state
+- host-state analysis
+- detection validation
+- threat hunting
+- root cause analysis
+
+Their architectural value is:
+
+specialized indexed visibility
+        ->
+better context across alerts, hosts, pipelines, and telemetry
+        ->
+stronger analyst decisions, deeper investigations,
+and more mature SOC operations
