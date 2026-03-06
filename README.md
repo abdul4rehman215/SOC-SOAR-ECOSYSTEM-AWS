@@ -267,7 +267,13 @@ SOC-SOAR-ECOSYSTEM-AWS/
 
 ---
 
-# 🧪 Project Index
+# 🗂️ Project Index
+
+> Click any lab title to jump directly to its folder.
+
+---
+
+# 🗂 Projects Overview
 
 ## 🧱 Section 1: Platform Buildout & Core SOC Architecture
 
@@ -278,7 +284,7 @@ SOC-SOAR-ECOSYSTEM-AWS/
 | 00 | [Installation & Setup Guide](./00-installation-and-setup-guide/) | Stack deployment | AWS EC2, Docker, Wazuh, TheHive, MISP, Cortex, agents, and tool integrations |
 | 01 | [Core SOC Ecosystem on AWS](./01-core-soc-ecosystem/) | Architecture & workflow | Detect → Enrich → Investigate → Manage operating model across the full SOC stack |
 
-### Skills Demonstrated
+### 🧠 Skills Demonstrated
 - AWS EC2 security lab deployment
 - Dockerized security platform setup
 - Wazuh, TheHive, Cortex, and MISP integration
@@ -302,7 +308,7 @@ SOC-SOAR-ECOSYSTEM-AWS/
 | 08 | [Suricata IDS + Wazuh SIEM](./08-suricata-network-threat-detection/) | Network IDS integration | Suricata alerts, decoders, rules, MITRE enrichment, SOC-ready parsing |
 | 09 | [Wazuh + VirusTotal Integration](./09-wazuh-virustotal-integration/) | Threat intel enrichment | FIM + VirusTotal validation + active response + TheHive visibility |
 
-### Skills Demonstrated
+### 🧠 Skills Demonstrated
 - Authentication abuse detection engineering
 - Alert thresholding and noise reduction
 - Endpoint telemetry engineering on Windows and Linux
@@ -329,7 +335,7 @@ SOC-SOAR-ECOSYSTEM-AWS/
 | 17 | [Zeek Network Monitoring + Wazuh](./17-zeek-network-monitoring-wazuh/) | Network security monitoring | DNS, TLS, rejected connections, scan behavior, NSM-style visibility |
 | 18 | [Auditd Credential Access Hunting](./18-auditd-wazuh-credential-access-hunting/) | Linux credential access hunting | auditd rules, exec monitoring, key file access telemetry, Wazuh custom rules |
 
-### Skills Demonstrated
+### 🧠 Skills Demonstrated
 - Web application firewall deployment and tuning
 - Layer 7 attack monitoring and analysis
 - Automated blocking and active response design
@@ -352,7 +358,7 @@ SOC-SOAR-ECOSYSTEM-AWS/
 | 22 | [Wazuh Module Exploration & Learning Projects](./22-learning-projects/) | Structured feature exploration | IT hygiene, threat hunting, discover indices, vulnerability detection exploration |
 | 23 | [Other Projects](./23-other-projects/) | Supporting research & tuning work | Supplementary PDFs around rule tuning and detection refinement |
 
-### Skills Demonstrated
+### 🧠 Skills Demonstrated
 - Full SOC + SOAR case lifecycle execution
 - AI-assisted alert triage and decision support
 - Dashboard engineering for analyst workflows
