@@ -23,7 +23,7 @@ This project turns raw SCA findings into a centralized, visual dashboard that ma
 ### Visualization Listing View
 
 <div align="center">
-<img src="://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/03-soc-compliance-cis-benchmark-dashboard/resources/2.png"/>
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/03-soc-compliance-cis-benchmark-dashboard/resources/2.png"/>
 </div>
 
 ### Full Dashboard View
