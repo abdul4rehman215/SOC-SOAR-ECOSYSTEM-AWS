@@ -314,16 +314,16 @@ I also shared this project on LinkedIn through multiple portfolio posts covering
 
 <p align="left">
   <a href="https://www.linkedin.com/posts/abdul4rehman215_%F0%9D%90%92%F0%9D%90%8E%F0%9D%90%82-%F0%9D%90%82%F0%9D%90%9A%F0%9D%90%A9%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A7%F0%9D%90%9E-%F0%9D%90%8F%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A3%F0%9D%90%9E%F0%9D%90%9C%F0%9D%90%AD-activity-7417785211024900096-l1VH?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU">
-    <img src="https://img.shields.io/badge/LinkedIn-Post%2001-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 01" />
+    <img src="https://img.shields.io/badge/Capstone-Post%2001-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 01" />
   </a>
   <a href="https://www.linkedin.com/posts/abdul4rehman215_%F0%9D%90%85%F0%9D%90%AE%F0%9D%90%A5%F0%9D%90%A5-%F0%9D%90%92%F0%9D%90%8E%F0%9D%90%82-%F0%9D%90%80%F0%9D%90%AB%F0%9D%90%9C%F0%9D%90%A1%F0%9D%90%A2%F0%9D%90%AD%F0%9D%90%9E%F0%9D%90%9C%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%AB-activity-7417966375043772416-9yEN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU">
-    <img src="https://img.shields.io/badge/LinkedIn-Post%2002-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 02" />
+    <img src="https://img.shields.io/badge/Architecture-Post%2002-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 02" />
   </a>
   <a href="https://www.linkedin.com/posts/abdul4rehman215_%F0%9D%90%87%F0%9D%90%9A%F0%9D%90%A7%F0%9D%90%9D%F0%9D%90%AC-%F0%9D%90%8E%F0%9D%90%A7-%F0%9D%90%92%F0%9D%90%8E%F0%9D%90%82-%F0%9D%90%8F%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A3%F0%9D%90%9E%F0%9D%90%9C%F0%9D%90%AD-activity-7418177814463582208-V4cH?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU">
-    <img src="https://img.shields.io/badge/LinkedIn-Post%2003-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 03" />
+    <img src="https://img.shields.io/badge/Recruiter-Post%2003-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 03" />
   </a>
   <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-socanalyst-cyberdefense-activity-7425425642369777664-4pFN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU">
-    <img src="https://img.shields.io/badge/LinkedIn-Post%2004-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 04" />
+    <img src="https://img.shields.io/badge/VideoDemo-Post%2004-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 04" />
   </a>
 </p>
 
