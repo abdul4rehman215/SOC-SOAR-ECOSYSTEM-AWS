@@ -24,6 +24,22 @@ Instead of looking at detections only as isolated alerts, this project helps int
 
 ---
 
+## 🖼️ Dashboard Screenshots
+
+### Visualization Listing View
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard/resources/2.png"/>
+</div>
+
+### Full Dashboard View
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard/resources/3.png"/>
+</div>
+
+---
+
 ## 🎯 Project Objective
 
 The objective of this project was to build and document a **MITRE ATT&CK-focused dashboard in Wazuh** that helps SOC analysts:
@@ -647,22 +663,6 @@ This layout provides:
 * technique visibility
 * standardized ATT&CK ID reference
 * temporal behavior visibility
-
----
-
-## 🖼️ Dashboard Screenshots
-
-### Visualization Listing View
-
-<div align="center">
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard/resources/2.png"/>
-</div>
-
-### Full Dashboard View
-
-<div align="center">
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard/resources/3.png"/>
-</div>
 
 ---
 
