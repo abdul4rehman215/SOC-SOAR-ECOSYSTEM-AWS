@@ -409,7 +409,6 @@ A properly designed VPC eliminates 80% of deployment issues and provides a secur
 Next Step → Install Core SOC Tools.
 
 ---
----
 
 ## 🌐 Project Post on LinkedIn
 
