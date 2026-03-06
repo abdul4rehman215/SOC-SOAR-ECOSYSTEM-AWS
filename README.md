@@ -1,5 +1,5 @@
 # 🛡️ SOC-SOAR-ECOSYSTEM-AWS - End-to-End SOC Engineering, SOC Analyst Portfolio
-## • Detection Engineering • Incident Response • Threat Intelligence • SOAR Automation
+> Detection Engineering • Incident Response • Threat Intelligence • SOAR Automation
 
 <p align="center">
   <img src="./resources/soc-soar-all-in-one-logo-line.png" alt="SOC SOAR Ecosystem" width="950">
