@@ -1,0 +1,196 @@
+#!/var/ossec/framework/python/bin/python3
+# Error Codes:
+#   1 - Module requests not found
+#   2 - Incorrect input arguments
+#   6 - Alert File does not exist
+#   7 - Error getting json_alert
+
+import json
+import os
+import sys
+import time
+from datetime import datetime
+
+# Exit error codes
+ERR_NO_REQUEST_MODULE = 1
+ERR_BAD_ARGUMENTS = 2
+ERR_FILE_NOT_FOUND = 6
+ERR_INVALID_JSON = 7
+
+try:
+    import requests
+except ModuleNotFoundError:
+    print("No module 'requests' found. Install: pip install requests")
+    sys.exit(ERR_NO_REQUEST_MODULE)
+
+# Global vars
+debug_enabled = False
+pwd = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
+# Log path
+LOG_FILE = f'{pwd}/logs/integrations.log'
+
+# Constants
+ALERT_INDEX = 1
+WEBHOOK_INDEX = 3
+
+
+def main(args):
+    global debug_enabled
+    try:
+        bad_arguments = False
+
+        if len(args) >= 4:
+            msg = '{0} {1} {2} {3} {4}'.format(
+                args[1],
+                args[2],
+                args[3],
+                args[4] if len(args) > 4 else '',
+                args[5] if len(args) > 5 else ''
+            )
+            debug_enabled = len(args) > 4 and args[4] == 'debug'
+        else:
+            msg = '# ERROR: Wrong arguments'
+            bad_arguments = True
+
+        # Log invocation
+        with open(LOG_FILE, 'a') as f:
+            f.write(msg + '\n')
+
+        if bad_arguments:
+            debug('# ERROR: Exiting, bad arguments. Inputted: %s' % args)
+            sys.exit(ERR_BAD_ARGUMENTS)
+
+        process_args(args)
+
+    except Exception as e:
+        debug(str(e))
+        raise
+
+
+def process_args(args) -> None:
+    debug('# Running n8n integration script')
+
+    alert_file_location = args[ALERT_INDEX]
+    webhook = args[WEBHOOK_INDEX]
+    options_file_location = ''
+
+    # Optional options file
+    for idx in range(4, len(args)):
+        if args[idx].endswith('options'):
+            options_file_location = args[idx]
+            break
+
+    json_options = get_json_options(options_file_location)
+    json_alert = get_json_alert(alert_file_location)
+
+    debug('# Generating message')
+    msg = generate_msg(json_alert, json_options)
+
+    # Skip if alert is filtered out
+    if not msg:
+        debug('# Alert skipped due to low severity')
+        return
+
+    debug('# Sending message to n8n webhook')
+    send_msg(msg, webhook)
+
+
+def debug(msg: str) -> None:
+    if debug_enabled:
+        print(msg)
+        with open(LOG_FILE, 'a') as f:
+            f.write(msg + '\n')
+
+
+def generate_msg(alert: any, options: any) -> str:
+    """
+    Generate JSON message to send to n8n
+    ONLY alerts with rule.level >= 7 are forwarded
+    """
+
+    # ===============================
+    # HIGH SEVERITY FILTER (IMPORTANT)
+    # ===============================
+    level = alert.get('rule', {}).get('level', 0)
+
+    if level < 7:
+        return ""
+
+    # Severity mapping (kept as-is)
+    if level <= 4:
+        severity = "1 low"
+    elif 5 <= level <= 7:
+        severity = "2 normal"
+    else:
+        severity = "3 high"
+
+    full_log = alert.get('full_log', 'N/A').replace("\n", " ")
+
+    msg = {
+        'severity': severity,
+        'pretext': 'WAZUH Alert',
+        'title': alert.get('rule', {}).get('description', 'N/A'),
+        'text': full_log,
+        'rule_id': alert.get('rule', {}).get('id', 'N/A'),
+        'timestamp': alert.get('timestamp', ''),
+        'id': alert.get('id', ''),
+        'body': "{} in agent {}".format(
+            full_log,
+            alert.get('agent', {}).get('name', 'N/A')
+        ),
+        'all_fields': alert
+    }
+
+    if options:
+        msg.update(options)
+
+    return json.dumps(msg)
+
+
+def send_msg(msg: str, url: str) -> None:
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept-Charset': 'UTF-8'
+    }
+
+    res = requests.post(
+        url,
+        data=msg,
+        headers=headers,
+        timeout=10,
+        verify=False
+    )
+
+    debug('# Response received: %s' % res.status_code)
+
+
+def get_json_alert(file_location: str) -> any:
+    try:
+        with open(file_location) as alert_file:
+            return json.load(alert_file)
+    except FileNotFoundError:
+        debug("# JSON alert file doesn't exist: %s" % file_location)
+        sys.exit(ERR_FILE_NOT_FOUND)
+    except json.decoder.JSONDecodeError as e:
+        debug('Failed getting JSON alert. Error: %s' % e)
+        sys.exit(ERR_INVALID_JSON)
+
+
+def get_json_options(file_location: str) -> any:
+    if not file_location:
+        return {}
+
+    try:
+        with open(file_location) as options_file:
+            return json.load(options_file)
+    except FileNotFoundError:
+        debug("# JSON options file doesn't exist: %s" % file_location)
+        return {}
+    except Exception as e:
+        debug('Failed getting JSON options. Error: %s' % e)
+        sys.exit(ERR_INVALID_JSON)
+
+
+if __name__ == '__main__':
+    main(sys.argv)
