@@ -1,0 +1,419 @@
+Wazuh Threat Hunting Module Exploration
+Architecture Notes
+
+============================================================
+1. EXPLORATION PURPOSE
+============================================================
+
+This project explores the Wazuh Threat Hunting module from a SOC,
+investigation, and behavior-analysis perspective.
+
+The goal is not only to review alerts.
+
+The goal is to understand how Wazuh helps analysts investigate:
+
+- hidden threats
+- suspicious low-level behaviors
+- patterns across time
+- activity that does not yet look like a major incident
+- behavior that may bypass traditional alert-only workflows
+
+This module acts as a proactive investigation and context layer inside
+the SOC.
+
+============================================================
+2. HIGH-LEVEL CONCEPT
+============================================================
+
+Traditional monitoring often begins with:
+  - alerts
+  - severity levels
+  - incidents
+  - tickets
+  - reactive investigation
+
+Threat hunting adds a different question:
+
+  "What suspicious behavior exists even if it has not triggered a major alert?"
+
+This shifts the analyst mindset from:
+  - alert-driven review
+
+to:
+  - behavior-driven investigation
+
+It is a proactive workflow that relies on:
+  - searching
+  - filtering
+  - correlating
+  - baselining
+  - investigating historical and current event data
+
+============================================================
+3. ARCHITECTURE POSITION IN THE SOC
+============================================================
+
+Monitored Endpoints / Systems / Infrastructure
+        |
+        v
+Wazuh Agent + Integrated Telemetry Sources
+        |
+        v
+Wazuh Manager
+  - event ingestion
+  - parsing
+  - decoding
+  - rule matching
+  - indexing pipeline
+        |
+        v
+Wazuh Dashboard
+        |
+        v
+Threat Hunting Module
+  - Dashboard
+  - Events
+  - Search / Filters / DQL
+  - Time-range analysis
+  - Agent-focused exploration
+        |
+        v
+SOC Analyst / Threat Hunter / Detection Engineer
+        |
+        v
+Proactive Security Investigation
+
+============================================================
+4. ENVIRONMENT MODEL
+============================================================
+
+This exploration assumes:
+
+- Wazuh is already deployed
+- endpoint or server telemetry is already flowing
+- archived and searchable event data is available
+- analysts are using the Wazuh Dashboard GUI
+- hunting is being performed across real monitored systems
+
+Example context:
+- Wazuh Dashboard
+- monitored Linux and/or Windows endpoints
+- AWS-hosted SOC ecosystem
+- multiple event types available for investigation
+- event history and agent-level visibility already present
+
+============================================================
+5. WHY THIS MODULE MATTERS
+============================================================
+
+The Threat Hunting module matters because not all dangerous activity
+appears as a loud or obvious alert.
+
+Attackers may rely on:
+- low-level signals
+- repeated small behaviors
+- legitimate tools
+- normal-looking process activity
+- routine system events that become suspicious only with context
+
+Examples of important questions:
+- Why is this process behavior repeating?
+- Why is this endpoint generating this pattern?
+- Why are these low-severity events clustering together?
+- Does this behavior make sense for this host?
+- Is this normal baseline activity or attacker tradecraft?
+
+Threat hunting gives analysts a way to answer those questions.
+
+============================================================
+6. CORE INVESTIGATION DOMAINS EXPOSED
+============================================================
+
+The Threat Hunting module organizes visibility into practical
+investigation areas.
+
+A. Dashboard
+   - total visible event volume
+   - high-level alert counts
+   - authentication failure / success visibility
+   - top agents
+   - alert group evolution
+   - MITRE ATT&CK-oriented summaries
+
+B. Events
+   - event-level review
+   - timestamps
+   - agent name
+   - rule description
+   - rule level
+   - rule ID
+   - searchable historical event records
+
+C. Search / Filters / DQL
+   - focused hunting logic
+   - narrowing event scope
+   - agent-specific review
+   - behavior pattern searching
+
+D. Time-Based Analysis
+   - trend visibility
+   - burst analysis
+   - repeated activity patterns
+   - evolving suspicious behavior across time
+
+E. Agent-Centered Hunting
+   - compare activity by monitored system
+   - identify noisy or high-risk endpoints
+   - examine host-specific behavior
+
+F. MITRE Context
+   - observed ATT&CK patterns
+   - attacker-technique perspective
+   - behavior mapped into structured investigation logic
+
+============================================================
+7. SOC VALUE OF EACH DOMAIN
+============================================================
+
+Dashboard
+  - gives fast summary of suspicious activity landscape
+  - helps analysts identify where to investigate first
+
+Events
+  - supports deep event-level validation
+  - useful when summary panels are not enough
+
+Search / Filters / DQL
+  - helps test hunting hypotheses
+  - makes behavioral narrowing practical
+
+Time-Based Analysis
+  - useful for spotting spikes, recurrence, and drift
+  - helps reveal suspicious patterns not obvious in isolated events
+
+Agent-Centered Hunting
+  - helps identify outlier systems
+  - useful for comparative investigation across endpoints
+
+MITRE Context
+  - improves structure of hunting logic
+  - helps analysts interpret behavior in attacker-tradecraft terms
+
+============================================================
+8. ANALYST WORKFLOW MODEL
+============================================================
+
+SOC Analyst / Threat Hunter opens Wazuh Dashboard
+        |
+        v
+Navigates to Threat Hunting module
+        |
+        v
+Reviews dashboard-level summary
+        |
+        +--> total event visibility
+        |
+        +--> alert levels and trends
+        |
+        +--> authentication-related activity
+        |
+        +--> top agents / top rule groups
+        |
+        +--> MITRE ATT&CK summaries
+        |
+        v
+Builds initial hunting hypothesis
+        |
+        v
+Drills into event-level data
+        |
+        +--> timestamps
+        +--> rules
+        +--> agents
+        +--> event descriptions
+        +--> repeated behaviors
+        |
+        v
+Uses filters / DQL / time ranges
+        |
+        v
+Validates whether behavior is:
+  - normal
+  - anomalous
+  - suspicious
+  - part of a larger pattern
+        |
+        v
+Uses findings for:
+  - triage
+  - hunting
+  - escalation
+  - rule tuning
+  - deeper investigation
+
+============================================================
+9. THREAT HUNTING USE-CASE MODEL
+============================================================
+
+The Threat Hunting module supports several important use cases.
+
+1. Baseline Comparison
+   Compare observed behavior against what is expected.
+
+2. Low-Level Signal Correlation
+   Investigate weaker events that become meaningful together.
+
+3. Behavioral Analysis
+   Review suspicious execution, authentication, or host activity.
+
+4. MITRE-Oriented Hunting
+   Search using attacker-technique context rather than alert labels alone.
+
+5. Agent Outlier Detection
+   Identify endpoints behaving differently from the rest.
+
+6. Timeline Investigation
+   Detect event bursts, repeated activity, or staged behavior.
+
+7. Incident Enrichment
+   Improve investigations by going beyond the alert that triggered first.
+
+8. Detection Improvement
+   Use hunting findings to improve future detections and tuning.
+
+============================================================
+10. RELATIONSHIP TO OTHER SOC FUNCTIONS
+============================================================
+
+The Threat Hunting module complements, rather than replaces:
+
+- alert monitoring
+- threat dashboards
+- IT hygiene visibility
+- vulnerability visibility
+- MITRE dashboards
+- incident response
+- detection engineering
+
+It provides the deeper investigative layer that helps analysts explore
+what may exist outside alert-only workflows.
+
+Examples:
+- alert spike + hunting review = stronger context
+- MITRE trend + event drill-down = better attacker perspective
+- agent anomaly + hunting timeline = better validation
+- repeated low-level events + rule tuning = improved future detection
+
+============================================================
+11. WHY IT IS OFTEN UNDERUSED
+============================================================
+
+Threat hunting is often underused because many teams focus only on:
+
+- alert queues
+- severity-driven incidents
+- reactive response
+- immediate tickets
+
+Hunting takes:
+- time
+- curiosity
+- context
+- baseline understanding
+- proactive thinking
+
+As a result, many teams underuse the very capability that helps find
+activity before it becomes obvious.
+
+============================================================
+12. WHY IT SHOULD BE USED MORE
+============================================================
+
+The module deserves more practical use because it provides:
+
+- proactive analyst-driven investigation
+- better use of archived event data
+- stronger behavioral analysis
+- improved anomaly recognition
+- reduced dependence on high-severity alerts
+- better detection engineering feedback
+- earlier identification of suspicious activity
+- more mature SOC operations
+
+It is especially valuable in environments where attackers may hide
+inside normal-looking or low-noise activity.
+
+============================================================
+13. HIGH-LEVEL PLAIN-TEXT FLOW
+============================================================
+
+Endpoint / Infrastructure Activity
+        |
+        v
+Wazuh Data Collection
+        |
+        v
+Parsing / Decoding / Indexing / Alerting
+        |
+        v
+Threat Hunting Module Views
+        |
+        +--> Dashboard summaries
+        +--> Events exploration
+        +--> Search and filtering
+        +--> Agent analysis
+        +--> MITRE context
+        +--> Time-based investigation
+        |
+        v
+Analyst Hypothesis and Investigation
+        |
+        v
+Better Threat Discovery and Validation
+
+============================================================
+14. DECISION VALUE TO THE ANALYST
+============================================================
+
+The Threat Hunting module helps analysts answer practical questions like:
+
+- Is this behavior really normal?
+- Why is this endpoint different from the others?
+- Why are these low-level events repeating?
+- Is this part of a larger suspicious pattern?
+- Does this match attacker behavior even if severity is low?
+- Are we missing something because we focused only on alerts?
+
+This shifts the analyst from:
+  "I only see what triggered"
+
+to:
+  "I investigate what may actually matter"
+
+============================================================
+15. FINAL SUMMARY
+============================================================
+
+This exploration shows that the Wazuh Threat Hunting module is a major
+proactive investigation capability inside the SOC.
+
+It helps transform centralized event data into practical understanding
+of:
+
+- behavior patterns
+- event trends
+- suspicious low-level activity
+- MITRE-aligned observations
+- agent outliers
+- early indicators of compromise
+
+Its architectural value is simple but powerful:
+
+centralized searchable telemetry
+        ->
+analyst-driven hunting workflows
+        ->
+behavioral investigation
+        ->
+smarter triage, earlier threat discovery,
+better validation, and stronger SOC maturity
