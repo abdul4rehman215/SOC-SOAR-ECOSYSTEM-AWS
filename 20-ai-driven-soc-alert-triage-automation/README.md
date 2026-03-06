@@ -102,6 +102,7 @@ This was not “just setup”. It included:
 
 ### ☁️ AWS + Networking
 - AWS EC2 instance running **Ubuntu**
+- docker installed (for n8n)
 - Open ports:
   - **22 (SSH)**
   - **5678 (n8n UI + Webhook)**  
@@ -135,12 +136,12 @@ This was not “just setup”. It included:
 ├── configs/
 │   └── ossec_integration_block.xml   # ossec.conf integration block snippet
 └── docs/
-│   └── ai-driven-soc-alert-triage-automation.pdf   # Full PDF guide (screenshots + full walkthrough)
+│   └── AI-Driven SOC Triage Automation Using Wazuh and n8n.pdf  # Full PDF guide (screenshots + full walkthrough)
 
 ````
 
 > 📄 If you prefer a visual, screenshot-based step-by-step walkthrough, open:
-> **[Full PDF Implementation Guide](docs/ai-driven-soc-alert-triage-automation.pdf)**
+> **[Full PDF Implementation Guide](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/20-ai-driven-soc-alert-triage-automation/docs/AI-Driven%20SOC%20Triage%20Automation%20Using%20Wazuh%20and%20n8n.pdf)**
 
 ---
 
@@ -155,14 +156,9 @@ This was not “just setup”. It included:
 
 ## 1.1 Install Docker (Ubuntu)
 
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y docker.io docker-compose
-sudo systemctl enable docker
-sudo systemctl start docker
-sudo usermod -aG docker $USER
-newgrp docker
-```
+👉 Refer to:  
+**Docker Installation Guide**  
+[Open Docker Installation Guide](../../02-docker-installation/README.md)
 
 ## 1.2 Run n8n Container (Persistent / Recommended)
 
