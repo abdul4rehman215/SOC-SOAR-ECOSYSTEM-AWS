@@ -206,19 +206,25 @@ This structure allows each dashboard to be understood both as:
 │   ├── architecture.txt
 │   ├── interview_qna.md
 │   ├── troubleshooting.md
-│   └── soc-threat-monitoring-dashboard.json
+│   └── resources/
+│       ├── SOC – Wazuh Threat Monitoring Dashboard.ndjson
+│       └── images
 ├── 02-soc-mitre-attack-coverage-dashboard/
 │   ├── README.md
 │   ├── architecture.txt
 │   ├── interview_qna.md
 │   ├── troubleshooting.md
-│   └── soc-mitre-attack-coverage-dashboard.json
+│   └── resources/
+│       ├── SOC – MITRE ATT&CK Coverage Dashboard.ndjson
+│       └── images
 └── 03-soc-compliance-cis-benchmark-dashboard/
     ├── README.md
     ├── architecture.txt
     ├── interview_qna.md
     ├── troubleshooting.md
-    └── soc-compliance-cis-benchmark-dashboard.json
+    └── resources/
+        ├── SOC – Compliance & CIS Benchmark Dashboard.ndjson
+        └── images
 ````
 
 ---
