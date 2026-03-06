@@ -397,13 +397,13 @@ http://<EC2_PUBLIC_IP>:5678/webhook/custom-n8n-ai
 
 ## ✅ Verification Checklist (End-to-End)
 
-✅ Wazuh generates alert with rule level ≥ 7
-✅ integrations.log shows forwarding attempts
-✅ n8n webhook receives JSON
-✅ normalize node structures fields + full context
-✅ AI node outputs structured SOC triage report
-✅ formatter builds polished HTML report
-✅ analyst receives email with:
+- ✅ Wazuh generates alert with rule level ≥ 7
+- ✅ integrations.log shows forwarding attempts
+- ✅ n8n webhook receives JSON
+- ✅ normalize node structures fields + full context
+- ✅ AI node outputs structured SOC triage report
+- ✅ formatter builds polished HTML report
+- ✅ analyst receives email with:
 
 * Alert overview
 * Log details
