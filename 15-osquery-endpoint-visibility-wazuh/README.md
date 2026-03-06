@@ -1,9 +1,7 @@
 # 🖥️ Osquery Exploration and Endpoint Visibility using Wazuh SIEM
 
 <p align="center">
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/osquery%20logo.png" width="180">
-&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh.png" width="180">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-osquery-logo.png"/>
 </p>
 
 ---
