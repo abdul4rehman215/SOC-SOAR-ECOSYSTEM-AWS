@@ -349,7 +349,7 @@ This reflects real SOC practice — not just configuration.
 
 I also shared this project on LinkedIn with a concise portfolio summary, key highlights, and implementation context.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-View%20Project%20Post-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/abdul4rehman215_behavior-based-http-anomaly-detection-wazuh-activity-7418638334807425025-4d6T?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-View%20Project%20Post-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/abdul4rehman215_wazuh-alerting-setup-ssh-brute-force-simulation-activity-7417148337004392448-yL1m?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU)
 
 ---
 
