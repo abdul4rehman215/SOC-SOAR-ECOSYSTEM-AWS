@@ -289,6 +289,10 @@ That section includes:
 
 ---
 
+#### [Watch the SOC demo](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/01-core-soc-ecosystem/SOC%20Working%20System.mp4)
+
+---
+
 # 📌 Key Takeaway
 
 This ecosystem transforms:
