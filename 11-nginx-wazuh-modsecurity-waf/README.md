@@ -2,7 +2,7 @@
 ## NGINX 1.24 + ModSecurity v3 (WAF) + OWASP CRS 3.x + Wazuh SIEM
 
 <p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Implementing-ModSecurity-WAF-integration-with-Wazuh.png" width="500"/>
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-modsecurity-logo.png"/>
 </p>
 
 ---
