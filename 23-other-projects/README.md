@@ -2,7 +2,7 @@
 
 ## 🌐 Project Post on LinkedIn
 
-I also shared this project on LinkedIn with a concise portfolio summary, key highlights, and implementation context.
+I also shared these 2 projects on LinkedIn with a concise portfolio summary, key highlights, and implementation context.
 
 <p align="left"
   <a href="https://www.linkedin.com/posts/abdul4rehman215_wazuh-sysmon-powershell-detection-rule-tuning-activity-7418906326963052544-iX9O?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/LinkedIn-Post%2001-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 01" /></a>
