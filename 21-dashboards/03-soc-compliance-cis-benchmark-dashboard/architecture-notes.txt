@@ -1,0 +1,474 @@
+SOC Compliance & CIS Benchmark Dashboard
+Architecture and Data Flow
+
+============================================================
+1. PROJECT PURPOSE
+============================================================
+
+This project focuses on the compliance-visibility and security-posture
+layer of the SOC.
+
+Its purpose is to transform Wazuh SCA findings into a practical
+dashboard that helps SOC analysts, security engineers, and defenders
+understand:
+
+- overall compliance posture
+- pass vs fail distribution
+- most frequently failing CIS controls
+- posture trends over time
+- where remediation should be prioritized first
+
+This project does not cover Wazuh deployment or Wazuh agent setup.
+Those components are documented separately in other repository folders.
+This project assumes Wazuh SCA data is already available.
+
+============================================================
+2. HIGH-LEVEL SOC FLOW
+============================================================
+
+Monitored Endpoints
+(Windows / Linux)
+        |
+        v
+Wazuh Agent
+        |
+        v
+Wazuh Manager
+        |
+        v
+Security Configuration Assessment (SCA) Evaluation
+        |
+        v
+Indexed SCA Findings in wazuh-alerts-*
+        |
+        v
+Wazuh Dashboard / OpenSearch Dashboards
+        |
+        v
+Compliance Visualizations
+        |
+        v
+SOC Compliance & CIS Benchmark Dashboard
+        |
+        v
+SOC Analyst / Security Engineer / Audit Support / Blue Team
+
+============================================================
+3. ENVIRONMENT MODEL
+============================================================
+
+Monitored Systems
+  - Ubuntu Linux
+  - Windows endpoints
+  - systems with Wazuh agents already connected
+
+Wazuh Layer
+  - Wazuh Manager
+  - Wazuh Indexer
+  - Wazuh Dashboard
+
+Compliance Module
+  - Wazuh SCA (Security Configuration Assessment)
+  - CIS policy files and benchmark checks
+  - result states such as passed, failed, not applicable
+
+Dashboard Layer
+  - uses Wazuh alert data from wazuh-alerts-*
+  - isolates rule.groups = sca
+  - visualizes posture, failed checks, and compliance trends
+
+============================================================
+4. PRIMARY DATA SOURCE
+============================================================
+
+Main index used:
+  wazuh-alerts-*
+
+Primary filter used:
+  rule.groups is sca
+
+Important fields used in this project:
+  - rule.groups
+  - data.sca.check.title
+  - data.sca.check.result
+  - data.sca.policy
+  - timestamp
+  - agent.name
+  - agent.id
+
+These fields make it possible to build a compliance-focused dashboard
+using SCA findings rather than general security alerts.
+
+============================================================
+5. WHAT WAZUH SCA DOES
+============================================================
+
+Wazuh SCA evaluates system configuration against security policies
+and benchmark guidance.
+
+Examples of supported policy use cases include:
+  - CIS benchmarks
+  - PCI-related checks
+  - NIST-aligned controls
+  - custom security policies
+
+For this project, the focus is on CIS benchmark visibility.
+
+Each evaluated check may produce results such as:
+  - passed
+  - failed
+  - not applicable
+
+Example check concepts:
+  - Ensure ssh PermitRootLogin is disabled
+  - Ensure ssh PermitEmptyPasswords is disabled
+  - Ensure ssh HostbasedAuthentication is disabled
+  - Ensure logging controls are configured
+  - Ensure strong remote access settings are enforced
+
+============================================================
+6. DASHBOARD COMPONENTS
+============================================================
+
+The dashboard is built from four main visualizations:
+
+1. Compliance - Overall Score
+2. Compliance - Pass vs Fail
+3. Compliance - Top Failed CIS Checks
+4. Compliance - Findings Timeline
+
+Together, these panels provide a practical posture-monitoring view
+for compliance and hardening visibility.
+
+============================================================
+7. VISUALIZATION-BY-VISUALIZATION ROLE
+============================================================
+
+A. Compliance - Overall Score
+----------------------------------------
+Purpose:
+  Provide a high-level view of compliance posture.
+
+Helps answer:
+  - How healthy is the baseline posture overall?
+  - Does the environment appear broadly aligned or weak?
+  - Is the compliance posture trending toward concern?
+
+Main concept:
+  gauge-style high-level compliance indicator
+
+Primary source logic:
+  count-based SCA-derived posture visibility
+
+B. Compliance - Pass vs Fail
+----------------------------------------
+Purpose:
+  Show the distribution of SCA result states.
+
+Helps answer:
+  - How many checks passed?
+  - How many checks failed?
+  - How many checks are not applicable?
+
+Main field:
+  data.sca.check.result
+
+Common result values:
+  - passed
+  - failed
+  - not applicable
+
+C. Compliance - Top Failed CIS Checks
+----------------------------------------
+Purpose:
+  Identify the most frequently failing controls.
+
+Helps answer:
+  - Which hardening controls fail most often?
+  - What should the team fix first?
+  - Are the same checks failing across multiple policies?
+
+Main fields:
+  data.sca.check.title
+  data.sca.policy
+
+Additional result filter:
+  data.sca.check.result = failed
+
+D. Compliance - Findings Timeline
+----------------------------------------
+Purpose:
+  Show how compliance findings change over time.
+
+Helps answer:
+  - Are failed findings increasing?
+  - Is remediation improving the environment?
+  - Are posture issues recurring over time?
+  - Do pass/fail results shift after hardening work?
+
+Main fields:
+  timestamp
+  data.sca.check.result
+
+============================================================
+8. FILTERING LOGIC
+============================================================
+
+This dashboard is intentionally isolated to SCA events only.
+
+Primary filter:
+  rule.groups is sca
+
+Why this matters:
+  - excludes unrelated alert types
+  - prevents authentication, FIM, network, and attack alerts
+    from polluting the dashboard
+  - keeps the dashboard focused on configuration posture
+  - improves compliance visibility quality
+
+Additional panel-specific logic may include:
+  data.sca.check.result is failed
+
+This is especially important for the
+"Compliance - Top Failed CIS Checks" panel.
+
+============================================================
+9. ANALYST / ENGINEER WORKFLOW
+============================================================
+
+SOC Analyst or Security Engineer opens Wazuh Dashboard
+        |
+        v
+Reviews compliance dashboard
+        |
+        +--> checks overall posture score
+        |
+        +--> checks pass vs fail distribution
+        |
+        +--> checks top failed CIS controls
+        |
+        +--> checks findings timeline
+        |
+        v
+Identifies configuration weaknesses
+        |
+        v
+Prioritizes most frequent or impactful failures
+        |
+        v
+Coordinates remediation / hardening work
+        |
+        v
+Monitors posture changes over time
+        |
+        v
+Uses findings for:
+  - risk reduction
+  - baseline hardening
+  - audit preparation
+  - security posture review
+
+============================================================
+10. DASHBOARD CREATION WORKFLOW
+============================================================
+
+Confirm SCA findings exist in Discover
+        |
+        v
+Apply filter rule.groups = sca
+        |
+        v
+Validate useful SCA fields
+        |
+        v
+Build four visualizations
+        |
+        +--> Overall Score
+        +--> Pass vs Fail
+        +--> Top Failed CIS Checks
+        +--> Findings Timeline
+        |
+        v
+Save each visualization with clear title and description
+        |
+        v
+Create dashboard container
+        |
+        v
+Arrange panels logically
+        |
+        v
+Save dashboard
+        |
+        v
+Export dashboard as JSON for reuse
+
+============================================================
+11. RECOMMENDED PANEL LAYOUT
+============================================================
+
+Top row:
+  [ Compliance - Overall Score ]
+
+Middle row:
+  [ Compliance - Pass vs Fail ]    [ Compliance - Findings Timeline ]
+
+Bottom row:
+  [ Compliance - Top Failed CIS Checks ]
+
+Why this layout works:
+  - top gives immediate posture summary
+  - middle gives distribution and trend context
+  - bottom highlights action-focused remediation priorities
+
+============================================================
+12. COMPLIANCE INTERPRETATION MODEL
+============================================================
+
+This dashboard helps teams interpret posture through several layers:
+
+Layer 1: High-Level Status
+  - Is compliance broadly healthy or weak?
+
+Layer 2: Result Distribution
+  - Are most checks passing or failing?
+
+Layer 3: Failure Prioritization
+  - Which specific controls are failing most often?
+
+Layer 4: Time-Based Change
+  - Are conditions improving, stable, or worsening?
+
+This layered visibility makes the dashboard useful for both
+operational teams and reporting stakeholders.
+
+============================================================
+13. EXAMPLE COMPLIANCE FINDINGS CONTEXT
+============================================================
+
+Typical failing CIS checks may involve:
+  - insecure SSH settings
+  - empty password acceptance
+  - host-based authentication enabled
+  - weak logging configuration
+  - unsafe remote access parameters
+  - incomplete hardening controls
+
+Example policy names:
+  - CIS Ubuntu Linux 24.04
+  - CIS Microsoft Windows
+
+These policy names may appear in split-series views to help identify
+whether certain hardening failures are concentrated in a specific OS
+or policy group.
+
+============================================================
+14. RISK REDUCTION VALUE
+============================================================
+
+This dashboard adds value because it shifts the question from:
+
+  "What individual SCA finding exists?"
+
+to:
+
+  "What posture weaknesses are most common and most urgent?"
+
+That makes it useful for:
+  - hardening programs
+  - security baseline monitoring
+  - remediation prioritization
+  - audit readiness
+  - attack-surface reduction
+  - security governance support
+
+============================================================
+15. EXPORT / REUSE MODEL
+============================================================
+
+This project includes:
+  soc-compliance-cis-benchmark-dashboard.json
+
+Purpose of JSON export:
+  - preserve full dashboard structure
+  - allow re-import into another Wazuh environment
+  - support backup and reproducibility
+  - preserve visualization layout and logic
+  - keep the project reusable for portfolio and lab reuse
+
+The README explains how the dashboard was built step by step,
+while the JSON preserves the actual dashboard object.
+
+============================================================
+16. REAL SOC VALUE
+============================================================
+
+This dashboard helps SOC and security teams:
+
+- monitor hardening posture
+- identify repeated misconfigurations
+- communicate compliance risk visually
+- prioritize remediation efforts
+- support internal and external reviews
+- reduce attack surface through better visibility
+
+It complements threat-monitoring dashboards by covering a different
+but equally important SOC need:
+
+  security posture visibility
+
+============================================================
+17. PLAIN-TEXT MASTER FLOW
+============================================================
+
+Monitored Endpoints
+        |
+        v
+Wazuh Agent telemetry
+        |
+        v
+Wazuh SCA policy evaluation
+        |
+        v
+SCA findings indexed in wazuh-alerts-*
+        |
+        v
+Compliance-specific filtering (rule.groups = sca)
+        |
+        v
+Visualization creation in Wazuh Dashboard
+        |
+        +--> Compliance - Overall Score
+        +--> Compliance - Pass vs Fail
+        +--> Compliance - Top Failed CIS Checks
+        +--> Compliance - Findings Timeline
+        |
+        v
+SOC Compliance & CIS Benchmark Dashboard
+        |
+        v
+Posture review, remediation prioritization, and compliance visibility
+
+============================================================
+18. FINAL SUMMARY
+============================================================
+
+This project represents the compliance-visibility layer of the Wazuh SOC.
+
+It converts raw SCA findings into a practical dashboard that helps teams
+understand:
+
+- overall compliance posture
+- result distribution
+- recurring failed controls
+- compliance trends over time
+
+The architecture is simple in concept:
+
+endpoint configuration data
+    ->
+Wazuh SCA findings
+    ->
+dashboard visualizations
+    ->
+better posture monitoring and remediation decisions
