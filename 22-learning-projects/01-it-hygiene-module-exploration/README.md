@@ -387,11 +387,10 @@ I strengthened my understanding of:
 ## 🖼️ Exploration Screenshots
 
 ### IT Hygiene Main Dashboard
-> **Place IT Hygiene dashboard overview image here**
-```text
-[IMAGE PLACEHOLDER: it-hygiene-dashboard-overview]
-Suggested file name: images/it-hygiene-dashboard-overview.png
-````
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/01-it-hygiene-module-exploration/images/1.png"/>
+</div>
 
 This view provides a centralized summary of endpoint hygiene, including system family visibility, installed packages, processes, operating systems, CPU context, ports, and process start time patterns.
 
@@ -401,12 +400,9 @@ It is useful because it gives an analyst a **high-level health and context snaps
 
 ### System / Hardware View
 
-> **Place system and hardware image here**
-
-```text
-[IMAGE PLACEHOLDER: it-hygiene-system-hardware]
-Suggested file name: images/it-hygiene-system-hardware.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/01-it-hygiene-module-exploration/images/2.png"/>
+</div>
 
 This section helps analysts understand:
 
@@ -421,12 +417,9 @@ This is useful for spotting hardware or resource anomalies and building endpoint
 
 ### Processes View
 
-> **Place processes exploration image here**
-
-```text
-[IMAGE PLACEHOLDER: it-hygiene-processes]
-Suggested file name: images/it-hygiene-processes.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/01-it-hygiene-module-exploration/images/3.png"/>
+</div>
 
 This section provides visibility into:
 
@@ -444,10 +437,9 @@ This is very important from a SOC perspective because process visibility often h
 
 > **Place network listeners image here**
 
-```text
-[IMAGE PLACEHOLDER: it-hygiene-network-listeners]
-Suggested file name: images/it-hygiene-network-listeners.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/01-it-hygiene-module-exploration/images/4.png"/>
+</div>
 
 This section helps analysts inspect:
 
@@ -464,10 +456,9 @@ This is important for identifying unnecessary exposed services, risky listeners,
 
 > **Place services exploration image here**
 
-```text
-[IMAGE PLACEHOLDER: it-hygiene-services]
-Suggested file name: images/it-hygiene-services.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/01-it-hygiene-module-exploration/images/5.png"/>
+</div>
 
 This section helps reveal:
 
