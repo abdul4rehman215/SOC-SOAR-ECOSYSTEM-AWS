@@ -305,3 +305,59 @@ Raw alerts
 It represents a practical, realistic SOC built the way real blue teams operate.
 
 ---
+
+---
+
+## 🌐 Project Posts on LinkedIn
+
+I also shared this project on LinkedIn through multiple portfolio posts covering the implementation, workflow, and key outcomes.
+
+<p align="left">
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_%F0%9D%90%92%F0%9D%90%8E%F0%9D%90%82-%F0%9D%90%82%F0%9D%90%9A%F0%9D%90%A9%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A7%F0%9D%90%9E-%F0%9D%90%8F%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A3%F0%9D%90%9E%F0%9D%90%9C%F0%9D%90%AD-activity-7417785211024900096-l1VH?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU">
+    <img src="https://img.shields.io/badge/LinkedIn-Post%2001-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 01" />
+  </a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_%F0%9D%90%85%F0%9D%90%AE%F0%9D%90%A5%F0%9D%90%A5-%F0%9D%90%92%F0%9D%90%8E%F0%9D%90%82-%F0%9D%90%80%F0%9D%90%AB%F0%9D%90%9C%F0%9D%90%A1%F0%9D%90%A2%F0%9D%90%AD%F0%9D%90%9E%F0%9D%90%9C%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%AB-activity-7417966375043772416-9yEN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU">
+    <img src="https://img.shields.io/badge/LinkedIn-Post%2002-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 02" />
+  </a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_%F0%9D%90%87%F0%9D%90%9A%F0%9D%90%A7%F0%9D%90%9D%F0%9D%90%AC-%F0%9D%90%8E%F0%9D%90%A7-%F0%9D%90%92%F0%9D%90%8E%F0%9D%90%82-%F0%9D%90%8F%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A3%F0%9D%90%9E%F0%9D%90%9C%F0%9D%90%AD-activity-7418177814463582208-V4cH?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU">
+    <img src="https://img.shields.io/badge/LinkedIn-Post%2003-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 03" />
+  </a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-socanalyst-cyberdefense-activity-7425425642369777664-4pFN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU">
+    <img src="https://img.shields.io/badge/LinkedIn-Post%2004-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 04" />
+  </a>
+</p>
+
+---
+
+## ⭐ Final Note
+
+This project reflects **real hands-on implementation** focused on practical security workflow execution, technical depth, and portfolio-grade documentation.
+
+It demonstrates the ability to:
+
+> **Build → Validate → Investigate → Document → Present**
+
+If this project adds value, consider starring the repository ⭐
+
+---
+
+## 👨‍💻 Author
+
+**Abdul Rehman**  
+SOC • SIEM • Detection Engineering • Incident Response • Threat Intelligence • Security Automation
+
+---
+
+### 📧 Reach Out
+
+  <a href="https://github.com/abdul4rehman215">
+    <img src="https://img.shields.io/badge/Follow-181717?style=for-the-badge&logo=github&logoColor=white" alt="Follow" />
+  </a>
+  <a href="https://linkedin.com/in/abdul4rehman215">
+    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white&v=1" alt="LinkedIn" />
+  </a>
+  <a href="mailto:abdul4rehman215@gmail.com">
+    <img src="https://img.shields.io/badge/Email-EE0000?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+  </a>
+
+---
