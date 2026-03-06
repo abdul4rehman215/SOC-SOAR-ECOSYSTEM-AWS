@@ -1,0 +1,417 @@
+SOC MITRE ATT&CK Coverage Dashboard
+Architecture and Data Flow
+
+============================================================
+1. PROJECT PURPOSE
+============================================================
+
+This project focuses on the ATT&CK-visibility layer of the SOC.
+
+Its purpose is to transform MITRE-mapped Wazuh alerts into a practical
+dashboard that helps SOC analysts understand:
+
+- which ATT&CK tactics are active
+- which techniques appear most often
+- which ATT&CK IDs are being detected
+- how attack behavior evolves over time
+
+This project does not cover Wazuh deployment or Wazuh agent installation.
+Those setup components are documented separately in other repository
+folders. This project assumes Wazuh alert data with MITRE mapping is
+already available.
+
+============================================================
+2. HIGH-LEVEL SOC FLOW
+============================================================
+
+Attacker Activity
+        |
+        v
+Monitored Endpoint
+        |
+        v
+Security Events / Logs / Telemetry
+        |
+        v
+Wazuh Manager
+        |
+        v
+Rule Matching + MITRE ATT&CK Mapping
+        |
+        v
+Indexed Alerts in Wazuh Dashboard
+        |
+        v
+MITRE-Focused Visualizations
+        |
+        v
+SOC MITRE ATT&CK Coverage Dashboard
+        |
+        v
+SOC Analyst / Detection Engineer / Threat Hunter
+
+============================================================
+3. ENVIRONMENT MODEL
+============================================================
+
+Attack Source
+  - Kali Linux or other simulated attacker system
+  - generates realistic security activity such as:
+      * invalid logins
+      * brute-force attempts
+      * account manipulation
+      * privilege-related activity
+
+Monitored Endpoint
+  - Ubuntu and/or Windows endpoint
+  - already sending telemetry to Wazuh
+  - produces alerts with MITRE ATT&CK field mappings
+
+Wazuh Stack
+  - Wazuh Manager
+  - Wazuh Indexer
+  - Wazuh Dashboard
+
+Dashboard Layer
+  - uses Wazuh alert data from wazuh-alerts-*
+  - visualizes ATT&CK tactics, techniques, IDs, and timelines
+
+============================================================
+4. PRIMARY DATA SOURCE
+============================================================
+
+Main index used:
+  wazuh-alerts-*
+
+Important fields used in this project:
+  - timestamp
+  - rule.level
+  - rule.description
+  - rule.mitre.tactic
+  - rule.mitre.technique
+  - rule.mitre.id
+  - agent.name
+  - agent.ip
+
+These fields make it possible to convert raw detections into a
+structured ATT&CK-based monitoring dashboard.
+
+============================================================
+5. MITRE MAPPING LOGIC
+============================================================
+
+Wazuh alerts may contain built-in or rule-based MITRE metadata.
+
+Examples of mapped fields:
+  - rule.mitre.tactic
+  - rule.mitre.technique
+  - rule.mitre.id
+
+Example ATT&CK mapping:
+  Tactic: Initial Access
+  Technique: Brute Force
+  Technique ID: T1110
+
+This metadata is the core of the dashboard because it allows analysts
+to understand attacker behavior in a standardized way.
+
+============================================================
+6. DASHBOARD COMPONENTS
+============================================================
+
+The dashboard is built from four main visualizations:
+
+1. MITRE - Tactics Distribution
+2. MITRE - Top Techniques
+3. MITRE - Technique IDs
+4. MITRE - Technique Timeline
+
+Together, these panels provide a practical ATT&CK-oriented SOC view.
+
+============================================================
+7. VISUALIZATION-BY-VISUALIZATION ROLE
+============================================================
+
+A. MITRE - Tactics Distribution
+----------------------------------------
+Purpose:
+  Show which ATT&CK tactics are most active.
+
+Helps answer:
+  - Is the activity related to Initial Access?
+  - Are Credential Access alerts increasing?
+  - Is Persistence or Command and Control present?
+  - Which attack lifecycle stages are most visible?
+
+Main field:
+  rule.mitre.tactic
+
+B. MITRE - Top Techniques
+----------------------------------------
+Purpose:
+  Show the most frequently observed ATT&CK techniques.
+
+Helps answer:
+  - Which attacker methods appear most often?
+  - Is Brute Force the dominant pattern?
+  - Are Valid Accounts or Account Manipulation present?
+  - What technique patterns deserve attention?
+
+Main field:
+  rule.mitre.technique
+
+C. MITRE - Technique IDs
+----------------------------------------
+Purpose:
+  Show ATT&CK technique IDs in standardized format.
+
+Helps answer:
+  - Which Txxxx IDs are being detected?
+  - How can detections be referenced consistently in reports?
+  - Which ATT&CK IDs dominate the environment?
+
+Main field:
+  rule.mitre.id
+
+D. MITRE - Technique Timeline
+----------------------------------------
+Purpose:
+  Show how ATT&CK techniques appear over time.
+
+Helps answer:
+  - When do technique spikes occur?
+  - Is there repeated brute-force activity?
+  - Is attack behavior evolving across time?
+  - Are multiple techniques appearing in sequence?
+
+Main fields:
+  timestamp
+  rule.mitre.technique
+
+============================================================
+8. FILTERING LOGIC
+============================================================
+
+This dashboard focuses on medium to high-severity alerts to improve
+SOC relevance and reduce background noise.
+
+Primary severity filter:
+  rule.level between 8 and 15
+
+Why this matters:
+  - removes lower-priority informational alerts
+  - emphasizes more meaningful attack activity
+  - makes the dashboard more triage-focused
+  - improves analyst signal quality
+
+This filter helps align the dashboard with realistic SOC workflows.
+
+============================================================
+9. ANALYST WORKFLOW
+============================================================
+
+SOC Analyst opens Wazuh Dashboard
+        |
+        v
+Reviews MITRE ATT&CK dashboard
+        |
+        +--> checks tactic distribution
+        |
+        +--> checks top techniques
+        |
+        +--> checks ATT&CK IDs
+        |
+        +--> checks timeline of technique activity
+        |
+        v
+Builds adversary-behavior understanding
+        |
+        v
+Correlates with raw alerts in Discover if needed
+        |
+        v
+Determines whether activity suggests:
+  - initial access
+  - credential access
+  - persistence
+  - multi-stage attack
+  - repeated brute-force behavior
+        |
+        v
+Escalates / investigates / documents / tunes detections
+
+============================================================
+10. DASHBOARD CREATION WORKFLOW
+============================================================
+
+Confirm MITRE fields exist in Discover
+        |
+        v
+Apply SOC-relevant severity filter
+        |
+        v
+Select useful ATT&CK-oriented questions
+        |
+        v
+Build tactic, technique, ID, and timeline visualizations
+        |
+        v
+Save each visualization with clear title and description
+        |
+        v
+Create dashboard container
+        |
+        v
+Arrange panels logically
+        |
+        v
+Save dashboard
+        |
+        v
+Export dashboard as JSON for reuse
+
+============================================================
+11. RECOMMENDED PANEL LAYOUT
+============================================================
+
+Top row:
+  [ MITRE - Tactics Distribution ]    [ MITRE - Top Techniques ]
+
+Bottom row:
+  [ MITRE - Technique IDs ]           [ MITRE - Technique Timeline ]
+
+Why this layout works:
+  - top row explains attack stage and behavior type
+  - bottom row provides standardized ATT&CK ID context and time analysis
+  - gives both summary and progression visibility in one screen
+
+============================================================
+12. EXAMPLE ATT&CK-ALIGNED SECURITY CONTEXT
+============================================================
+
+Possible activity visible in this dashboard includes:
+  - SSH brute-force attempts
+  - repeated invalid logins
+  - valid account usage alerts
+  - account manipulation events
+  - communication-related techniques
+  - privilege-related detections
+
+Possible MITRE examples:
+  - T1110  Brute Force
+  - T1078  Valid Accounts
+  - T1098  Account Manipulation
+  - T1136  Create Account
+
+These mappings help explain what attacker technique may be represented
+by the alert stream.
+
+============================================================
+13. ATT&CK ANALYSIS VALUE
+============================================================
+
+This dashboard adds value because it shifts the analyst question from:
+
+  "What alert fired?"
+
+to:
+
+  "What attacker behavior is this alert showing?"
+
+That makes it useful for:
+  - threat analysis
+  - ATT&CK-aligned reporting
+  - detection engineering review
+  - attacker behavior tracking
+  - investigation context building
+
+============================================================
+14. EXPORT / REUSE MODEL
+============================================================
+
+This project includes:
+  soc-mitre-attack-coverage-dashboard.json
+
+Purpose of JSON export:
+  - preserve full dashboard structure
+  - allow import into another Wazuh dashboard environment
+  - keep visualizations reusable
+  - support backup and portfolio reproducibility
+
+The README explains how the dashboard was created step by step,
+while the JSON preserves the actual dashboard object.
+
+============================================================
+15. REAL SOC VALUE
+============================================================
+
+This dashboard helps SOC teams:
+
+- map detections to ATT&CK language
+- understand attack stage visibility
+- track recurring techniques
+- identify behavioral spikes over time
+- improve communication during investigations
+- support structured reporting and detection tuning
+
+It is especially useful for:
+- ATT&CK-aligned monitoring
+- threat hunting support
+- detection engineering
+- blue team analysis
+- analyst reporting
+- security operations maturity
+
+============================================================
+16. PLAIN-TEXT MASTER FLOW
+============================================================
+
+Attack Simulation / Suspicious Activity
+        |
+        v
+Endpoint telemetry and security logs
+        |
+        v
+Wazuh rules generate alerts with MITRE mapping
+        |
+        v
+Indexed alerts in wazuh-alerts-*
+        |
+        v
+Visualization creation in Wazuh Dashboard
+        |
+        +--> MITRE - Tactics Distribution
+        +--> MITRE - Top Techniques
+        +--> MITRE - Technique IDs
+        +--> MITRE - Technique Timeline
+        |
+        v
+SOC MITRE ATT&CK Coverage Dashboard
+        |
+        v
+Analyst understands attack stage, technique frequency,
+standardized ATT&CK IDs, and timeline behavior
+
+============================================================
+17. FINAL SUMMARY
+============================================================
+
+This project represents the ATT&CK-visibility layer of the Wazuh SOC.
+
+It converts MITRE-mapped Wazuh alerts into a practical dashboard that
+helps analysts understand:
+
+- where activity sits in the ATT&CK lifecycle
+- which techniques dominate the environment
+- which ATT&CK IDs are repeatedly observed
+- how attacker behavior changes over time
+
+The architecture is simple in concept:
+
+security events
+    ->
+Wazuh alerts with MITRE mapping
+    ->
+dashboard visualizations
+    ->
+better ATT&CK-aligned SOC analysis
