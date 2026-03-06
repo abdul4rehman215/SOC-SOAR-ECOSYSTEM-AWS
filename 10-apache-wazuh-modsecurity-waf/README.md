@@ -1,7 +1,7 @@
 # 🛡️ Web Application Security Monitoring Using Apache, ModSecurity (OWASP CRS), and Wazuh SIEM
 
 <p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/Implementing-ModSecurity-WAF-integration-with-Wazuh.png" width="700">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-modsecurity-logo.png">
 </p>
 
 
