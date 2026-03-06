@@ -62,7 +62,7 @@
 <!-- ===================== SCOPE & STATUS ===================== -->
 
 ![Projects](https://img.shields.io/badge/Projects-38-43A047?style=for-the-badge)
-![Installations](https://img.shields.io/badge/INSTALLATIONS-11-546E7A?style=for-the-badge)
+![Installations](https://img.shields.io/badge/INSTALLATIONS%20&%20SETUPS-11-546E7A?style=for-the-badge)
 ![Capstones](https://img.shields.io/badge/Capstones-2-8E24AA?style=for-the-badge)
 ![Dashboards Count](https://img.shields.io/badge/Dashboards-6-0277BD?style=for-the-badge)
 ![Explorations](https://img.shields.io/badge/Learning%20Explorations-4-F57C00?style=for-the-badge)
