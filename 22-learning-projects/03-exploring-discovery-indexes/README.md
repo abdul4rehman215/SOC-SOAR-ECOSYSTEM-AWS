@@ -477,96 +477,13 @@ It is **capability**.
 
 ---
 
-## 🖼️ Knowledge / Learning Reference Placeholders
-
-### Discover Index Concept Reference 1
-
-> **Place concept/knowledge image here**
-
-```text
-[IMAGE PLACEHOLDER: discover-indices-knowledge-01]
-Suggested file name: images/discover-indices-knowledge-01.png
-```
-
-Use this section to reinforce the idea that alerts are only one part of the Wazuh data ecosystem and that monitoring, statistics, archives, and state indices all serve different investigation purposes.
-
----
-
-### Discover Index Concept Reference 2
-
-> **Place concept/knowledge image here**
-
-```text id="4jx6od"
-[IMAGE PLACEHOLDER: discover-indices-knowledge-02]
-Suggested file name: images/discover-indices-knowledge-02.png
-```
-
-Use this section to explain the role of archives, monitoring, statistics, and state indices, including why they are often ignored and why they are still valuable.
-
----
-
-### Discover Index Concept Reference 3
-
-> **Place concept/knowledge image here**
-
-```text id="ynv6db"
-[IMAGE PLACEHOLDER: discover-indices-knowledge-03]
-Suggested file name: images/discover-indices-knowledge-03.png
-```
-
-Use this section to show practical use cases for statistics, monitoring, and state/inventory indices in operations, troubleshooting, and investigation.
-
----
-
-### Discover Index Concept Reference 4
-
-> **Place concept/knowledge image here**
-
-```text id="jlwmj0"
-[IMAGE PLACEHOLDER: discover-indices-knowledge-04]
-Suggested file name: images/discover-indices-knowledge-04.png
-```
-
-Use this section to summarize index patterns and their best-use scenarios in a simple analyst-friendly way.
-
----
-
-### Discover Index Concept Reference 5
-
-> **Place concept/knowledge image here**
-
-```text id="2dtt55"
-[IMAGE PLACEHOLDER: discover-indices-knowledge-05]
-Suggested file name: images/discover-indices-knowledge-05.png
-```
-
-Use this section to support understanding of the official Wazuh index pattern naming scheme and what each family stores.
-
----
-
-### Discover Index Concept Reference 6
-
-> **Place concept/knowledge image here**
-
-```text id="575e7f"
-[IMAGE PLACEHOLDER: discover-indices-knowledge-06]
-Suggested file name: images/discover-indices-knowledge-06.png
-```
-
-Use this section to explain that custom index patterns can also be created, which helps analysts and engineers extend visibility beyond defaults when needed.
-
----
-
 ## 🖼️ Practical Exploration Screenshots
 
 ### `wazuh-monitoring-*` Exploration
 
-> **Place monitoring index screenshot here**
-
-```text id="k2vk4v"
-[IMAGE PLACEHOLDER: discover-monitoring-index]
-Suggested file name: images/discover-monitoring-index.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/03-exploring-discovery-indexes/images/1.png"/>
+</div>
 
 This exploration shows agent-health and telemetry status visibility such as:
 
@@ -583,12 +500,9 @@ This is useful for validating whether a monitored endpoint was actually healthy 
 
 ### `wazuh-statistics-*` Exploration
 
-> **Place statistics index screenshot here**
-
-```text id="2f0vpi"
-[IMAGE PLACEHOLDER: discover-statistics-index]
-Suggested file name: images/discover-statistics-index.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/03-exploring-discovery-indexes/images/2.png"/>
+</div>
 
 This view shows internal Wazuh processing metrics such as:
 
@@ -607,10 +521,9 @@ This is important for identifying ingestion issues, pipeline health problems, an
 
 > **Place states inventory overview screenshot here**
 
-```text id="sm0elq"
-[IMAGE PLACEHOLDER: discover-states-inventory-overview]
-Suggested file name: images/discover-states-inventory-overview.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/03-exploring-discovery-indexes/images/3.png"/>
+</div>
 
 This view demonstrates point-in-time endpoint state data, including:
 
@@ -628,10 +541,9 @@ This is useful for understanding host baseline and contextual system state durin
 
 > **Place packages index screenshot here**
 
-```text id="9z9bf8"
-[IMAGE PLACEHOLDER: discover-states-packages-index]
-Suggested file name: images/discover-states-packages-index.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/03-exploring-discovery-indexes/images/4.png"/>
+</div>
 
 This view is useful for investigating:
 
@@ -650,10 +562,9 @@ This helps with software review, inventory-based hunting, and validating whether
 
 > **Place ports index screenshot here**
 
-```text id="7286uk"
-[IMAGE PLACEHOLDER: discover-states-ports-index]
-Suggested file name: images/discover-states-ports-index.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/03-exploring-discovery-indexes/images/5.png"/>
+</div>
 
 This view helps analysts inspect:
 
@@ -672,10 +583,9 @@ This is important for identifying exposed services, confirming port state, and r
 
 > **Place processes index screenshot here**
 
-```text id="m0yv0b"
-[IMAGE PLACEHOLDER: discover-states-processes-index]
-Suggested file name: images/discover-states-processes-index.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/03-exploring-discovery-indexes/images/6.png"/>
+</div>
 
 This view provides visibility into:
 
@@ -693,10 +603,9 @@ This is valuable for investigations, threat hunting, persistence review, and hos
 
 > **Place services index screenshot here**
 
-```text id="xccs0m"
-[IMAGE PLACEHOLDER: discover-states-services-index]
-Suggested file name: images/discover-states-services-index.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/03-exploring-discovery-indexes/images/7.png"/>
+</div>
 
 This section is useful for reviewing:
 
