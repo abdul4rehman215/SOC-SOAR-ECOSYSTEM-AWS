@@ -234,7 +234,9 @@ Those capabilities are documented in other folders of the main repository.
 ├── architecture.txt
 ├── interview_qna.md
 ├── troubleshooting.md
-└── soc-mitre-attack-coverage-dashboard.json
+└── resources/
+    ├── SOC – MITRE ATT&CK Coverage Dashboard.ndjson
+    └── images
 ```
 
 ---
@@ -650,34 +652,17 @@ This layout provides:
 
 ## 🖼️ Dashboard Screenshots
 
-### Full Dashboard View
-
-> **Place MITRE dashboard overview image here**
-
-```text
-[IMAGE PLACEHOLDER: mitre-dashboard-overview]
-Suggested file name: images/soc-mitre-attack-coverage-dashboard-overview.png
-```
-
-### Dashboard Entry / Saved Object View
-
-> **Optional placeholder for dashboard listing image**
-
-```text
-[IMAGE PLACEHOLDER: mitre-dashboard-listing]
-Suggested file name: images/soc-mitre-dashboard-listing.png
-```
-
 ### Visualization Listing View
 
-> **Optional placeholder for visualization inventory image**
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard/resources/2.png"/>
+</div>
 
-```text
-[IMAGE PLACEHOLDER: mitre-visualizations-list]
-Suggested file name: images/soc-mitre-visualizations-list.png
-```
+### Full Dashboard View
 
-You can later replace these placeholders with embedded image references after uploading the image assets.
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard/resources/3.png"/>
+</div>
 
 ---
 
@@ -821,9 +806,11 @@ Through this project, I strengthened my understanding of:
 
 This project also includes the exported dashboard JSON file:
 
-```text
-soc-mitre-attack-coverage-dashboard.json
-```
+`
+SOC – MITRE ATT&CK Coverage Dashboard.ndjson
+`
+- or **[click here](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard/resources/SOC%20%E2%80%93%20MITRE%20ATT%26CK%20Coverage%20Dashboard.ndjson)**
+
 
 This allows the full dashboard to be re-imported later and preserves the same dashboard object structure used in the project.
 
