@@ -1,0 +1,405 @@
+SOC Threat Monitoring Dashboard
+Architecture and Data Flow
+
+============================================================
+1. PROJECT PURPOSE
+============================================================
+
+This project focuses on the dashboard engineering layer of the SOC.
+
+Its purpose is to transform Wazuh security alerts into a practical
+threat-monitoring dashboard that helps SOC analysts:
+
+- identify high-severity alerts quickly
+- detect common attack patterns
+- spot top attacker IPs
+- view geographic attack origin
+- monitor attack spikes over time
+
+The project does not focus on Wazuh deployment or agent installation.
+Those setup components are documented separately in other repository
+folders. This project assumes Wazuh alert data is already available.
+
+============================================================
+2. HIGH-LEVEL SOC FLOW
+============================================================
+
+Attacker Activity
+        |
+        v
+Target / Monitored Endpoint
+        |
+        v
+Security Events and Logs
+        |
+        v
+Wazuh Manager
+        |
+        v
+Wazuh Alert Processing and Indexing
+        |
+        v
+Wazuh Dashboard / OpenSearch Dashboards
+        |
+        v
+Threat Monitoring Visualizations
+        |
+        v
+SOC Threat Monitoring Dashboard
+        |
+        v
+SOC Analyst Triage and Investigation
+
+============================================================
+3. ENVIRONMENT MODEL
+============================================================
+
+Kali Linux EC2
+  - used for attack simulation
+  - example activity: SSH brute force attempts
+
+Monitored Endpoint
+  - Ubuntu or Windows system
+  - already onboarded to Wazuh
+  - generates logs and security-relevant alerts
+
+Wazuh Stack
+  - Wazuh Manager
+  - Wazuh Indexer
+  - Wazuh Dashboard
+
+Dashboard Layer
+  - uses Wazuh alert data from wazuh-alerts-*
+  - creates visualizations for SOC operations
+
+============================================================
+4. DATA SOURCE USED
+============================================================
+
+Primary data source:
+  wazuh-alerts-*
+
+Important fields used in this project include:
+  - timestamp
+  - rule.level
+  - rule.description
+  - data.srcip
+  - agent.name
+  - agent.ip
+  - rule.id
+  - rule.firedtimes
+  - MITRE-related alert context when present
+
+These fields support severity analysis, alert categorization,
+source-IP visibility, and time-based monitoring.
+
+============================================================
+5. THREAT MONITORING DASHBOARD COMPONENTS
+============================================================
+
+The dashboard is built from five main visualizations:
+
+1. SOC - Alerts by Severity
+2. SOC - Top Alert Types
+3. SOC - Top Attacker IPs
+4. SOC - Attack Source Geo Map
+5. SOC - High Severity Attack Timeline
+
+Together, these panels provide a compact and operationally useful
+threat-monitoring view.
+
+============================================================
+6. VISUALIZATION-BY-VISUALIZATION ROLE
+============================================================
+
+A. SOC - Alerts by Severity
+----------------------------------------
+Purpose:
+  Show distribution of alerts by Wazuh rule severity.
+
+Helps answer:
+  - Are alerts mostly low, medium, or high severity?
+  - Is the SOC seeing increased higher-risk activity?
+  - What should be prioritized first?
+
+Main field:
+  rule.level
+
+B. SOC - Top Alert Types
+----------------------------------------
+Purpose:
+  Show the most common alert categories.
+
+Helps answer:
+  - What detections are firing most often?
+  - Are brute-force or authentication alerts dominant?
+  - Which detections might be noisy?
+
+Main field:
+  rule.description
+
+C. SOC - Top Attacker IPs
+----------------------------------------
+Purpose:
+  Highlight source IPs responsible for medium/high-severity alerts.
+
+Helps answer:
+  - Which external IPs are most active?
+  - Are there likely brute-force or intrusion sources?
+  - Which IPs may need investigation or blocking?
+
+Main field:
+  data.srcip
+
+Filter focus:
+  rule.level between 8 and 15
+
+D. SOC - Attack Source Geo Map
+----------------------------------------
+Purpose:
+  Show geographic origin of suspicious activity.
+
+Helps answer:
+  - Where are attacks coming from geographically?
+  - Are there repeated foreign-origin sources?
+  - Is there clustering by region?
+
+Main field concept:
+  source-IP geolocation / GeoIP-enriched mapping field
+
+Filter focus:
+  rule.level between 8 and 15
+
+E. SOC - High Severity Attack Timeline
+----------------------------------------
+Purpose:
+  Show how medium/high-severity alerts change over time.
+
+Helps answer:
+  - When did activity spike?
+  - Is suspicious activity recurring?
+  - Are there bursty brute-force or scanning periods?
+
+Main fields:
+  timestamp
+  rule.level
+
+============================================================
+7. FILTERING LOGIC
+============================================================
+
+This dashboard emphasizes medium to high-severity security activity.
+
+Primary severity filter used:
+  rule.level between 8 and 15
+
+Why this matters:
+  - removes some lower-value informational noise
+  - keeps dashboard more triage-focused
+  - highlights more actionable alerts
+  - supports faster analyst prioritization
+
+Some panels may use full alert data,
+while others intentionally focus on severity-filtered activity.
+
+============================================================
+8. ANALYST WORKFLOW
+============================================================
+
+SOC Analyst opens Wazuh Dashboard
+        |
+        v
+Reviews threat-monitoring dashboard
+        |
+        +--> checks alert severity distribution
+        |
+        +--> checks top alert categories
+        |
+        +--> checks top attacker IPs
+        |
+        +--> checks source geo locations
+        |
+        +--> checks time-based spikes
+        |
+        v
+Determines triage priority
+        |
+        v
+Investigates suspicious alerts in Discover / event detail view
+        |
+        v
+Correlates activity with host, user, source IP, time, and rule context
+        |
+        v
+Escalates / documents / responds as needed
+
+============================================================
+9. DASHBOARD CREATION WORKFLOW
+============================================================
+
+Wazuh alert data confirmed in Discover
+        |
+        v
+Select useful threat-monitoring questions
+        |
+        v
+Choose fields for each visualization
+        |
+        v
+Create five visualizations
+        |
+        v
+Save each visualization with clear name and description
+        |
+        v
+Create dashboard container
+        |
+        v
+Add and arrange panels
+        |
+        v
+Save dashboard
+        |
+        v
+Export dashboard as JSON for reuse
+
+============================================================
+10. RECOMMENDED PANEL LAYOUT
+============================================================
+
+Top row:
+  [ Alerts by Severity ]    [ Top Alert Types ]
+
+Middle row:
+  [ Top Attacker IPs ]      [ Attack Source Geo Map ]
+
+Bottom row:
+  [ High Severity Attack Timeline ]
+
+Why this layout works:
+  - top row gives quick summary of alert importance and type
+  - middle row gives source-based context
+  - bottom row gives temporal activity context
+
+============================================================
+11. ATTACK-SIMULATION CONTEXT
+============================================================
+
+Example simulated activity:
+  SSH brute-force attempts from attacker machine
+
+Possible detection examples:
+  - SSH invalid user
+  - authentication failures
+  - repeated login attempts
+  - MITRE ATT&CK-related brute-force mapping
+
+Why this helps:
+  It provides realistic higher-severity alert data that can be
+  visualized meaningfully in the threat-monitoring dashboard.
+
+============================================================
+12. GEOMAP NOTE
+============================================================
+
+The Attack Source Geo Map depends on geolocation-capable source-IP data.
+
+Depending on the Wazuh/OpenSearch setup, this may require:
+  - GeoIP enrichment in the data pipeline
+  - a mappable geolocation field
+  - working source IP field population
+
+The exported dashboard JSON preserves the working visualization state
+used in this environment.
+
+============================================================
+13. EXPORT / REUSE MODEL
+============================================================
+
+This project includes:
+  soc-threat-monitoring-dashboard.json
+
+Purpose of JSON export:
+  - preserve full dashboard structure
+  - allow re-import into Wazuh Dashboard
+  - avoid rebuilding panels manually from scratch
+  - support backup and portfolio reproducibility
+
+The README explains how the dashboard was built step by step,
+while the JSON preserves the actual dashboard object.
+
+============================================================
+14. REAL SOC VALUE
+============================================================
+
+This dashboard provides operational value by helping analysts:
+
+- reduce dependency on raw log-only review
+- prioritize higher-severity events
+- identify suspicious source IPs faster
+- observe attack trends visually
+- gain quick situational awareness
+- start investigations with better context
+
+It supports real SOC use cases such as:
+- daily monitoring
+- brute-force visibility
+- suspicious IP review
+- shift handoff context
+- analyst triage
+- detection tuning feedback
+
+============================================================
+15. PLAIN-TEXT MASTER FLOW
+============================================================
+
+Attack Simulation / Threat Activity
+        |
+        v
+Wazuh-monitored endpoint logs
+        |
+        v
+Wazuh rule matching and alert generation
+        |
+        v
+Indexed alerts in wazuh-alerts-*
+        |
+        v
+Visualization creation in Wazuh Dashboard
+        |
+        +--> Alerts by Severity
+        +--> Top Alert Types
+        +--> Top Attacker IPs
+        +--> Attack Source Geo Map
+        +--> High Severity Attack Timeline
+        |
+        v
+SOC Threat Monitoring Dashboard
+        |
+        v
+Analyst visibility, triage, and investigation
+
+============================================================
+16. FINAL SUMMARY
+============================================================
+
+This project represents the threat-visibility layer of the Wazuh SOC.
+
+It converts Wazuh alert data into a practical monitoring dashboard that
+helps analysts understand:
+
+- alert importance
+- dominant attack categories
+- suspicious sources
+- geographic attack origin
+- attack timing and spikes
+
+The architecture is simple in concept:
+
+security events
+    ->
+Wazuh alerts
+    ->
+dashboard visualizations
+    ->
+better SOC triage and monitoring decisions
