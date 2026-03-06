@@ -8,6 +8,9 @@
 
 <div align="center">
 
+
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-suricata-logo.png"/>
+
 <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/230919-suricata-diagram5.png" width="800">
 
 </div>
