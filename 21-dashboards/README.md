@@ -431,11 +431,16 @@ This main folder is the parent directory for the following completed dashboard s
 
 Each subproject contains its own implementation guide, architecture, troubleshooting guide, interview Q&A, and reusable dashboard export.
 
-## 🌐 Project Post on LinkedIn
+---
 
-I also shared this project on LinkedIn with a concise portfolio summary, key highlights, and implementation context.
+## 🌐 Project Posts on LinkedIn
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-View%20Project%20Post-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/abdul4rehman215_socanalyst-handsonlearning-wazuh-activity-7416924504947380224-i3TI?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU)
+I also shared this project on LinkedIn through multiple posts covering the implementation, workflow, and key outcomes.
+
+<p align="left">
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_threatdetection-blueteam-soc-activity-7416913188769644544-bXpG?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/LinkedIn-Post%2001-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 01" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_socanalyst-handsonlearning-wazuh-activity-7416924504947380224-i3TI?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/LinkedIn-Post%2002-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 02" /></a>
+</p>
 
 ---
 
