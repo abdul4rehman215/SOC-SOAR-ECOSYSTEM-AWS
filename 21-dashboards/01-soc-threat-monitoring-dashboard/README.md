@@ -26,6 +26,34 @@ Rather than treating dashboards as just a reporting feature, this project approa
 
 ---
 
+## 🖼️ Dashboard Screenshots
+
+### Visualization Listing View
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/2.png"/>
+</div>
+
+### Full Dashboard View
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/3.png"/>
+</div>
+
+### High Severity Attack Timeline
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/4.png"/>
+</div>
+
+### Attack Source Geo Map
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/5.png"/>
+</div>
+
+---
+
 ## 🎯 Project Objective
 
 The objective of this project was to design and document a **Wazuh-based threat monitoring dashboard** that helps SOC analysts:
@@ -691,34 +719,6 @@ This layout balances:
 * source identification
 * geographic context
 * time-based monitoring
-
----
-
-## 🖼️ Dashboard Screenshots
-
-### Visualization Listing View
-
-<div align="center">
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/2.png"/>
-</div>
-
-### Full Dashboard View
-
-<div align="center">
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/3.png"/>
-</div>
-
-### High Severity Attack Timeline
-
-<div align="center">
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/4.png"/>
-</div>
-
-### Attack Source Geo Map
-
-<div align="center">
-<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/21-dashboards/01-soc-threat-monitoring-dashboard/resources/5.png"/>
-</div>
 
 ---
 
