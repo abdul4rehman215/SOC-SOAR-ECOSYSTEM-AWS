@@ -3,7 +3,7 @@
 ## Real-Time Malware Detection & Automated Threat Removal (SOC Automation Project)
 
 <p align="center">
-  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-virustotal.png" width="450"/>
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/wazuh-virustotal-logo.png"/>
 </p>
 
 ---
