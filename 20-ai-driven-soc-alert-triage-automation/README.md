@@ -20,6 +20,11 @@ It’s a practical SOAR-style workflow focused on:
 ## 📌 Quick Visual Architecture
 
 <p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/ai-triage_workflow_template.png"/>
+</p>
+
+
+<p align="center">
   <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/AI-powered%20SOC%20alert%20triage%20automation.png" alt="AI-Powered SOC Alert Triage Automation" width="900"/>
 </p>
 
