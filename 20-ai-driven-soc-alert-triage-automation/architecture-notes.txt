@@ -1,0 +1,201 @@
+AI-Powered SOC Alert Triage Automation
+Architecture (Plaintext)
+=====================================
+
+Project Name:
+- AI-Driven SOC Alert Triage Automation (Wazuh + n8n + AI Agent + Email Reporting)
+
+Goal:
+- Convert raw Wazuh alerts into analyst-ready triage intelligence in seconds.
+- Reduce alert fatigue by forwarding only meaningful (high severity) events.
+- Deliver a clean, structured triage report via email with:
+  - What happened
+  - Risk assessment
+  - Recommended actions
+  - Clear next step
+
+High-Level Architecture
+-----------------------
+
+          ┌───────────────────────────────────────────────────────────┐
+          │                      SOC ECOSYSTEM (AWS)                  │
+          └───────────────────────────────────────────────────────────┘
+
+   (Endpoints / Agents)
+   ┌──────────────────────────┐
+   │ Windows / Linux Endpoints │
+   │  - Wazuh Agent            │
+   │  - Sysmon / Auditd/etc    │
+   └──────────────┬───────────┘
+                  │
+                  │  (Telemetry, logs, detections)
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │                     WAZUH MANAGER (SIEM/XDR)              │
+   │  - Rule engine triggers alerts                            │
+   │  - Alert JSON written into alerts file pipeline            │
+   │  - MITRE mappings (when present)                           │
+   │  - Severity level (rule.level)                             │
+   └──────────────┬────────────────────────────────────────────┘
+                  │
+                  │  (Integration Execution)
+                  │  The Wazuh manager runs a custom integration script
+                  │  whenever alerts match the integration rule threshold.
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │           CUSTOM WAZUH INTEGRATION SCRIPT (custom-n8n-ai)  │
+   │  Responsibilities:                                        │
+   │   1) Read alert JSON                                       │
+   │   2) Apply severity filter (rule.level >= 7)               │
+   │   3) Build payload with:                                   │
+   │      - extracted fields (title, severity, rule_id, etc.)    │
+   │      - full raw alert context (all_fields)                  │
+   │   4) POST JSON payload to n8n webhook                       │
+   │   5) Log action in /var/ossec/logs/integrations.log         │
+   └──────────────┬────────────────────────────────────────────┘
+                  │
+                  │  HTTP POST (JSON)
+                  │  Destination: n8n Production Webhook URL
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │                        n8n (SOAR LAYER)                   │
+   │  Deployed as self-hosted workflow engine on AWS EC2        │
+   │  - Runs via Docker                                         │
+   │  - Web UI on port 5678                                     │
+   │  - Webhook listener acts as event intake                   │
+   └──────────────┬────────────────────────────────────────────┘
+                  │
+                  │  1) Webhook Trigger Node
+                  │  - Receives Wazuh alert JSON payload
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │                  NODE 1: WEBHOOK (ENTRY)                  │
+   │  Input: Wazuh JSON payload                                 │
+   │  Output: Raw alert JSON in n8n workflow context             │
+   └──────────────┬────────────────────────────────────────────┘
+                  │
+                  │  2) Normalize / Structure Alert Context
+                  │  - Extract key fields (agent, src ip, user, etc.)
+                  │  - Preserve full raw alert JSON for AI context
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │             NODE 2: NORMALIZE WAZUH ALERT (JS)             │
+   │  Extracts:                                                  │
+   │   - rule_level, rule_id, description                        │
+   │   - agent_name, agent_id, agent_ip                          │
+   │   - src_ip, src_port, user                                  │
+   │   - groups, fired count                                     │
+   │   - MITRE IDs/tactics/techniques (if present)               │
+   │  Also includes:                                             │
+   │   - full_alert (entire raw payload) for AI context           │
+   └──────────────┬────────────────────────────────────────────┘
+                  │
+                  │  3) AI Triage / Decision Support
+                  │  - Uses strict prompt rules:
+                  │    * Use only JSON data
+                  │    * No hallucinations
+                  │    * Output fixed structured format
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │            NODE 3: AI SOC TRIAGE ENGINE (GEMINI)           │
+   │  Input: normalized JSON context + full_alert                │
+   │  Output (strict sections):                                  │
+   │   - ALERT_OVERVIEW                                          │
+   │   - TRIAGE_SUMMARY                                          │
+   │   - RISK_ASSESSMENT                                         │
+   │   - RECOMMENDED_ACTIONS                                     │
+   │   - NEXT_STEP                                               │
+   └──────────────┬────────────────────────────────────────────┘
+                  │
+                  │  4) Email Formatting / Visual Output
+                  │  - Parse AI sections
+                  │  - Build HTML report with severity styling
+                  │  - Add overview table + log details
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │          NODE 4: FORMAT SOC EMAIL REPORT (JS → HTML)        │
+   │  Output:                                                     │
+   │   - subject: "HIGH/MEDIUM/CRITICAL SOC Alert..."             │
+   │   - html: complete SOC-style formatted report                │
+   │  Features:                                                   │
+   │   - Severity badge + color coding                            │
+   │   - Clean table layout (rule, agent, MITRE, source IP, etc.) │
+   │   - AI triage sections rendered cleanly                      │
+   │   - Fallback handling if AI misses any section               │
+   └──────────────┬────────────────────────────────────────────┘
+                  │
+                  │  5) SMTP Email Delivery
+                  │  - Gmail App Password
+                  │  - HTML email sent to SOC analyst mailbox
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │                 NODE 5: SEND EMAIL (SMTP)                   │
+   │  Delivery:                                                   │
+   │   - To: SOC analyst email                                    │
+   │   - Subject: from formatter node                             │
+   │   - Body: HTML SOC triage report                             │
+   └──────────────┬────────────────────────────────────────────┘
+                  │
+                  │  Analyst receives decision-ready intelligence
+                  ▼
+   ┌───────────────────────────────────────────────────────────┐
+   │                     SOC ANALYST INBOX                       │
+   │  Receives:                                                   │
+   │   - Alert Overview (rule id, severity, MITRE, asset, etc.)    │
+   │   - Log details                                               │
+   │   - AI Triage Summary                                         │
+   │   - Risk Assessment + Confidence + FP probability             │
+   │   - Recommended Actions                                       │
+   │   - Next Step directive                                       │
+   └───────────────────────────────────────────────────────────┘
+
+
+Key Design Decisions
+--------------------
+
+1) Severity Filtering Upstream (Wazuh)
+- Two layers of filtering were explored:
+  A) Wazuh integration block <level>7</level>
+  B) Custom script filter rule.level >= 7
+- Final approach keeps filtering upstream to avoid forwarding noise.
+
+2) Full Context for AI (Major Optimization)
+- Early results were inconsistent when only partial fields were sent.
+- Final workflow passes full raw alert JSON to AI.
+- This improved accuracy and reduced “generic” AI outputs.
+
+3) Strict Prompt Engineering (Production Rules)
+- No hallucinations policy:
+  - Use only JSON data
+  - Do not invent missing fields
+  - Output must follow strict format
+- Ensures stable, analyst-ready output every run.
+
+4) Email as “Analyst Output Interface”
+- Many SOC workflows route alerts to dashboards only.
+- This project creates a clear “human interface”:
+  - clean visual layout
+  - severity labels + structure
+  - decision support included
+
+
+Data Flow Summary (One-Liners)
+------------------------------
+
+- Wazuh generates alert → custom script forwards JSON → n8n receives webhook
+- n8n normalizes fields + retains full context → AI triage generates structured report
+- formatter turns triage into professional HTML email → SMTP sends to analyst
+
+
+Operational Outcome
+-------------------
+
+- Manual triage reduced:
+  - faster initial investigation (seconds instead of minutes)
+  - reduced alert fatigue by severity gating
+- Analyst receives:
+  - structured intelligence
+  - recommended actions
+  - next-step directive
+- Adds a practical SOAR layer to the SOC ecosystem:
+  - Detection → Decision Support → Analyst Notification (fully automated)
