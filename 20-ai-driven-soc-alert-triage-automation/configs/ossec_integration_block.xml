@@ -1,0 +1,11 @@
+<!--
+(Wazuh ossec.conf snippet)
+Paste inside <ossec_config> in /var/ossec/etc/ossec.conf
+-->
+
+<integration>
+  <name>custom-n8n-ai</name>
+  <hook_url>http://<EC2_PUBLIC_IP>:5678/webhook/custom-n8n-ai</hook_url>
+  <level>7</level>
+  <alert_format>json</alert_format>
+</integration>
