@@ -1,0 +1,390 @@
+Wazuh IT Hygiene Module Exploration
+Architecture Notes
+
+============================================================
+1. EXPLORATION PURPOSE
+============================================================
+
+This project explores the Wazuh IT Hygiene module from a SOC and
+endpoint-visibility perspective.
+
+The goal is not alerting or incident response by itself.
+
+The goal is to understand how Wazuh helps security teams answer
+baseline and context questions such as:
+
+- What is normal on this endpoint?
+- What software is installed?
+- What processes are running?
+- Which services are active?
+- Which ports and protocols are exposed?
+- What hardware and resource profile does this host have?
+- What identity and account context exists on the system?
+
+This module acts as a context and visibility layer for endpoint
+understanding inside the SOC.
+
+============================================================
+2. HIGH-LEVEL CONCEPT
+============================================================
+
+Traditional SOC workflows often begin with:
+  - alerts
+  - detections
+  - suspicious events
+  - investigations
+
+The IT Hygiene module adds an earlier and broader question:
+
+  "What does this endpoint normally look like?"
+
+This helps analysts understand baseline state before deciding
+whether something is suspicious, risky, unauthorized, or anomalous.
+
+============================================================
+3. ARCHITECTURE POSITION IN THE SOC
+============================================================
+
+Endpoint / Server
+        |
+        v
+Wazuh Agent
+  - collects endpoint telemetry
+  - sends inventory and state-related data
+        |
+        v
+Wazuh Manager / Indexing Pipeline
+        |
+        v
+Wazuh Dashboard
+        |
+        v
+IT Hygiene Module
+  - Dashboard
+  - System
+  - Software
+  - Processes
+  - Network
+  - Identity
+  - Services
+        |
+        v
+SOC Analyst / Security Engineer / Threat Hunter
+        |
+        v
+Context-Aware Security Decisions
+
+============================================================
+4. ENVIRONMENT MODEL
+============================================================
+
+This exploration assumes:
+
+- Wazuh is already deployed
+- endpoint agents are already connected
+- endpoint data is being collected normally
+- the analyst is using the Wazuh Dashboard GUI
+- the IT Hygiene module is available under Security Operations
+
+Example environment context:
+- Wazuh Dashboard
+- monitored Linux and/or Windows endpoints
+- AWS-hosted SOC ecosystem
+- endpoint telemetry already flowing into Wazuh
+
+============================================================
+5. WHY THIS MODULE MATTERS
+============================================================
+
+The IT Hygiene module matters because many important security questions
+cannot be answered from alerts alone.
+
+Examples:
+- Is this package supposed to be installed?
+- Is this service expected on this host?
+- Is this process normal for this server role?
+- Why is this endpoint consuming unusual CPU or memory?
+- Why is this host listening on this port?
+- Is this account activity part of the normal baseline?
+
+The module improves security operations by giving analysts inventory,
+state, and behavior context.
+
+============================================================
+6. MAIN DATA DOMAINS EXPOSED
+============================================================
+
+The IT Hygiene module organizes endpoint visibility into several
+practical domains.
+
+A. Dashboard
+   - high-level hygiene overview
+   - summary-level counts and top items
+
+B. System
+   - operating system family and version
+   - CPU name / cores / hardware context
+   - total and used memory
+   - host-level baseline details
+
+C. Software
+   - package inventory
+   - installed software visibility
+   - software footprint awareness
+
+D. Processes
+   - process name
+   - PID / parent PID
+   - command line
+   - process start time
+   - currently running process visibility
+
+E. Network
+   - ports
+   - protocols
+   - listeners
+   - network-facing process visibility
+
+F. Identity
+   - user and account-related visibility
+   - identity context for endpoint operations
+
+G. Services
+   - active services
+   - service inventory
+   - persistence-relevant service context
+
+============================================================
+7. SOC VALUE OF EACH DOMAIN
+============================================================
+
+Dashboard
+  - gives fast overview of endpoint hygiene posture
+  - helps analysts decide where to drill down first
+
+System
+  - helps define hardware/resource baseline
+  - useful for drift, anomaly, and environment understanding
+
+Software
+  - supports inventory review
+  - helps identify unauthorized, risky, or unexpected packages
+
+Processes
+  - helps investigate suspicious execution
+  - useful for persistence and anomaly review
+
+Network
+  - helps identify exposed services and risky listeners
+  - useful for attack-surface awareness
+
+Identity
+  - adds user/account context for endpoint activity
+
+Services
+  - useful for persistence review
+  - helps identify unexpected or unnecessary service exposure
+
+============================================================
+8. ANALYST WORKFLOW MODEL
+============================================================
+
+SOC Analyst opens Wazuh Dashboard
+        |
+        v
+Navigates to Security Operations -> IT Hygiene
+        |
+        v
+Reviews high-level endpoint hygiene dashboard
+        |
+        +--> checks system / hardware context
+        |
+        +--> checks installed packages
+        |
+        +--> checks running processes
+        |
+        +--> checks network listeners / ports / protocols
+        |
+        +--> checks identity-related context
+        |
+        +--> checks active services
+        |
+        v
+Builds endpoint baseline understanding
+        |
+        v
+Compares normal vs suspicious state
+        |
+        v
+Uses context during:
+  - triage
+  - hunting
+  - validation
+  - remediation planning
+  - endpoint review
+
+============================================================
+9. MODULE USE-CASE MODEL
+============================================================
+
+The IT Hygiene module supports several important use cases.
+
+1. Baseline Visibility
+   Understand what is normal on an endpoint.
+
+2. Suspicious Service Detection
+   Detect services that should not be active or exposed.
+
+3. Unauthorized Software Review
+   Review installed packages and unexpected software.
+
+4. Process Investigation
+   Validate running processes, command lines, and lineage clues.
+
+5. Resource Monitoring
+   Identify abnormal memory or CPU use patterns.
+
+6. Network Exposure Review
+   Review ports, protocols, and listeners to detect unnecessary exposure.
+
+7. Identity Context Review
+   Understand account-related endpoint context.
+
+8. Proactive Risk Reduction
+   Fix hygiene problems before they become incidents.
+
+============================================================
+10. RELATIONSHIP TO OTHER SOC FUNCTIONS
+============================================================
+
+The IT Hygiene module complements, rather than replaces:
+
+- alert monitoring
+- detection engineering
+- incident response
+- compliance dashboards
+- vulnerability visibility
+- threat hunting
+
+It provides the endpoint context that makes those functions stronger.
+
+Examples:
+- threat alert + process baseline = better triage
+- suspicious port + service view = better exposure analysis
+- suspicious package + software inventory = stronger validation
+- hunting workflow + endpoint context = better decision-making
+
+============================================================
+11. WHY IT IS OFTEN UNDERUSED
+============================================================
+
+This module is often underused because many teams focus only on:
+
+- alerts
+- incidents
+- detections
+- active threats
+
+As a result, context and baseline visibility are undervalued.
+
+But in practice, many investigations become faster and more accurate
+when analysts already understand:
+- endpoint software state
+- process landscape
+- services inventory
+- network exposure
+- system profile
+
+============================================================
+12. WHY IT SHOULD BE USED MORE
+============================================================
+
+The module deserves more practical use because it provides:
+
+- centralized endpoint visibility
+- baseline understanding
+- better context during triage
+- proactive hygiene review
+- stronger endpoint investigations
+- reduced blind spots
+- improved attack-surface awareness
+- better anomaly recognition
+
+It is especially valuable in environments where analysts need to
+move from alert-only thinking to context-aware analysis.
+
+============================================================
+13. HIGH-LEVEL PLAIN-TEXT FLOW
+============================================================
+
+Endpoint State and Telemetry
+        |
+        v
+Wazuh Agent Collection
+        |
+        v
+Wazuh Processing and Storage
+        |
+        v
+IT Hygiene Module Views
+        |
+        +--> Dashboard
+        +--> System
+        +--> Software
+        +--> Processes
+        +--> Network
+        +--> Identity
+        +--> Services
+        |
+        v
+Analyst Visibility and Baseline Understanding
+        |
+        v
+Better SOC Decisions
+
+============================================================
+14. DECISION VALUE TO THE ANALYST
+============================================================
+
+The IT Hygiene module helps analysts answer practical questions like:
+
+- Is this endpoint behaving normally?
+- Is this service expected here?
+- Is this process part of the baseline?
+- Is this software authorized?
+- Is this network listener justified?
+- Is this system drifting from expected hygiene?
+
+This shifts the analyst from:
+  "I only see an alert"
+
+to:
+  "I understand the system behind the alert"
+
+============================================================
+15. FINAL SUMMARY
+============================================================
+
+This exploration shows that the Wazuh IT Hygiene module is a major
+endpoint-context and visibility capability inside the SOC.
+
+It helps transform raw endpoint telemetry into practical understanding of:
+
+- systems
+- hardware
+- software
+- processes
+- network exposure
+- identity context
+- services
+
+Its architectural value is simple but important:
+
+endpoint state visibility
+        ->
+centralized Wazuh hygiene views
+        ->
+baseline understanding
+        ->
+smarter triage, stronger investigations,
+better hygiene awareness, and improved SOC context
