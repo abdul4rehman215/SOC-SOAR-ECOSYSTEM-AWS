@@ -455,11 +455,11 @@ This project demonstrates how AI + automation can:
 
 ## ✅ Project Outcome
 
-✅ Production-style AI triage engine integrated into SOC ecosystem
-✅ Automated analyst-ready email reports delivered in seconds
-✅ Reduced manual review and cognitive load
-✅ Strong SOAR capability added using open-source tooling (n8n)
-✅ Practical “Detection → AI → Analyst” pipeline operational in real time
+- ✅ Production-style AI triage engine integrated into SOC ecosystem
+- ✅ Automated analyst-ready email reports delivered in seconds
+- ✅ Reduced manual review and cognitive load
+- ✅ Strong SOAR capability added using open-source tooling (n8n)
+- ✅ Practical “Detection → AI → Analyst” pipeline operational in real time
 
 ---
 
