@@ -389,11 +389,10 @@ I strengthened my understanding of:
 ## 🖼️ Exploration Screenshots
 
 ### Threat Hunting Dashboard Overview
-> **Place main threat hunting dashboard image here**
-```text
-[IMAGE PLACEHOLDER: threat-hunting-dashboard-overview]
-Suggested file name: images/threat-hunting-dashboard-overview.png
-````
+
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/02-threat-hunting-module-exploration/images/1.png"/>
+</div>
 
 This view gives a high-level analyst summary including:
 
@@ -411,12 +410,9 @@ This is useful because it helps analysts quickly understand whether there are me
 
 ### Event-Level Hunting View
 
-> **Place event exploration image here**
-
-```text
-[IMAGE PLACEHOLDER: threat-hunting-event-view]
-Suggested file name: images/threat-hunting-event-view.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/02-threat-hunting-module-exploration/images/2.png"/>
+</div>
 
 This section is important because threat hunting often happens at the event level.
 
@@ -432,14 +428,11 @@ This is where low-level clues often become visible.
 
 ---
 
-### Additional Threat Hunting Dashboard View
+### Agent Threat Hunting Dashboard View
 
-> **Place extended dashboard exploration image here**
-
-```text
-[IMAGE PLACEHOLDER: threat-hunting-dashboard-extended]
-Suggested file name: images/threat-hunting-dashboard-extended.png
-```
+<div align="center">
+<img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/22-learning-projects/02-threat-hunting-module-exploration/images/3.png"/>
+</div>
 
 This view reinforces how the module supports multi-panel investigative visibility, including:
 
@@ -449,97 +442,6 @@ This view reinforces how the module supports multi-panel investigative visibilit
 * alert activity trends
 
 It is useful for building hypotheses before drilling deeper into raw event details.
-
----
-
-## 🖼️ Knowledge / Learning Reference Placeholders
-
-### Threat Hunting Concept Reference 1
-
-> **Place concept/knowledge image here**
-
-```text
-[IMAGE PLACEHOLDER: threat-hunting-knowledge-01]
-Suggested file name: images/threat-hunting-knowledge-01.png
-```
-
-Use this section to visually support the idea that threat hunting is proactive and investigation-driven rather than only alert-driven.
-
----
-
-### Threat Hunting Concept Reference 2
-
-> **Place concept/knowledge image here**
-
-```text
-[IMAGE PLACEHOLDER: threat-hunting-knowledge-02]
-Suggested file name: images/threat-hunting-knowledge-02.png
-```
-
-Use this section to highlight use cases such as:
-
-* IOC hunting
-* behavioral analysis
-* MITRE mapping
-* inventory-driven investigation
-* reduced dwell time
-
----
-
-### Threat Hunting Concept Reference 3
-
-> **Place concept/knowledge image here**
-
-```text
-[IMAGE PLACEHOLDER: threat-hunting-knowledge-03]
-Suggested file name: images/threat-hunting-knowledge-03.png
-```
-
-Use this section to reinforce that threat hunting relies on collected and searchable event data rather than only triggered alerts.
-
----
-
-### Threat Hunting Concept Reference 4
-
-> **Place concept/knowledge image here**
-
-```text
-[IMAGE PLACEHOLDER: threat-hunting-knowledge-04]
-Suggested file name: images/threat-hunting-knowledge-04.png
-```
-
-Use this section to explain the hunting cycle:
-
-* create hypothesis
-* collect data
-* analyze
-* respond
-
----
-
-### Threat Hunting Concept Reference 5
-
-> **Place concept/knowledge image here**
-
-```text
-[IMAGE PLACEHOLDER: threat-hunting-knowledge-05]
-Suggested file name: images/threat-hunting-knowledge-05.png
-```
-
-Use this section to show the importance of centralized log visibility and searchable telemetry in Wazuh.
-
----
-
-### Threat Hunting Concept Reference 6
-
-> **Place concept/knowledge image here**
-
-```text
-[IMAGE PLACEHOLDER: threat-hunting-knowledge-06]
-Suggested file name: images/threat-hunting-knowledge-06.png
-```
-
-Use this section to support the idea that Wazuh decoders, event normalization, and structured fields make hunting much more practical than working with raw unstructured logs alone.
 
 ---
 
@@ -576,12 +478,3 @@ That is why threat hunting should not be treated as optional in a SOC.
 It is one of the clearest signs of a stronger, more mature security operation — one that does not only respond to incidents, but actively looks for threats before they fully surface.
 
 ---
-
-## 🏁 Exploration Status
-
-✅ Threat Hunting module explored from a SOC perspective
-✅ Event-level and dashboard-level hunting visibility reviewed
-✅ MITRE, agent, and behavioral context explored
-✅ Practical SOC hunting use cases documented
-✅ Benefits and learning outcomes captured
-✅ Ready as a learning-focused module exploration project
