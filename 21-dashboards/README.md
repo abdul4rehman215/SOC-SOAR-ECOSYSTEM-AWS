@@ -418,9 +418,9 @@ The three dashboard subprojects inside this folder extend that vision further by
 
 This main folder is the parent directory for:
 
-* **SOC Threat Monitoring Dashboard**
-* **SOC MITRE ATT&CK Coverage Dashboard**
-* **SOC Compliance & CIS Benchmark Dashboard**
+* **[SOC Threat Monitoring Dashboard](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/21-dashboards/01-soc-threat-monitoring-dashboard)**
+* **[SOC MITRE ATT&CK Coverage Dashboard](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/21-dashboards/02-soc-mitre-attack-coverage-dashboard)**
+* **[SOC Compliance & CIS Benchmark Dashboard](https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/tree/main/21-dashboards/03-soc-compliance-cis-benchmark-dashboard)**
 
 Each of these subprojects will be documented individually with its own guide, architecture, interview Q&A, troubleshooting, and reusable JSON export.
 
