@@ -923,7 +923,7 @@ This makes the dashboard a practical part of **security posture monitoring, base
 
 I also shared this project on LinkedIn with a concise portfolio summary, key highlights, and implementation context.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-View%20Project%20Post-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/abdul4rehman215_soc-socanalyst-mitreattack-activity-7417071722383855616-WVBF?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-View%20Project%20Post-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/abdul4rehman215_soc-socanalyst-wazuh-activity-7417094373819191296-VpjN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU)
 
 ---
 
