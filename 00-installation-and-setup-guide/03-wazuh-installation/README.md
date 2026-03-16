@@ -150,10 +150,11 @@ This installs:
 
 At the end of installation, credentials are displayed:
 
-Username: admin
-Password: auto-generated
+- Username: admin
 
-Save securely.
+- Password: auto-generated
+
+- Save securely.
 
 ---
 
