@@ -171,7 +171,11 @@ This was not “just setup”. It included:
 docker run -d \
   --name n8n \
   -p 5678:5678 \
-  -v ~/.n8n:/home/node/.n8n \
+  -v /home/ubuntu/.n8n:/home/node/.n8n \
+  -e N8N_HOST=54.210.89.104 \
+  -e N8N_PORT=5678 \
+  -e N8N_PROTOCOL=http \
+  -e N8N_SECURE_COOKIE=false \
   --restart unless-stopped \
   n8nio/n8n
 ```
