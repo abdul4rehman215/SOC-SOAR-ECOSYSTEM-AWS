@@ -224,6 +224,16 @@ Dashboard validation:
 
 ---
 
+## Password Know via Terminal 
+
+This command extracts and prints all generated passwords (admin, kibanaserver, wazuh-wui, etc.).
+
+```
+sudo tar -O -xvf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
+```
+
+---
+
 # 🚨 Most Common Failures
 
 | Problem               | Root Cause       |
