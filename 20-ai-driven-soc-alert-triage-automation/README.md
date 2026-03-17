@@ -481,6 +481,17 @@ http://<EC2_PUBLIC_IP>:5678/webhook/custom-n8n-ai
 
 ---
 
+## Quick test
+
+From the Wazuh manager server, manually test the webhook first:
+
+```
+curl -X POST http://N8N_EC2_PUBLIC_IP/webhook-test/custom-n8n-ai \
+  -H "Content-Type: application/json" \
+  -d '{"test":"wazuh-to-n8n"}'
+```
+---
+
 ## 🧠 What I Learned
 
 * AI triage is only reliable with **strict prompt engineering**
