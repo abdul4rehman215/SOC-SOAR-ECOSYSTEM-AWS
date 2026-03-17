@@ -45,6 +45,20 @@ docker compose version || docker-compose version
 #   -v ~/.n8n:/home/node/.n8n \
 #   n8nio/n8n
 
+docker run -d \
+  --name n8n \
+  -p 127.0.0.1:5678:5678 \
+  -v /home/ubuntu/.n8n:/home/node/.n8n \
+  -e N8N_HOST=54.210.89.104 \
+  -e N8N_PORT=5678 \
+  -e N8N_PROTOCOL=http \
+  -e N8N_SECURE_COOKIE=false \
+  -e N8N_BASIC_AUTH_ACTIVE=true \
+  -e N8N_BASIC_AUTH_USER=admin \
+  -e N8N_BASIC_AUTH_PASSWORD=StrongPassword123 \
+  --restart unless-stopped \
+  n8nio/n8n
+
 # Option B: Run n8n in detached mode (recommended)
 docker run -d \
   --name n8n \
