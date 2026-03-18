@@ -1115,4 +1115,8 @@ Building practical security operations projects focused on **real workflow execu
     <img src="https://img.shields.io/badge/Email-EE0000?style=for-the-badge&logo=gmail&logoColor=white" />
   </a>
 
+  <a href="https://www.buymeacoffee.com/abdul4rehman215">
+    <img src="https://raw.githubusercontent.com/abdul4rehman215/abdul4rehman215/main/resources/bmc-button.png" alt="Buy Me a Coffee" height="28" />
+  </a>
+  
 ---
