@@ -8,14 +8,14 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -112,
-        32
+        160,
+        224
       ],
-      "id": "c4d4e7f4-c0cd-4230-a96f-6e84ac014a43",
+      "id": "3c06da25-b92f-45c9-ac8a-00c30f988c26",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "9nqGO6PSS2MIAuCy",
+          "id": "zUXQUtrG0SuLzxx4",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -29,24 +29,24 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -624,
-        -112
+        -352,
+        80
       ],
-      "id": "889fcd64-33b9-46c0-90fa-3c42adbd2686",
+      "id": "e663d375-e4af-4d44-b828-e60c89ee99c3",
       "name": "Wazuh Alert Webhook",
       "webhookId": "86eb5f77-eeae-457e-a526-c1b92cbf7a5f"
     },
     {
       "parameters": {
-        "jsCode": "const alert = $json.body;\n\n// Extract important nested fields safely\nconst rule = alert.all_fields?.rule || {};\nconst agent = alert.all_fields?.agent || {};\nconst mitre = rule.mitre || {};\nconst data = alert.all_fields?.data || {};\n\nreturn [{\n  rule_level: rule.level || \"N/A\",\n  rule_id: alert.rule_id || rule.id || \"N/A\",\n  description: alert.title || rule.description || \"N/A\",\n  log: alert.text || alert.all_fields?.full_log || \"N/A\",\n\n  // Core Agent Info\n  agent_name: agent.name || \"Unknown\",\n  agent_id: agent.id || \"N/A\",\n  agent_ip: agent.ip || \"N/A\",\n\n  // Network / Source\n  src_ip: data.srcip || \"N/A\",\n  src_port: data.srcport || \"N/A\",\n  user: data.dstuser || data.user || \"N/A\",\n\n  // MITRE\n  mitre_id: mitre.id || [],\n  mitre_tactic: mitre.tactic || [],\n  mitre_technique: mitre.technique || [],\n\n  // Rule Metadata\n  rule_firedtimes: alert.all_fields?.firedtimes || 0,\n  groups: alert.all_fields?.groups || [],\n\n  timestamp: alert.timestamp || alert.all_fields?.timestamp || new Date().toISOString(),\n\n  // PASS FULL RAW ALERT FOR AI CONTEXT\n  full_alert: alert\n}];\n"
+        "jsCode": "const alert = $json.body;\n\n// Extract important nested fields safely\nconst rule = alert.all_fields?.rule || {};\nconst agent = alert.all_fields?.agent || {};\nconst mitre = rule.mitre || {};\nconst data = alert.all_fields?.data || {};\n\nreturn [{\n  rule_level: rule.level ?? \"N/A\",\n  rule_id: alert.rule_id || rule.id || \"N/A\",\n  description: alert.title || rule.description || \"N/A\",\n  log: alert.text || alert.all_fields?.full_log || \"N/A\",\n\n  // Core Agent Info\n  agent_name: agent.name || \"Unknown\",\n  agent_id: agent.id || \"N/A\",\n  agent_ip: agent.ip || \"N/A\",\n\n  // Network / Source\n  src_ip: data.srcip || \"N/A\",\n  src_port: data.srcport || \"N/A\",\n  user: data.srcuser || data.dstuser || data.user || \"N/A\",\n\n  // MITRE\n  mitre_id: mitre.id || [],\n  mitre_tactic: mitre.tactic || [],\n  mitre_technique: mitre.technique || [],\n\n  // Rule Metadata\n  rule_firedtimes: rule.firedtimes,\n  groups: rule.groups || [],\n\n  timestamp: alert.timestamp || alert.all_fields?.timestamp || new Date().toISOString(),\n\n  // PASS FULL RAW ALERT FOR AI CONTEXT\n  full_alert: alert\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -272,
-        -192
+        0,
+        0
       ],
-      "id": "381c08f5-057b-43c8-80d5-b0583979789a",
+      "id": "9df60ca1-0132-49c6-8381-f2f7908ce61c",
       "name": "Normalize Wazuh Alert"
     },
     {
@@ -58,23 +58,23 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        16,
-        -192
+        288,
+        0
       ],
-      "id": "293424e3-5b60-454d-8681-4c94b736c197",
+      "id": "4014ff04-53a2-4e35-a2da-7ed19b40a47f",
       "name": "AI SOC Triage Engine"
     },
     {
       "parameters": {
-        "jsCode": "// ================================\n// GET DATA\n// ================================\n\nconst alert = $items(\"Normalize Wazuh Alert\")[0].json;\nconst aiRaw = $input.first().json.output || \"\";\n\n// ================================\n// CLEAN AI OUTPUT\n// ================================\n\n// Remove any accidental markdown artifacts\nlet aiResponse = aiRaw\n  .replace(/```/g, \"\")\n  .replace(/\\*\\*/g, \"\")\n  .trim();\n\n// ================================\n// EXTRACT SECTIONS (FIXED)\n// ================================\n\nfunction extractSection(title) {\n  const regex = new RegExp(\n    `${title}\\\\s*([\\\\s\\\\S]*?)(?=\\\\n[A-Z_]{3,}|$)`,\n    \"i\"\n  );\n  const match = aiResponse.match(regex);\n  return match ? match[1].trim() : \"\";\n}\n\nconst overview = extractSection(\"ALERT_OVERVIEW\");\nconst summary = extractSection(\"TRIAGE_SUMMARY\");\nconst risk = extractSection(\"RISK_ASSESSMENT\");\nconst actions = extractSection(\"RECOMMENDED_ACTIONS\");\n\n// Try ANALYST_DECISION first\nlet decision = extractSection(\"ANALYST_DECISION\");\n\n// If empty, try NEXT_STEP\nif (!decision) {\n  decision = extractSection(\"NEXT_STEP\");\n}\n\n// Final fallback\nif (!decision) {\n  decision = \"Analyst review required.\";\n}\n\n// Clean formatting artifacts\ndecision = decision\n  .replace(/NEXT_STEP/gi, \"\")\n  .replace(/ANALYST_DECISION/gi, \"\")\n  .replace(/\\n+/g, \" \")\n  .trim();\n\n\n// ================================\n// ALERT FIELDS\n// ================================\n\nconst ruleLevel = alert.rule_level || \"N/A\";\nconst ruleId = alert.rule_id || \"N/A\";\nconst description = alert.description || \"N/A\";\nconst agentName = alert.agent_name || \"Unknown\";\nconst agentIp = alert.agent_ip || \"N/A\";\nconst log = alert.log || \"N/A\";\nconst timestamp = alert.timestamp || new Date().toISOString();\nconst agentId = alert.agent_id || \"N/A\";\nconst srcIp = alert.src_ip || alert.agent_ip || \"N/A\";\nconst srcPort = alert.src_port || \"N/A\";\nconst user = alert.user || \"N/A\";\n\nconst mitreId = Array.isArray(alert.mitre_id) ? alert.mitre_id.join(\", \") : \"N/A\";\nconst mitreTactic = Array.isArray(alert.mitre_tactic) ? alert.mitre_tactic.join(\", \") : \"N/A\";\nconst mitreTechnique = Array.isArray(alert.mitre_technique) ? alert.mitre_technique.join(\", \") : \"N/A\";\n\n// 🔥 FIXED: proper fired count fallback\nconst ruleFired =\n  alert.rule_firedtimes ??\n  alert.full_alert?.all_fields?.rule?.firedtimes ??\n  \"N/A\";\n\nconst groups = Array.isArray(alert.groups) && alert.groups.length\n  ? alert.groups.join(\", \")\n  : \"N/A\";\n\n// ================================\n// SEVERITY LOGIC\n// ================================\n\nlet severityBadge = \"LOW\";\nlet severityColor = \"#17a2b8\";\nlet severityIcon = \"ℹ️\";\n\nconst level = Number(ruleLevel);\n\nif (level >= 13) {\n  severityBadge = \"CRITICAL\";\n  severityColor = \"#dc3545\";\n  severityIcon = \"🚨\";\n} else if (level >= 10) {\n  severityBadge = \"HIGH\";\n  severityColor = \"#fd7e14\";\n  severityIcon = \"⚠️\";\n} else if (level >= 7) {\n  severityBadge = \"MEDIUM\";\n  severityColor = \"#ffc107\";\n  severityIcon = \"🔶\";\n}\n\n// ================================\n// SUBJECT\n// ================================\n\nconst emailSubject = `${severityIcon} ${severityBadge} SOC Alert - Rule ${ruleId} (${agentName})`;\n\n// ================================\n// EMAIL HTML\n// ================================\n\nconst emailBody = `\n<!DOCTYPE html>\n<html>\n<body style=\"font-family:Segoe UI, Arial; background:#f4f6f9; padding:20px;\">\n\n<div style=\"max-width:800px; margin:auto; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);\">\n\n<!-- HEADER -->\n<div style=\"background:${severityColor}; color:white; padding:30px; text-align:center;\">\n<h1 style=\"margin:0;\">${severityIcon} ${severityBadge} Security Alert</h1>\n<p style=\"margin:5px 0 0 0;\">Severity Level: ${ruleLevel}</p>\n</div>\n\n<div style=\"padding:30px;\">\n\n<!-- ALERT OVERVIEW -->\n<h2 style=\"border-bottom:2px solid ${severityColor}; padding-bottom:8px;\">🛡 Alert Overview</h2>\n\n<div style=\"background:#f8f9fa; border:1px solid #e3e6ea; border-radius:8px; overflow:hidden;\">\n\n<table width=\"100%\" cellpadding=\"10\" style=\"border-collapse:collapse; font-size:14px;\">\n\n<tr><td style=\"width:30%; border-bottom:1px solid #e3e6ea;\"><b>Rule ID</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${ruleId}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Description</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${description}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Severity Level</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${ruleLevel}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Rule Fired Count</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${ruleFired}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Agent Name</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${agentName}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Agent ID</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${agentId}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Source IP</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${srcIp}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Source Port</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${srcPort}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>User</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${user}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Groups</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${groups}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>MITRE Technique ID</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${mitreId}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>MITRE Tactic</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${mitreTactic}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>MITRE Technique</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${mitreTechnique}</td></tr>\n<tr><td><b>Timestamp</b></td><td>${timestamp}</td></tr>\n\n</table>\n</div>\n\n<br>\n\n<!-- LOG -->\n<h2 style=\"border-bottom:2px solid #ccc; padding-bottom:8px;\">📄 Log Details</h2>\n<div style=\"background:#f1f3f5; padding:15px; border-radius:6px; font-family:monospace; font-size:13px;\">\n${log}\n</div>\n\n<br>\n\n<!-- AI TRIAGE -->\n<h2 style=\"border-bottom:2px solid #ccc; padding-bottom:8px;\">🤖 AI Triage Report</h2>\n\n<div style=\"margin-bottom:20px;\">\n<h3>Summary</h3>\n<p style=\"white-space:pre-line;\">${summary}</p>\n</div>\n\n<div style=\"margin-bottom:20px;\">\n<h3>Risk Assessment</h3>\n<p style=\"white-space:pre-line;\">${risk}</p>\n</div>\n\n<!-- RECOMMENDATIONS -->\n<div style=\"background:#e7f1ff; padding:20px; border-left:6px solid #0d6efd; border-radius:6px; margin-bottom:20px;\">\n<h3 style=\"margin-top:0;\">🛠 Recommended Actions</h3>\n<p style=\"white-space:pre-line; margin:0;\">${actions}</p>\n</div>\n\n<!-- DECISION -->\n<div style=\"background:#fff3cd; padding:15px; border-left:6px solid #ffc107; border-radius:6px;\">\n<b>⚡ Next Step:</b> ${decision}\n</div>\n\n</div>\n\n</div>\n\n</body>\n</html>\n`;\n\nreturn {\n  json: {\n    subject: emailSubject,\n    html: emailBody\n  }\n};\n"
+        "jsCode": "// ================================\n// GET DATA\n// ================================\n\nconst alert = $items(\"Normalize Wazuh Alert\")[0].json;\nconst aiRaw = $input.first().json.output || \"\";\n\n// ================================\n// CLEAN AI OUTPUT\n// ================================\n\n// Remove any accidental markdown artifacts\nlet aiResponse = aiRaw\n  .replace(/```/g, \"\")\n  .replace(/\\*\\*/g, \"\")\n  .trim();\n\n// ================================\n// EXTRACT SECTIONS (FIXED)\n// ================================\n\nfunction extractSection(title) {\n  const regex = new RegExp(\n    `${title}\\\\s*([\\\\s\\\\S]*?)(?=\\\\n[A-Z_]{3,}|$)`,\n    \"i\"\n  );\n  const match = aiResponse.match(regex);\n  return match ? match[1].trim() : \"\";\n}\n\nconst overview = extractSection(\"ALERT_OVERVIEW\");\nconst summary = extractSection(\"TRIAGE_SUMMARY\");\nconst risk = extractSection(\"RISK_ASSESSMENT\");\nconst actions = extractSection(\"RECOMMENDED_ACTIONS\");\n\n// Try ANALYST_DECISION first\nlet decision = extractSection(\"ANALYST_DECISION\");\n\n// If empty, try NEXT_STEP\nif (!decision) {\n  decision = extractSection(\"NEXT_STEP\");\n}\n\n// Final fallback\nif (!decision) {\n  decision = \"Analyst review required.\";\n}\n\n// Clean formatting artifacts\ndecision = decision\n  .replace(/NEXT_STEP/gi, \"\")\n  .replace(/ANALYST_DECISION/gi, \"\")\n  .replace(/\\n+/g, \" \")\n  .trim();\n\n\n// ================================\n// ALERT FIELDS\n// ================================\n\nconst ruleLevel = alert.rule_level || \"N/A\";\nconst ruleId = alert.rule_id || \"N/A\";\nconst description = alert.description || \"N/A\";\nconst agentName = alert.agent_name || \"Unknown\";\nconst agentIp = alert.agent_ip || \"N/A\";\nconst log = alert.log || \"N/A\";\nconst timestamp = alert.timestamp || new Date().toISOString();\nconst agentId = alert.agent_id || \"N/A\";\nconst srcIp = alert.src_ip || alert.agent_ip || \"N/A\";\nconst srcPort = alert.src_port || \"N/A\";\nconst user = alert.user || \"N/A\";\n\nconst mitreId = Array.isArray(alert.mitre_id) ? alert.mitre_id.join(\", \") : \"N/A\";\nconst mitreTactic = Array.isArray(alert.mitre_tactic) ? alert.mitre_tactic.join(\", \") : \"N/A\";\nconst mitreTechnique = Array.isArray(alert.mitre_technique) ? alert.mitre_technique.join(\", \") : \"N/A\";\n\n// 🔥 FIXED: proper fired count fallback\nconst ruleFired =\n  alert.rule_firedtimes ??\n  alert.full_alert?.all_fields?.rule?.firedtimes ??\n  \"N/A\";\n\nconst groups =\n  Array.isArray(alert.groups) && alert.groups.length\n    ? alert.groups.join(\", \")\n    : Array.isArray(alert.full_alert?.all_fields?.rule?.groups)\n      ? alert.full_alert.all_fields.rule.groups.join(\", \")\n      : \"N/A\";\n\n// ================================\n// SEVERITY LOGIC\n// ================================\n\nlet severityBadge = \"LOW\";\nlet severityColor = \"#17a2b8\";\nlet severityIcon = \"ℹ️\";\n\nconst level = Number(ruleLevel);\n\nif (level >= 13) {\n  severityBadge = \"CRITICAL\";\n  severityColor = \"#dc3545\";\n  severityIcon = \"🚨\";\n} else if (level >= 10) {\n  severityBadge = \"HIGH\";\n  severityColor = \"#fd7e14\";\n  severityIcon = \"⚠️\";\n} else if (level >= 7) {\n  severityBadge = \"MEDIUM\";\n  severityColor = \"#ffc107\";\n  severityIcon = \"🔶\";\n}\n\n// ================================\n// SUBJECT\n// ================================\n\nconst emailSubject = `${severityIcon} ${severityBadge} SOC Alert - Rule ${ruleId} (${agentName})`;\n\n// ================================\n// EMAIL HTML\n// ================================\n\nconst emailBody = `\n<!DOCTYPE html>\n<html>\n<body style=\"font-family:Segoe UI, Arial; background:#f4f6f9; padding:20px;\">\n\n<div style=\"max-width:800px; margin:auto; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);\">\n\n<!-- HEADER -->\n<div style=\"background:${severityColor}; color:white; padding:30px; text-align:center;\">\n<h1 style=\"margin:0;\">${severityIcon} ${severityBadge} Security Alert</h1>\n<p style=\"margin:5px 0 0 0;\">Severity Level: ${ruleLevel}</p>\n</div>\n\n<div style=\"padding:30px;\">\n\n<!-- ALERT OVERVIEW -->\n<h2 style=\"border-bottom:2px solid ${severityColor}; padding-bottom:8px;\">🛡 Alert Overview</h2>\n\n<div style=\"background:#f8f9fa; border:1px solid #e3e6ea; border-radius:8px; overflow:hidden;\">\n\n<table width=\"100%\" cellpadding=\"10\" style=\"border-collapse:collapse; font-size:14px;\">\n\n<tr><td style=\"width:30%; border-bottom:1px solid #e3e6ea;\"><b>Rule ID</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${ruleId}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Description</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${description}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Severity Level</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${ruleLevel}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Rule Fired Count</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${ruleFired}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Agent Name</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${agentName}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Agent ID</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${agentId}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Source IP</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${srcIp}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Source Port</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${srcPort}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>User</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${user}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>Groups</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${groups}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>MITRE Technique ID</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${mitreId}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>MITRE Tactic</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${mitreTactic}</td></tr>\n<tr><td style=\"border-bottom:1px solid #e3e6ea;\"><b>MITRE Technique</b></td><td style=\"border-bottom:1px solid #e3e6ea;\">${mitreTechnique}</td></tr>\n<tr><td><b>Timestamp</b></td><td>${timestamp}</td></tr>\n\n</table>\n</div>\n\n<br>\n\n<!-- LOG -->\n<h2 style=\"border-bottom:2px solid #ccc; padding-bottom:8px;\">📄 Log Details</h2>\n<div style=\"background:#f1f3f5; padding:15px; border-radius:6px; font-family:monospace; font-size:13px;\">\n${log}\n</div>\n\n<br>\n\n<!-- AI TRIAGE -->\n<h2 style=\"border-bottom:2px solid #ccc; padding-bottom:8px;\">🤖 AI Triage Report</h2>\n\n<div style=\"margin-bottom:20px;\">\n<h3>Summary</h3>\n<p style=\"white-space:pre-line;\">${summary}</p>\n</div>\n\n<div style=\"margin-bottom:20px;\">\n<h3>Risk Assessment</h3>\n<p style=\"white-space:pre-line;\">${risk}</p>\n</div>\n\n<!-- RECOMMENDATIONS -->\n<div style=\"background:#e7f1ff; padding:20px; border-left:6px solid #0d6efd; border-radius:6px; margin-bottom:20px;\">\n<h3 style=\"margin-top:0;\">🛠 Recommended Actions</h3>\n<p style=\"white-space:pre-line; margin:0;\">${actions}</p>\n</div>\n\n<!-- DECISION -->\n<div style=\"background:#fff3cd; padding:15px; border-left:6px solid #ffc107; border-radius:6px;\">\n<b>⚡ Next Step:</b> ${decision}\n</div>\n\n</div>\n\n</div>\n\n</body>\n</html>\n`;\n\nreturn {\n  json: {\n    subject: emailSubject,\n    html: emailBody\n  }\n};\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        400,
-        -192
+        672,
+        0
       ],
-      "id": "e1c911cb-f68a-48aa-8a19-2f767ce79bd9",
+      "id": "0f8fee4b-5fb7-4355-815b-8eb2e5108ce2",
       "name": "Format SOC Email Report"
     },
     {
@@ -88,15 +88,15 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        704,
-        -192
+        976,
+        0
       ],
-      "id": "386920ef-cbf6-4827-b3b3-fcc97938b24e",
+      "id": "bd580223-1d4a-4883-9f26-48f064c627be",
       "name": "Send SOC Alert Email",
       "webhookId": "f6fba4b4-c561-4842-ab28-6df02534e2cf",
       "credentials": {
         "smtp": {
-          "id": "bhLlhQRcdOMT95iD",
+          "id": "eBQPq6XrRXFwJZtO",
           "name": "SMTP account"
         }
       }
@@ -163,13 +163,14 @@
   "active": false,
   "settings": {
     "executionOrder": "v1",
+    "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "d7bcad20-3a75-406e-886f-039162145afe",
+  "versionId": "cdb7975e-da70-46cb-9545-0423c3373013",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "10084d57850f6e49fdfbfc33bd2463a41410c4957ef50e9dcba6a9c5fab24b4b"
+    "instanceId": "cf6f75798732927d9c1c1afda8304478e8f2a8a5038e6f75124d182cde108efa"
   },
-  "id": "GWxpLD5I-GXGVB5AwekM4",
+  "id": "C3kzsalhSi5dDKJw",
   "tags": []
 }
