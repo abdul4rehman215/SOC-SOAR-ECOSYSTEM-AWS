@@ -74,7 +74,7 @@ cd docker/prod1-thehive
 # 6️⃣ INITIALIZE DOCKER ENVIRONMENT
 #############################
 
-bash ../scripts/init.sh
+bash ./scripts/init.sh
 
 #############################
 # 7️⃣ START THEHIVE STACK
