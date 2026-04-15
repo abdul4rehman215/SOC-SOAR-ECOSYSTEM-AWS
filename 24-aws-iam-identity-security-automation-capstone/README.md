@@ -132,10 +132,8 @@ Because this is a prototype, the value is expressed as **expected operational im
 ├── architecture-notes.txt
 ├── interview_qna.md
 ├── notes/
-│   ├── architecture-image-prompt.md
 │   ├── capstone-positioning-and-usp.md
-│   ├── implementation-decisions.md
-│   └── linkedin-links-placeholder.md
+│   └── implementation-decisions.md
 ├── resources/
 │   └── README.md
 ├── project-pdfs/
