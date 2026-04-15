@@ -3,7 +3,7 @@
 > SOC Operations • SOC Analyst Workflows • Detection Engineering • Incident Response • Threat Intelligence • SOAR Automation
 
 <p align="center">
-  <img src="./resources/soc-soar-all-in-one-logo-line.png" alt="SOC SOAR Ecosystem" width="950">
+  <img src="./resources/soc-soar-all-in-one-logo-line-updated-aws.png" alt="SOC SOAR Ecosystem" width="950">
 </p>
 
 <p align="center">
