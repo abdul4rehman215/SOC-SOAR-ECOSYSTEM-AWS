@@ -1,0 +1,1 @@
+Overview folder purpose: summarize how Flows A/B/C/D combine into one lifecycle for AWS IAM detection, containment, hygiene monitoring, and closure sync.
