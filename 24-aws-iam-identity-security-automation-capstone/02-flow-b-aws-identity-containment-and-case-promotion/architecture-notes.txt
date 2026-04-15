@@ -1,0 +1,1 @@
+Flow B notes: native TheHive 5 nodes became the preferred final approach after earlier HTTP query-format issues. Promotion depends on an existing case template.
