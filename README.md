@@ -61,9 +61,9 @@
 
 <!-- ===================== SCOPE & STATUS ===================== -->
 
-![Projects](https://img.shields.io/badge/Projects-38-43A047?style=for-the-badge)
+![Projects](https://img.shields.io/badge/Projects-39-43A047?style=for-the-badge)
 ![Installations](https://img.shields.io/badge/INSTALLATIONS%20&%20SETUPS-11-546E7A?style=for-the-badge)
-![Capstones](https://img.shields.io/badge/Capstones-2-8E24AA?style=for-the-badge)
+![Capstones](https://img.shields.io/badge/Capstones-3-8E24AA?style=for-the-badge)
 ![Dashboards Count](https://img.shields.io/badge/Dashboards-6-0277BD?style=for-the-badge)
 ![Explorations](https://img.shields.io/badge/Learning%20Explorations-4-F57C00?style=for-the-badge)
 ![Portfolio](https://img.shields.io/badge/Portfolio-Project%20Based-00C853?style=for-the-badge)
@@ -207,9 +207,10 @@ The portfolio includes detection logic, enrichment flows, response steps, analys
 Endpoint, network, web, cloud, threat intel, dashboards, and automation are all covered.
 
 ### ✅ It includes portfolio-grade capstones
-The repository contains two strong flagship implementations:
+The repository contains three strong flagship implementations:
 - **SOC + SOAR malware incident response capstone**
 - **AI-driven SOC alert triage automation**
+- **AWS IAM identity security automation capstone**
 
 ### ✅ It reflects analyst and engineering discipline
 Many projects include:
@@ -255,8 +256,21 @@ A modern SOC automation pipeline using:
 - analyst-ready severity-colored reporting
 
 ---
+## 3. ☁️ AWS IAM Identity Security Automation Capstone
+**[24-aws-iam-identity-security-automation-capstone](./24-aws-iam-identity-security-automation-capstone/)**
 
-## 3. 🌐 Detection Engineering Across Endpoint, Network, Web, and Cloud
+A four-flow cloud identity security automation capstone covering:
+- AWS identity finding triage and enrichment
+- IAM access-key containment with analyst actioning
+- scheduled IAM hygiene monitoring and proactive alerting
+- TheHive 5 alert and case lifecycle integration
+- Slack and DataTable operational tracking
+- closure-state synchronization back into tracking
+
+---
+
+
+## 4. 🌐 Detection Engineering Across Endpoint, Network, Web, and Cloud
 The repository includes practical projects around:
 - SSH brute-force detection
 - HTTP anomaly detection using OpenSearch ML
@@ -270,7 +284,7 @@ The repository includes practical projects around:
 
 ---
 
-## 4. 📊 Dashboard Engineering and Visibility Projects
+## 5. 📊 Dashboard Engineering and Visibility Projects
 **[21-dashboards](./21-dashboards/)** contains dedicated security visualization work for:
 - SOC threat monitoring
 - MITRE ATT&CK coverage
@@ -418,10 +432,13 @@ Flagship portfolio work covering end-to-end SOC/SOAR execution, AI-assisted auto
 | 21 | [Wazuh Dashboard Engineering & Security Visualization](./21-dashboards/) | Dashboard engineering | Dedicated dashboards for threat monitoring, ATT&CK coverage, and compliance, plus additional project-embedded dashboards in SSH brute-force, Suricata, and Zeek workflows |
 | 22 | [Wazuh Module Exploration & Learning Projects](./22-learning-projects/) | Structured feature exploration | IT hygiene, threat hunting, discover indices, vulnerability detection exploration |
 | 23 | [Other Projects](./23-other-projects/) | Supporting research & tuning work | Supplementary PDFs around rule tuning and detection refinement |
+| 24 | [AWS IAM Identity Security Automation Capstone](./24-aws-iam-identity-security-automation-capstone/) | Cloud identity security automation capstone | Four-flow prototype for AWS identity triage, IAM containment, hygiene monitoring, TheHive integration, and closure sync |
 
 ### 🧠 Skills Demonstrated
 - Full SOC + SOAR case lifecycle execution
 - AI-assisted alert triage and decision support
+- Cloud identity security automation and orchestration
+- TheHive alert-to-case lifecycle synchronization
 - Dashboard engineering for analyst workflows
 - Threat intel lifecycle thinking
 - Detection tuning and portfolio documentation depth
@@ -605,15 +622,70 @@ This project demonstrates the ability to build a **practical AI-assisted SOC ale
 
 ---
 
-## 🌟 Why These Two Projects Matter
+## ☁️ Flagship Capstone 03 — AWS IAM Identity Security Automation (Project 24)
+
+<div align="center">
+
+`Ingest Finding` ➜ `Enrich Identity Context` ➜ `Contain Access` ➜ `Open / Promote Case` ➜ `Monitor Hygiene` ➜ `Sync Closure`
+
+</div>
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/☁️%20Ingest%20AWS%20Identity%20Finding-FF9900?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🧠%20Enrich%20IAM%20%26%20CloudTrail%20Context-3949AB?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🛑%20Contain%20Access%20Key-C62828?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/📂%20TheHive%20Alert%20%26%20Case-7B1FA2?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🧹%20Scheduled%20IAM%20Hygiene-00897B?style=flat-square"/>
+<img src="https://img.shields.io/badge/→-444444?style=flat-square"/>
+<img src="https://img.shields.io/badge/🔁%20Closure%20Sync%20to%20Tracking-1565C0?style=flat-square"/>
+
+</div>
+
+### 🧩 Integrated Components Used
+
+- **AWS GuardDuty / Security Hub / IAM / CloudTrail** for detection source, identity context, and audit trail validation
+- **n8n** for multi-flow orchestration, normalization, branching, and scheduled automation
+- **Slack** for analyst-facing triage, containment, hygiene, and closure notifications
+- **TheHive 5** for alert creation, case promotion, and closure-state handling
+- **n8n Data Tables** for lightweight operational state tracking
+- **IAM credential report parsing** for scheduled hygiene review and proactive issue generation
+
+### 🎯 What This Capstone Simulates
+
+This capstone represents a **cloud identity security operations workflow** where AWS identity findings are:
+
+- ingested and normalized from identity-focused AWS detections
+- enriched with IAM and CloudTrail context before analyst action
+- optionally contained through access-key deactivation flows
+- pushed into TheHive for alerting and case handling
+- expanded with proactive hygiene monitoring for missing MFA and stale credential issues
+- synchronized back into tracking once the case lifecycle is closed
+
+It is a full **Detect → Enrich → Contain → Track → Close** cloud identity automation implementation.
+
+### ✅ Outcome Statement
+
+This project demonstrates the ability to build a **multi-workflow AWS identity security automation capstone** that connects cloud detections, analyst notifications, ticketing, hygiene monitoring, and closure synchronization into one coherent SOC prototype.
+
+**Project link:** [24-aws-iam-identity-security-automation-capstone](./24-aws-iam-identity-security-automation-capstone/)
+
+---
+
+## 🌟 Why These Flagship Capstones Matter
 
 Together, these flagship projects show:
 
 - **traditional SOC depth** through detection, investigation, incident response, and intelligence sharing
 - **modern SOC capability** through automation, orchestration, and AI-assisted analyst support
+- **cloud-focused identity operations capability** through enrichment, containment, hygiene monitoring, and lifecycle synchronization
 - **portfolio-level execution** across both defensive operations and workflow engineering
 
-They are the strongest proof in this repository that the portfolio goes beyond tool setup and demonstrates **end-to-end security operations capability**.
+They are the strongest proof in this repository that the portfolio goes beyond tool setup and demonstrates **end-to-end security operations capability** across investigation, AI-assisted triage, cloud identity automation, and lifecycle closure.
 
 # 🛠️ Tools & Technologies Used Across This Repository
 
@@ -656,6 +728,9 @@ They are the strongest proof in this repository that the portfolio goes beyond t
 
 ## ☁️ Cloud Monitoring
 - AWS CloudTrail
+- AWS GuardDuty
+- AWS Security Hub
+- AWS IAM
 - Amazon S3
 - IAM roles / access configuration
 
@@ -673,6 +748,7 @@ They are the strongest proof in this repository that the portfolio goes beyond t
 - Slack
 - Email-based SOC reporting
 - Gemini API
+- n8n Data Tables
 
 </details>
 
@@ -694,6 +770,7 @@ They are the strongest proof in this repository that the portfolio goes beyond t
 | Incident Response | Triage, scoping, timeline, containment, eradication, recovery, and closure |
 | Threat Intelligence | IOC validation, enrichment, contextualization, and MISP sharing |
 | SOAR / Automation | TheHive + Cortex workflowing, Wazuh custom integrations, n8n automation |
+| Cloud Identity Security Automation | GuardDuty / Security Hub / IAM / CloudTrail workflows, containment logic, hygiene checks, and case-closure synchronization |
 | AI-Assisted Security Ops | Structured alert summarization, analyst-ready triage reporting, decision support |
 | Dashboard Engineering | Threat monitoring, ATT&CK coverage views, compliance posture visualization |
 | Documentation Discipline | Commands, architecture notes, troubleshooting, interview Q&A, project walkthroughs |
@@ -750,6 +827,7 @@ SOC-SOAR-ECOSYSTEM-AWS/
 │   └── 04-vulnerability-detection-module-exploration/
 │
 ├── 23-other-projects/                                # Supplementary security work and supporting PDFs
+├── 24-aws-iam-identity-security-automation-capstone/ # AWS IAM identity triage, containment, hygiene, and case-closure automation capstone
 ├── resources/                                        # Shared logos, diagrams, screenshots, and architecture visuals
 └── README.md
 ````
@@ -943,7 +1021,10 @@ This repository is best explored as a **connected portfolio**, not as random sta
 5. **[20-ai-driven-soc-alert-triage-automation](./20-ai-driven-soc-alert-triage-automation/)**
    Review the automation and AI-assisted analyst triage pipeline.
 
-6. **[21-dashboards](./21-dashboards/)** and **[22-learning-projects](./22-learning-projects/)**
+6. **[24-aws-iam-identity-security-automation-capstone](./24-aws-iam-identity-security-automation-capstone/)**
+   Review the four-flow AWS IAM identity security automation capstone covering triage, containment, IAM hygiene monitoring, TheHive integration, and closure sync.
+
+7. **[21-dashboards](./21-dashboards/)** and **[22-learning-projects](./22-learning-projects/)**
    Explore visibility engineering, dashboarding, and feature/module exploration.
 
 ---
@@ -1050,6 +1131,7 @@ This portfolio demonstrates the ability to:
 - Perform **alert triage, investigation, escalation, and incident response**
 - Engineer and tune detections using **rules, decoders, thresholds, and enrichment**
 - Use **Wazuh, TheHive, Cortex, and MISP** in connected operational workflows
+- Build **cloud identity security automation** using GuardDuty, Security Hub, IAM, CloudTrail, n8n, Slack, and TheHive
 - Enrich and validate IOCs using **threat intelligence sources**
 - Design **active response and automation workflows**
 - Create **dashboard-driven security visibility**
@@ -1088,6 +1170,7 @@ If you are reviewing this portfolio, the best places to start are:
 
 - **[19-capstone-soc-soar-malware-incident-response](./19-capstone-soc-soar-malware-incident-response/)**
 - **[20-ai-driven-soc-alert-triage-automation](./20-ai-driven-soc-alert-triage-automation/)**
+- **[24-aws-iam-identity-security-automation-capstone](./24-aws-iam-identity-security-automation-capstone/)**
 - **[21-dashboards](./21-dashboards/)**
 - **[00-installation-and-setup-guide](./00-installation-and-setup-guide/)**
 
