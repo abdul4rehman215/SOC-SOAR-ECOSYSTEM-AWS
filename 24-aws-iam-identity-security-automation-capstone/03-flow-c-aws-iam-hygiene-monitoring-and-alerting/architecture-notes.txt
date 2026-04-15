@@ -1,0 +1,1 @@
+Flow C notes: the wait node is essential between report generation and report retrieval. Primary findings include missing MFA, unused access key, and stale access key.

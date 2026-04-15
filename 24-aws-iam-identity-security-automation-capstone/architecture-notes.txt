@@ -1,0 +1,57 @@
+AWS IAM Identity Security Automation Capstone — Master Architecture Notes
+=======================================================================
+
+Objective
+---------
+Design a portfolio-grade cloud identity automation prototype that converts fragmented AWS identity findings into a structured SOC workflow spanning triage, containment, hygiene alerting, and closure synchronization.
+
+Core design pillars
+-------------------
+- Detection must be enriched before analysts act.
+- Containment must remain traceable and ticket-linked.
+- Scheduled posture reviews must live beside reactive detections.
+- Closure in TheHive must flow back into operational tracking.
+- The project should support both ticketing-enabled and non-ticketing variants.
+
+Flow responsibilities
+---------------------
+Flow A
+  - Receives SNS/webhook-based identity findings.
+  - Validates trusted topic and supported identity scenario.
+  - Enriches with IAM last-used context and CloudTrail evidence.
+  - Scores severity/risk.
+  - Updates Slack/DataTable.
+  - Creates TheHive alert in ticketing variant.
+
+Flow B
+  - Receives Security Hub custom action or approved containment request.
+  - Validates action and required fields.
+  - Disables the IAM access key when eligible.
+  - Updates Slack/DataTable.
+  - Finds matching TheHive alert and promotes it to a case.
+  - Adds case comment after promotion.
+
+Flow C
+  - Scheduled workflow.
+  - Generates IAM credential report.
+  - Waits for report readiness.
+  - Parses base64/XML-wrapped CSV response.
+  - Evaluates missing MFA, unused access keys, stale keys.
+  - Posts digest to Slack.
+  - Writes/updates finding rows.
+  - Creates proactive TheHive alerts per hygiene issue.
+
+Flow D
+  - Scheduled/manual polling workflow.
+  - Searches recent TheHive cases.
+  - Filters for project-relevant and recently closed/resolved records.
+  - Normalizes case metadata.
+  - Maps back to finding reference where possible.
+  - Updates DataTable and posts closure sync note to Slack.
+
+Production hardening ideas
+--------------------------
+- parameterize sources, status lists, and case template IDs via config/secrets
+- convert repeated normalization patterns into n8n sub-workflows
+- add retries / backoff for Slack/TheHive/AWS transient failures
+- add approval steps around higher-risk containment responders
