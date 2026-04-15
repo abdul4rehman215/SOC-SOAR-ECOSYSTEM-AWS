@@ -45,9 +45,9 @@ This is not just a set of imported JSON files. It is a portfolio-grade prototype
 
 ## 🧩 High-level architecture
 
-> 📌 Add your final architecture image here later: `resources/aws-iam-identity-security-capstone-architecture.png`
->
-> A ready-to-use prompt is included in `notes/architecture-image-prompt.md`.
+<p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/24-aws-iam-identity-security-automation-capstone/resources/aws-iam-identity-security-capstone-architecture.png" alt="AWS IAM Security Automation Capstone Architecture" width="900"/>
+</p>
 
 ### Master lifecycle view
 
