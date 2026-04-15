@@ -1,0 +1,1 @@
+Flow D notes: code-node execution mode matters; each returned item must be shaped as a json object. Closed status matching and sourceRef extraction are central to reliable sync.
