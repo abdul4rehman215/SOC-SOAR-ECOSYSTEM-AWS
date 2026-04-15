@@ -215,8 +215,57 @@ These limitations are part of the project’s credibility: they show where produ
 
 ---
 
-## 🤝 Author
+## 🌐 Project Posts on LinkedIn
 
-Built and documented by **[Abdul Rehman](https://www.linkedin.com/in/abdul4rehman215/)**.
+I also shared this project on LinkedIn through multiple posts covering the implementation, workflow, and key outcomes.
 
-GitHub branding: **abdul4rehman215**
+> To be added Soon....
+
+<!--
+
+<p align="left">
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-capstone-project-malware-detection-and-activity-7430280092578172943-Avqu?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/LinkedIn-Post%2001-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 01" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-capstone-project-incident-response-activity-7430997244033658880-uzzZ?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/LinkedIn-Post%2002-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 02" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-soar-cybersecurity-activity-7431722094020816896-UKtd?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/Capstone-Post%2003-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 03" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_socarchitecture-soar-securityengineering-activity-7431359622495510528-ZYVd?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/Architecture-Post%2004-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 04" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-soar-blueteam-activity-7432088167048167424-7xns?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/Recruiter-Post%2005-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 05" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-capstone-project-malware-detection-activity-7431953077693440000-KWbW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/Review-Post%2006-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 06" /></a>
+</p>
+
+---
+
+-->
+
+## ⭐ Final Note
+
+This project reflects **real hands-on implementation** focused on practical security workflow execution, technical depth, and portfolio-grade documentation.
+
+It demonstrates the ability to:
+
+> **Build → Validate → Investigate → Document → Present**
+
+If this project adds value, consider starring the repository ⭐
+
+---
+
+## 👨‍💻 Author
+
+**Abdul Rehman**  
+SOC • SIEM • Detection Engineering • Incident Response • Threat Intelligence • Security Automation
+
+---
+
+### 📧 Reach Out
+
+  <a href="https://github.com/abdul4rehman215">
+    <img src="https://img.shields.io/badge/Follow-181717?style=for-the-badge&logo=github&logoColor=white" alt="Follow" />
+  </a>
+  <a href="https://linkedin.com/in/abdul4rehman215">
+    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white&v=1" alt="LinkedIn" />
+  </a>
+  <a href="mailto:abdul4rehman215@gmail.com">
+    <img src="https://img.shields.io/badge/Email-EE0000?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+  </a>
+
+---
+
