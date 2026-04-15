@@ -8,6 +8,10 @@
   <img src="https://img.shields.io/badge/Focus-SOC%20Automation-059669?style=for-the-badge" alt="Focus">
 </p>
 
+<p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/AWS%20IAM%20logos.png" alt="AWS IAM Logos" width="900"/>
+</p>
+
 ## 🎯 Problem vs Solution
 
 Cloud identity findings often arrive as isolated alerts with incomplete context. In real SOC operations, that creates four recurring issues:
