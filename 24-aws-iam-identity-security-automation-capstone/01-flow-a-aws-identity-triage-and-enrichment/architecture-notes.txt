@@ -1,0 +1,1 @@
+Flow A notes: validates trusted topic, normalizes AWS identity event, enriches with IAM last-used and CloudTrail context, scores risk, and opens TheHive alert in the ticketing-enabled variant.
