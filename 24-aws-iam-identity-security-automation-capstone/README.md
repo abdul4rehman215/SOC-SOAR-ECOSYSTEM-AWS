@@ -127,7 +127,7 @@ Because this is a prototype, the value is expressed as **expected operational im
 ## 📁 Repository structure
 
 ```text
-21-aws-iam-identity-security-automation-capstone/
+24-aws-iam-identity-security-automation-capstone/
 ├── README.md
 ├── architecture-notes.txt
 ├── interview_qna.md
