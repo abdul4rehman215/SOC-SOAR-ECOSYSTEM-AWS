@@ -128,25 +128,81 @@ Because this is a prototype, the value is expressed as **expected operational im
 
 ---
 
-## 📁 Repository structure
+## 📁 Project layout and artifact mapping
 
 ```text
 24-aws-iam-identity-security-automation-capstone/
-├── README.md
-├── architecture-notes.txt
-├── interview_qna.md
-├── notes/
-│   ├── capstone-positioning-and-usp.md
-│   └── implementation-decisions.md
-├── resources/
-│   └── README.md
-├── project-pdfs/
-├── workflow-jsons/
-├── 00-project-overview/
-├── 01-flow-a-aws-identity-triage-and-enrichment/
-├── 02-flow-b-aws-identity-containment-and-case-promotion/
-├── 03-flow-c-aws-iam-hygiene-monitoring-and-alerting/
-└── 04-flow-d-thehive-case-closure-sync/
+├── README.md                                           # Capstone overview, objectives, architecture summary, and navigation
+├── architecture-notes.txt                              # High-level design notes and implementation rationale
+├── interview_qna.md                                    # Interview-focused talking points and project discussion prompts
+├── notes/                                              # Supporting notes for positioning, decisions, and presentation
+│   ├── architecture-image-prompt.md                    # Prompt/reference for generating architecture visuals
+│   ├── capstone-positioning-and-usp.md                 # Project positioning, USP, and portfolio framing notes
+│   ├── implementation-decisions.md                     # Key implementation decisions and tradeoffs
+│   └── linkedin-links-placeholder.md                   # Placeholder for portfolio and LinkedIn reference links
+├── resources/                                          # Supporting references and reusable guidance
+│   └── README.md                                       # Notes about reference material used in the capstone
+├── project-pdfs/                                       # Exported PDF artifacts for overview and workflow evidence
+│   ├── AWS IAM n8n Automation Project Overview.pdf     # Project overview document
+│   ├── Flow A AWS Identity Triage TheHive Alert.pdf    # Flow A evidence/export
+│   ├── Flow B AWS Identity Containment TheHive5 Native.pdf  # Flow B evidence/export
+│   ├── Flow C AWS IAM Hygiene TheHive5 Alerts.pdf      # Flow C evidence/export
+│   ├── Flow D AWS TheHive Case Closure Sync.pdf        # Flow D evidence/export
+│   └── README.md                                       # Notes about included PDF artifacts
+├── 00-project-overview/                                # Executive overview, rollout notes, and high-level project summary
+│   ├── README.md                                       # Overview of the capstone scope and structure
+│   ├── architecture-notes.txt                          # Overview architecture notes
+│   ├── interview_qna.md                                # Interview prep for the overall capstone
+│   ├── troubleshooting.md                              # Common issues and fixes for the overall setup
+│   ├── artifacts/
+│   │   └── AWS IAM n8n Automation Project Overview.pdf # Overview artifact
+│   └── notes/
+│       ├── overview-summary.md                         # Short summary of the capstone
+│       └── rollout-and-demo-notes.md                   # Demo flow and rollout notes
+├── 01-flow-a-aws-identity-triage-and-enrichment/       # Flow A: triage, enrichment, and alert context building
+│   ├── README.md                                       # Workflow explanation and flow-specific setup
+│   ├── architecture-notes.txt                          # Flow A architecture notes
+│   ├── interview_qna.md                                # Flow A interview talking points
+│   ├── troubleshooting.md                              # Flow A troubleshooting guidance
+│   ├── artifacts/
+│   │   └── Flow A AWS Identity Triage TheHive Alert.pdf
+│   └── notes/
+│       ├── design-notes.md                             # Design rationale for Flow A
+│       ├── extension-ideas.md                          # Future enhancements for Flow A
+│       └── validation-notes.md                         # Validation and testing notes
+├── 02-flow-b-aws-identity-containment-and-case-promotion/  # Flow B: containment and case promotion
+│   ├── README.md                                       # Workflow explanation and operational notes
+│   ├── architecture-notes.txt                          # Flow B architecture notes
+│   ├── interview_qna.md                                # Flow B interview talking points
+│   ├── troubleshooting.md                              # Flow B troubleshooting guidance
+│   ├── artifacts/
+│   │   └── Flow B AWS Identity Containment TheHive5 Native.pdf
+│   └── notes/
+│       ├── case-template-notes.md                      # Notes on case structure/template usage
+│       ├── design-notes.md                             # Design rationale for Flow B
+│       └── validation-notes.md                         # Validation and testing notes
+├── 03-flow-c-aws-iam-hygiene-monitoring-and-alerting/  # Flow C: IAM hygiene monitoring and alert generation
+│   ├── README.md                                       # Workflow explanation and monitoring logic
+│   ├── architecture-notes.txt                          # Flow C architecture notes
+│   ├── interview_qna.md                                # Flow C interview talking points
+│   ├── troubleshooting.md                              # Flow C troubleshooting guidance
+│   ├── artifacts/
+│   │   └── Flow C AWS IAM Hygiene TheHive5 Alerts.pdf
+│   └── notes/
+│       ├── design-notes.md                             # Design rationale for Flow C
+│       ├── finding-logic-notes.md                      # Detection/finding logic notes
+│       └── validation-notes.md                         # Validation and testing notes
+└── 04-flow-d-thehive-case-closure-sync/                # Flow D: TheHive case closure synchronization
+    ├── README.md                                       # Workflow explanation and sync logic
+    ├── architecture-notes.txt                          # Flow D architecture notes
+    ├── interview_qna.md                                # Flow D interview talking points
+    ├── troubleshooting.md                              # Flow D troubleshooting guidance
+    ├── artifacts/
+    │   └── Flow D AWS TheHive Case Closure Sync.pdf
+    └── notes/
+        ├── design-notes.md                             # Design rationale for Flow D
+        ├── field-mapping-notes.md                      # Field mapping/reference notes
+        └── validation-notes.md                         # Validation and testing notes
 ```
 
 ---
