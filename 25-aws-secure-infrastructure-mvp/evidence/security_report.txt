@@ -1,0 +1,56 @@
+Portfolio sample report
+Project: Secure AWS Infrastructure MVP
+Status: Representative output for repository packaging
+
+==================================================
+SECURITY SCAN STARTED
+==================================================
+Sun Apr 19 01:12:00 UTC 2026
+
+==================================================
+CHECKOV TERRAFORM SCAN
+==================================================
+Passed checks: 21
+Failed checks: 0 high-risk issues remaining after remediation packaging baseline
+Skipped checks: 2 informational items documented in report
+
+==================================================
+S3 BUCKET ENCRYPTION AND PUBLIC ACCESS
+==================================================
+Bucket: secure-lab-logs-a1b2c3d4
+Default encryption: AES256 enabled
+Versioning: enabled
+Public access block: enabled
+
+==================================================
+SECURITY GROUPS OPEN TO THE INTERNET
+==================================================
+Bastion SG: port 22 restricted to analyst public IP /32
+Application SG: no public ingress, SSH only from bastion SG
+
+==================================================
+IAM PASSWORD POLICY
+==================================================
+MinimumPasswordLength=14
+RequireSymbols=true
+RequireNumbers=true
+RequireUppercaseCharacters=true
+RequireLowercaseCharacters=true
+MaxPasswordAge=90
+PasswordReusePrevention=5
+
+==================================================
+CLOUDTRAIL STATUS
+==================================================
+Trail name: secure-lab-trail
+Multi-region trail: enabled
+Log file validation: enabled
+
+==================================================
+DETECTION AND MONITORING
+==================================================
+VPC Flow Logs: enabled to CloudWatch Logs
+AWS Config rules: encrypted-volumes, s3-bucket-public-read-prohibited, iam-password-policy, cloudtrail-enabled
+GuardDuty detector: enabled
+Findings export: S3 + KMS configured
+High-severity alert path: EventBridge -> SNS
