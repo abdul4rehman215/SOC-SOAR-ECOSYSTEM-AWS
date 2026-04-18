@@ -1,0 +1,27 @@
+{
+  "generated_at_utc": "2026-04-19T01:06:12Z",
+  "account_id": "123456789012",
+  "region": "us-east-1",
+  "created_resources": {
+    "ec2_role": {
+      "role_name": "SecureEC2Role",
+      "role_arn": "arn:aws:iam::123456789012:role/SecureEC2Role",
+      "policy_name": "SecureEC2Policy",
+      "policy_arn": "arn:aws:iam::123456789012:policy/SecureEC2Policy",
+      "instance_profile_name": "SecureEC2InstanceProfile"
+    },
+    "audit_role": {
+      "role_name": "SecurityAuditRole",
+      "role_arn": "arn:aws:iam::123456789012:role/SecurityAuditRole",
+      "managed_policy_arn": "arn:aws:iam::aws:policy/SecurityAudit",
+      "extras_policy_name": "SecurityAuditExtrasPolicy",
+      "extras_policy_arn": "arn:aws:iam::123456789012:policy/SecurityAuditExtrasPolicy"
+    }
+  },
+  "policy_analysis": {
+    "SecureEC2Policy": [],
+    "SecurityAuditTrustPolicy": [],
+    "SecurityAuditExtrasPolicy": []
+  },
+  "note": "Illustrative repository artifact aligned to the project walkthrough."
+}
