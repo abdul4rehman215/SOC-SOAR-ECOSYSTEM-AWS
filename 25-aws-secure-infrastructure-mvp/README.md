@@ -2,7 +2,7 @@
 
 Portfolio-grade AWS security engineering project focused on building, assessing, and hardening a small secure cloud environment using Terraform, Python automation, and defense-in-depth monitoring controls.
 
-Prepared by **Abdul Rehman** (`abdul4rehman215`)
+Prepared by **Abdul Rehman** ([`abdul4rehman215`](https://www.linkedin.com/in/abdul4rehman215))
 
 ---
 
@@ -112,13 +112,12 @@ This lifecycle view shows the repository as an operating sequence:
 ## 5. Repository Layout
 
 ```text
-aws-secure-infrastructure-mvp/
+25-aws-secure-infrastructure-mvp/
 |-- README.md
 |-- .gitignore
 |-- requirements.txt
 |-- report/
-|   |-- AWS_Secure_Infrastructure_MVP_Project.pdf
-|   `-- AWS_Secure_Infrastructure_MVP_Project.docx
+|   `-- AWS_Secure_Infrastructure_MVP_Project.pdf
 |-- terraform/
 |   |-- main.tf
 |   `-- terraform_outputs.txt
@@ -375,7 +374,6 @@ A next version of this repository could add:
 For the full project narrative, executive summary, diagrams, validation write-up, and portfolio presentation layer, open:
 
 - `report/AWS_Secure_Infrastructure_MVP_Project.pdf`
-- `report/AWS_Secure_Infrastructure_MVP_Project.docx`
 
 ---
 
