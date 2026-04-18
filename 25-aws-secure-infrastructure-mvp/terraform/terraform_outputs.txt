@@ -1,0 +1,8 @@
+# Illustrative sample output for portfolio packaging
+vpc_id = "vpc-0f7c1a23bc9d12345"
+bastion_public_ip = "18.211.45.78"
+app_private_ip = "10.0.2.45"
+s3_bucket_name = "secure-lab-logs-a1b2c3d4"
+cloudtrail_name = "secure-lab-trail"
+bastion_sg_id = "sg-0c11a2b345d67890a"
+app_sg_id = "sg-04d5e6f7890abc123"
