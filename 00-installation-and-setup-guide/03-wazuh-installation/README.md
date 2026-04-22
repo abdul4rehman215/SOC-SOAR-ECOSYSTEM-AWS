@@ -234,6 +234,33 @@ sudo tar -O -xvf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
 
 ---
 
+## Useful Wazuh Manager Commands
+
+```
+tail -f /var/ossec/logs/integrations.log
+```
+
+```
+sudo systemctl restart wazuh-manager
+```
+
+```
+cd /var/ossec/integrations
+```
+
+```
+/var/ossec/bin/wazuh-analysisd -t
+```
+
+```
+nano /var/ossec/etc/rules/local_rules.xml
+```
+
+```
+cd /var/ossec/etc/rules/
+```
+
+
 # 🚨 Most Common Failures
 
 | Problem               | Root Cause       |
