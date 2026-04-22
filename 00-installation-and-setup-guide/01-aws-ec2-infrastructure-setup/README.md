@@ -236,7 +236,7 @@ timedatectl
 ## Change timezone (example)
 
 ```bash
-sudo timedatectl set-timezone Asia/Baku
+sudo timedatectl set-timezone Asia/Kolkata
 ```
 
 ## Enable NTP time sync
