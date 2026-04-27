@@ -19,7 +19,7 @@
 
 ---
 
-## Problem vs solution
+## 🎯 Problem vs solution
 
 AI applications are becoming part of normal enterprise workflows, but SOC pipelines usually still focus on traditional host, network, cloud, and identity telemetry. GenAI-specific risks such as direct prompt injection, indirect prompt injection, unsafe retrieved context, and improper output handling often stay inside the application layer, disconnected from SIEM detection engineering and incident response.
 
@@ -53,7 +53,7 @@ The result is not a single automation demo. It is a connected security engineeri
 
 ---
 
-## What this capstone proves
+## 🧠 What this capstone proves
 
 This project demonstrates hands-on ability to design, implement, test, and document an AI-security SOC automation pipeline with realistic engineering constraints:
 
@@ -71,7 +71,7 @@ This project demonstrates hands-on ability to design, implement, test, and docum
 
 ---
 
-## Architecture
+## 🧩 Architecture
 
 ### Master lifecycle view
 
@@ -150,7 +150,7 @@ The flows are intentionally separated rather than merged into one large n8n canv
 
 ---
 
-## Repository layout
+## 📁 Repository layout
 
 ```text
 26-genai-detection-as-code-cicd-wazuh-n8n-thehive/
@@ -181,7 +181,7 @@ The flows are intentionally separated rather than merged into one large n8n canv
 
 ---
 
-## Included artifacts
+## 🗂️ Included artifacts
 
 ### Project PDFs
 
@@ -205,7 +205,7 @@ The workflow JSON files in `workflows/` are sanitized skeletons intended for por
 
 ---
 
-## Zero-to-hero setup guide
+## 🧪 Zero-to-hero setup guide
 
 > This repository folder is documentation-first. It contains the workflow exports, supporting scripts, and reference artifacts required to reproduce the prototype. It does not include live credentials or private keys.
 
@@ -345,7 +345,7 @@ The prototype uses n8n DataTables as a lightweight operational database.
 
 ---
 
-## Security and secret-handling note
+## ⚠️ Security and secret-handling note
 
 This folder intentionally excludes:
 
@@ -383,7 +383,7 @@ The project was validated with the following evidence scenarios:
 
 ---
 
-## Future improvements
+## 🔭 Future improvements
 
 - Replace n8n DataTables with PostgreSQL for multi-user production audit scale.
 - Add GitHub branch protection rules that require Flow A pass before merge.
@@ -395,6 +395,57 @@ The project was validated with the following evidence scenarios:
 
 ---
 
-## Author
+## 🌐 Project Posts on LinkedIn
 
-Built and documented by <a href="https://www.linkedin.com/in/abdul4rehman215/">abdul4rehman215</a>.
+I also shared this project on LinkedIn through multiple posts covering the implementation, workflow, and key outcomes.
+
+> To be added Soon....
+
+<!--
+
+<p align="left">
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-capstone-project-malware-detection-and-activity-7430280092578172943-Avqu?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/LinkedIn-Post%2001-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 01" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-capstone-project-incident-response-activity-7430997244033658880-uzzZ?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/LinkedIn-Post%2002-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 02" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-soar-cybersecurity-activity-7431722094020816896-UKtd?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/Capstone-Post%2003-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 03" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_socarchitecture-soar-securityengineering-activity-7431359622495510528-ZYVd?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/Architecture-Post%2004-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 04" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-soar-blueteam-activity-7432088167048167424-7xns?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/Recruiter-Post%2005-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 05" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_soc-capstone-project-malware-detection-activity-7431953077693440000-KWbW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEuho14BQnjOksWA5iihN6dnsE3C-o3yBUU"><img src="https://img.shields.io/badge/Review-Post%2006-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 06" /></a>
+</p>
+
+---
+
+-->
+
+## ⭐ Final Note
+
+This project reflects **real hands-on implementation** focused on practical security workflow execution, technical depth, and portfolio-grade documentation.
+
+It demonstrates the ability to:
+
+> **Build → Validate → Investigate → Document → Present**
+
+If this project adds value, consider starring the repository ⭐
+
+---
+
+## 👨‍💻 Author
+
+**Abdul Rehman**  
+SOC • SIEM • Detection Engineering • Incident Response • Threat Intelligence • Security Automation
+
+---
+
+### 📧 Reach Out
+
+  <a href="https://github.com/abdul4rehman215">
+    <img src="https://img.shields.io/badge/Follow-181717?style=for-the-badge&logo=github&logoColor=white" alt="Follow" />
+  </a>
+  <a href="https://linkedin.com/in/abdul4rehman215">
+    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white&v=1" alt="LinkedIn" />
+  </a>
+  <a href="mailto:abdul4rehman215@gmail.com">
+    <img src="https://img.shields.io/badge/Email-EE0000?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+  </a>
+
+---
+
