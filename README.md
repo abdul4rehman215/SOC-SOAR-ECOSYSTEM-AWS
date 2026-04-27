@@ -58,12 +58,14 @@
 ![Malware Analysis](https://img.shields.io/badge/Malware-Analysis-8E24AA?style=for-the-badge)
 ![Dashboards](https://img.shields.io/badge/Dashboards-Security%20Visualization-00897B?style=for-the-badge)
 ![MITRE](https://img.shields.io/badge/MITRE-ATT%26CK-D32F2F?style=for-the-badge)
+![AI Security](https://img.shields.io/badge/AI%20Security-GenAI%20Detection-7C3AED?style=for-the-badge)
+![Detection as Code](https://img.shields.io/badge/Detection--as--Code-Wazuh%20CI%2FCD-0F766E?style=for-the-badge)
 
 <!-- ===================== SCOPE & STATUS ===================== -->
 
-![Projects](https://img.shields.io/badge/Projects-39-43A047?style=for-the-badge)
+![Projects](https://img.shields.io/badge/Projects-40-43A047?style=for-the-badge)
 ![Installations](https://img.shields.io/badge/INSTALLATIONS%20&%20SETUPS-11-546E7A?style=for-the-badge)
-![Capstones](https://img.shields.io/badge/Capstones-3-8E24AA?style=for-the-badge)
+![Capstones](https://img.shields.io/badge/Capstones-4-8E24AA?style=for-the-badge)
 ![Dashboards Count](https://img.shields.io/badge/Dashboards-6-0277BD?style=for-the-badge)
 ![Explorations](https://img.shields.io/badge/Learning%20Explorations-4-F57C00?style=for-the-badge)
 ![Portfolio](https://img.shields.io/badge/Portfolio-Project%20Based-00C853?style=for-the-badge)
@@ -90,6 +92,7 @@ This repository presents a **full self-built SOC/SOAR ecosystem on AWS**, design
 - ✅ **Incident response, case management, and threat intelligence workflows**
 - ✅ **Security automation and active response pipelines**
 - ✅ **AI-assisted SOC alert triage and analyst reporting**
+- ✅ **GenAI detection-as-code CI/CD for Wazuh using GitHub, n8n, OWASP LLM, MITRE ATLAS, TheHive, Slack, and audit tables**
 - ✅ **Dashboard engineering for monitoring, ATT&CK visibility, and compliance posture**
 
 This is **not a tool-installation showcase** and **not a collection of isolated mini-labs**.
@@ -98,7 +101,7 @@ It is a **project-based security operations portfolio** built from scratch to re
 
 **Detect → Enrich → Investigate → Respond → Share Intelligence → Automate → Visualize**
 
-The repository demonstrates hands-on implementation using **Wazuh, TheHive, Cortex, MISP, Sysmon, Osquery, auditd, Suricata, Snort, Zeek, ModSecurity, Fail2Ban, CloudTrail, n8n, and Gemini** across multiple connected projects.
+The repository demonstrates hands-on implementation using **Wazuh, TheHive, Cortex, MISP, Sysmon, Osquery, auditd, Suricata, Snort, Zeek, ModSecurity, Fail2Ban, CloudTrail, GitHub PR automation, n8n, Gemini, Slack, OWASP LLM mapping, and MITRE ATT&CK/ATLAS-style context** across multiple connected projects.
 
 ---
 
@@ -116,6 +119,7 @@ It includes hands-on work across:
 - **Incident response and case management** using structured workflows
 - **Threat intelligence enrichment and IOC sharing**
 - **SOAR-style automation and AI-assisted triage**
+- **AI application security and GenAI detection-as-code workflowing**
 - **Dashboards and security visualization** for analyst workflows and operational visibility
 
 This portfolio is designed to reflect **real security operations thinking**, with a strong emphasis on implementation depth, workflow continuity, and documentation discipline.
@@ -136,6 +140,7 @@ This repository demonstrates practical capability across:
 - **Active response workflows such as automated DNS sinkholing and IP blocking**
 - **Cloud monitoring and security visibility using AWS CloudTrail**
 - **AI-driven SOC alert triage automation using Wazuh + n8n + Gemini**
+- **GenAI application-security detection-as-code using GitHub PR validation, controlled Wazuh deployment, runtime guardrail telemetry, OWASP LLM mapping, MITRE ATLAS context, Slack, TheHive, and n8n DataTables**
 - **Dashboard engineering for threat monitoring, MITRE ATT&CK coverage, and compliance reporting**
 - **Structured project documentation including configs, scripts, notes, troubleshooting, and interview-ready explanations**
 
@@ -207,10 +212,11 @@ The portfolio includes detection logic, enrichment flows, response steps, analys
 Endpoint, network, web, cloud, threat intel, dashboards, and automation are all covered.
 
 ### ✅ It includes portfolio-grade capstones
-The repository contains three strong flagship implementations:
+The repository contains four strong flagship implementations:
 - **SOC + SOAR malware incident response capstone**
 - **AI-driven SOC alert triage automation**
 - **AWS IAM identity security automation capstone**
+- **GenAI detection-as-code CI/CD for Wazuh, n8n, OWASP LLM, MITRE ATLAS, Slack, and TheHive**
 
 ### ✅ It reflects analyst and engineering discipline
 Many projects include:
@@ -269,8 +275,21 @@ A four-flow cloud identity security automation capstone covering:
 
 ---
 
+## 4. 🧬 GenAI Detection-as-Code CI/CD for Wazuh, n8n, TheHive & OWASP LLM
+**[26-genai-detection-as-code-cicd-wazuh-n8n-thehive](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/)**
 
-## 4. 🌐 Detection Engineering Across Endpoint, Network, Web, and Cloud
+A next-level AI-security SOC automation capstone covering:
+- GitHub pull-request validation for Wazuh XML, Sigma, metadata, mappings, and replay logic
+- controlled Wazuh manager deployment with approval gates, backup, staging, restart, postdeploy validation, and rollback path
+- runtime GenAI telemetry from an AI demo app into Wazuh localfile monitoring
+- custom Wazuh rules for direct prompt injection, indirect prompt injection, and improper output handling
+- n8n triage enrichment with OWASP LLM and MITRE ATLAS context
+- Slack analyst alerts, TheHive 5 alert/case/comment lifecycle, dashboard event collection, error dead-lettering, and case closure synchronization
+
+---
+
+
+## 5. 🌐 Detection Engineering Across Endpoint, Network, Web, and Cloud
 The repository includes practical projects around:
 - SSH brute-force detection
 - HTTP anomaly detection using OpenSearch ML
@@ -284,7 +303,7 @@ The repository includes practical projects around:
 
 ---
 
-## 5. 📊 Dashboard Engineering and Visibility Projects
+## 6. 📊 Dashboard Engineering and Visibility Projects
 **[21-dashboards](./21-dashboards/)** contains dedicated security visualization work for:
 - SOC threat monitoring
 - MITRE ATT&CK coverage
@@ -416,6 +435,8 @@ Projects focused on WAF monitoring, hunting workflows, automated containment, DN
 ![Focus](https://img.shields.io/badge/Focus-End--to--End%20Incident%20Response-C62828?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/Focus-SOAR%20Automation-7B1FA2?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/Focus-AI%20Triage-AD1457?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-GenAI%20Security-7C3AED?style=for-the-badge)
+![Focus](https://img.shields.io/badge/Focus-Detection--as--Code-0F766E?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/Focus-Dashboard%20Engineering-00897B?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/Focus-Feature%20Exploration-3949AB?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/Focus-Portfolio%20Depth-455A64?style=for-the-badge)
@@ -433,11 +454,14 @@ Flagship portfolio work covering end-to-end SOC/SOAR execution, AI-assisted auto
 | 22 | [Wazuh Module Exploration & Learning Projects](./22-learning-projects/) | Structured feature exploration | IT hygiene, threat hunting, discover indices, vulnerability detection exploration |
 | 23 | [Other Projects](./23-other-projects/) | Supporting research & tuning work | Supplementary PDFs around rule tuning and detection refinement |
 | 24 | [AWS IAM Identity Security Automation Capstone](./24-aws-iam-identity-security-automation-capstone/) | Cloud identity security automation capstone | Four-flow prototype for AWS identity triage, IAM containment, hygiene monitoring, TheHive integration, and closure sync |
+| 26 | [GenAI Detection-as-Code CI/CD for Wazuh, n8n, TheHive & OWASP LLM](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/) | AI security + detection-as-code capstone | GitHub PR CI, Wazuh controlled deployment, AI-demo runtime telemetry, OWASP LLM/ATLAS enrichment, Slack, TheHive cases, audit tables, dashboard collector, error handling, and closure sync |
 
 ### 🧠 Skills Demonstrated
 - Full SOC + SOAR case lifecycle execution
 - AI-assisted alert triage and decision support
 - Cloud identity security automation and orchestration
+- GenAI application-security telemetry and prompt-injection detection engineering
+- Detection-as-code CI/CD and controlled Wazuh deployment governance
 - TheHive alert-to-case lifecycle synchronization
 - Dashboard engineering for analyst workflows
 - Threat intel lifecycle thinking
@@ -676,6 +700,63 @@ This project demonstrates the ability to build a **multi-workflow AWS identity s
 
 ---
 
+## 🧬 Flagship Capstone 04 — GenAI Detection-as-Code CI/CD for Wazuh (Project 26)
+
+**[26-genai-detection-as-code-cicd-wazuh-n8n-thehive](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/)**
+
+<div align="left">
+
+<img src="https://img.shields.io/badge/🤖%20AI%20Security-7C3AED?style=flat-square"/>
+<img src="https://img.shields.io/badge/🧬%20Detection%20as%20Code-0F766E?style=flat-square"/>
+<img src="https://img.shields.io/badge/🛡️%20Wazuh%20CI%2FCD-0052CC?style=flat-square"/>
+<img src="https://img.shields.io/badge/⚙️%20n8n%20Automation-EA4B71?style=flat-square"/>
+<img src="https://img.shields.io/badge/TheHive%205-F59E0B?style=flat-square"/>
+<img src="https://img.shields.io/badge/📊%20Audit%20Tables-00897B?style=flat-square"/>
+
+</div>
+
+This capstone extends the portfolio into modern **AI application security operations** by building a complete GenAI runtime detection and detection-engineering pipeline around Wazuh, GitHub, n8n, Slack, TheHive, and structured audit tables.
+
+It is organized as a multi-workflow prototype:
+
+- **Flow A — Detection CI validation:** GitHub pull request workflow for Wazuh XML, Sigma, metadata, mapping, staging, and replay validation.
+- **Flow B — Controlled Wazuh deployment:** gated deployment path with approval signals, backup, checkout, staging, predeploy checks, activation, restart, postdeploy validation, and rollback path.
+- **Flow C — Runtime GenAI triage:** AI demo app telemetry → Wazuh detection → n8n enrichment → Slack → TheHive alert/case/comment lifecycle → audit/dashboard rows.
+- **Supporting workflows:** SOC dashboard event collector, global error/dead-letter handler, and TheHive case closure sync.
+
+### 🧩 Integrated Components Used
+
+- **GitHub PR events and labels** for detection-as-code workflow control
+- **Wazuh manager and Wazuh agent** for rule validation and runtime GenAI alerting
+- **Custom Wazuh rules/decoder** for prompt injection and unsafe output handling patterns
+- **n8n** for CI validation, deployment orchestration, triage automation, dashboard events, and closure sync
+- **OWASP LLM Top 10 and MITRE ATLAS-style mapping** for AI-security context
+- **Slack** for analyst notification and operational evidence
+- **TheHive 5** for alert creation, update-before-create logic, case promotion, comments, templates, and case closure synchronization
+- **n8n DataTables** for CI runs, changed files, stage results, deployments, runtime alerts, audit events, case promotions, closure sync, dead letters, and dashboard metrics
+- **AI demo app** producing structured guardrail telemetry for Wazuh localfile ingestion
+
+### 🎯 What This Capstone Simulates
+
+This capstone represents a production-style **AI-security detection engineering pipeline** where GenAI runtime risks are treated as first-class SOC telemetry:
+
+- detection changes are validated before being merged or deployed
+- Wazuh content deployment is controlled by CI status, labels, approval, and deploy signals
+- AI-app guardrail events are detected by Wazuh rules and routed to n8n
+- high-risk prompt-injection alerts are enriched, tracked, and promoted to TheHive cases
+- runtime triage outcomes are sent to Slack and written into audit/dashboard tables
+- closed TheHive cases synchronize back into the operational tracking layer
+
+It is a full **Detection-as-Code → Controlled Deployment → Runtime Detection → Case Lifecycle → Audit Dashboard** implementation for GenAI security operations.
+
+### ✅ Outcome Statement
+
+This project demonstrates the ability to build an advanced **GenAI security SOC automation capstone** that connects detection engineering, CI/CD validation, Wazuh deployment safety, AI runtime telemetry, analyst notification, TheHive case handling, and operational auditability into one coherent MVP prototype.
+
+**Project link:** [26-genai-detection-as-code-cicd-wazuh-n8n-thehive](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/)
+
+---
+
 ## 🌟 Why These Flagship Capstones Matter
 
 Together, these flagship projects show:
@@ -683,9 +764,10 @@ Together, these flagship projects show:
 - **traditional SOC depth** through detection, investigation, incident response, and intelligence sharing
 - **modern SOC capability** through automation, orchestration, and AI-assisted analyst support
 - **cloud-focused identity operations capability** through enrichment, containment, hygiene monitoring, and lifecycle synchronization
+- **AI-security detection engineering capability** through GenAI telemetry, OWASP LLM mapping, prompt-injection detection, controlled deployment, TheHive case promotion, and audit/dashboard workflows
 - **portfolio-level execution** across both defensive operations and workflow engineering
 
-They are the strongest proof in this repository that the portfolio goes beyond tool setup and demonstrates **end-to-end security operations capability** across investigation, AI-assisted triage, cloud identity automation, and lifecycle closure.
+They are the strongest proof in this repository that the portfolio goes beyond tool setup and demonstrates **end-to-end security operations capability** across investigation, AI-assisted triage, cloud identity automation, GenAI detection-as-code, and lifecycle closure.
 
 # 🛠️ Tools & Technologies Used Across This Repository
 
@@ -704,6 +786,7 @@ They are the strongest proof in this repository that the portfolio goes beyond t
 - Cortex
 - MISP
 - OpenSearch / Wazuh Dashboard
+- TheHive 5 alert/case templates and comments
 
 ## 🖥️ Endpoint & Host Telemetry
 - Sysmon for Windows
@@ -735,12 +818,21 @@ They are the strongest proof in this repository that the portfolio goes beyond t
 - IAM roles / access configuration
 
 ## 🤖 Automation & Scripting
+- GitHub PR automation / GitHub API
+- n8n DataTables
 - Python
 - Bash / Shell
 - PowerShell
 - JavaScript
 - n8n workflows
 - JSON / XML / rule configuration files
+
+## 🧬 AI Security / Detection-as-Code Context
+- OWASP LLM Top 10 mapping
+- MITRE ATLAS-style technique mapping
+- Sigma rule validation
+- Wazuh XML rule/decoder validation
+- GenAI guardrail telemetry modeling
 
 ## 🔍 Threat Intel / Enrichment / Notification
 - VirusTotal
@@ -828,6 +920,7 @@ SOC-SOAR-ECOSYSTEM-AWS/
 │
 ├── 23-other-projects/                                # Supplementary security work and supporting PDFs
 ├── 24-aws-iam-identity-security-automation-capstone/ # AWS IAM identity triage, containment, hygiene, and case-closure automation capstone
+├── 26-genai-detection-as-code-cicd-wazuh-n8n-thehive/ # GenAI detection-as-code CI/CD, Wazuh deployment, runtime triage, TheHive cases, audit/dashboard workflows
 ├── resources/                                        # Shared logos, diagrams, screenshots, and architecture visuals
 └── README.md
 ````
@@ -959,6 +1052,7 @@ This heatmap reflects **hands-on implementation across a full AWS-based SOC/SOAR
 | 🧬 Threat Intelligence Operations | █████████░ **90%** | Enrichment, observable analysis, IOC validation, intelligence sharing | MISP, VirusTotal, AlienVault OTX, Cortex |
 | ⚙️ SOAR & Security Automation | █████████░ **90%** | Automated enrichment, workflowing, active response, orchestration | Wazuh integrations, n8n, Python, Bash, PowerShell |
 | 🤖 AI-Assisted SOC Operations | ████████░░ **80%** | Alert normalization, AI triage prompting, analyst-ready summaries | n8n, Gemini, JavaScript, HTML email formatting |
+| 🧬 GenAI / AI-App Security Detection | █████████░ **90%** | Prompt-injection telemetry, OWASP LLM mapping, MITRE ATLAS context, detection-as-code CI/CD, runtime triage, TheHive case promotion | Wazuh, GitHub, n8n, OWASP LLM, MITRE ATLAS, TheHive, Slack |
 | 📈 Dashboard Engineering & Security Visualization | ████████░░ **80%** | Threat dashboards, ATT&CK visibility, compliance monitoring | Wazuh Dashboard, OpenSearch visualizations |
 | 🧾 Security Documentation & Reporting | ██████████ **100%** | Architecture notes, commands, troubleshooting, interview Q&A, project reporting | Markdown, JSON, configs, screenshots, notes |
 
@@ -1024,7 +1118,10 @@ This repository is best explored as a **connected portfolio**, not as random sta
 6. **[24-aws-iam-identity-security-automation-capstone](./24-aws-iam-identity-security-automation-capstone/)**
    Review the four-flow AWS IAM identity security automation capstone covering triage, containment, IAM hygiene monitoring, TheHive integration, and closure sync.
 
-7. **[21-dashboards](./21-dashboards/)** and **[22-learning-projects](./22-learning-projects/)**
+7. **[26-genai-detection-as-code-cicd-wazuh-n8n-thehive](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/)**
+   Review the GenAI detection-as-code capstone covering GitHub PR validation, controlled Wazuh deployment, AI demo runtime telemetry, Slack triage, TheHive case promotion, audit tables, dashboard collection, error handling, and closure synchronization.
+
+8. **[21-dashboards](./21-dashboards/)** and **[22-learning-projects](./22-learning-projects/)**
    Explore visibility engineering, dashboarding, and feature/module exploration.
 
 ---
@@ -1132,6 +1229,7 @@ This portfolio demonstrates the ability to:
 - Engineer and tune detections using **rules, decoders, thresholds, and enrichment**
 - Use **Wazuh, TheHive, Cortex, and MISP** in connected operational workflows
 - Build **cloud identity security automation** using GuardDuty, Security Hub, IAM, CloudTrail, n8n, Slack, and TheHive
+- Build **GenAI detection-as-code CI/CD** using GitHub, Wazuh, n8n, OWASP LLM, MITRE ATLAS, Slack, TheHive, and audit/dashboard workflows
 - Enrich and validate IOCs using **threat intelligence sources**
 - Design **active response and automation workflows**
 - Create **dashboard-driven security visibility**
@@ -1149,6 +1247,7 @@ Key strengths shown through this repository include:
 - **Incident response lifecycle understanding**
 - **Threat intelligence enrichment and sharing**
 - **SOAR-style workflow automation**
+- **Detection-as-code CI/CD and AI-security workflow engineering**
 - **Security dashboarding and operational visibility**
 - **Hands-on project execution from setup to validation**
 
@@ -1162,7 +1261,7 @@ This repository reflects **real hands-on SOC/SOAR project work** — not isolate
 
 It demonstrates practical capability across a full security operations workflow:
 
-> **Detect → Correlate → Investigate → Respond → Enrich → Automate → Visualize**
+> **Detect → Validate → Deploy → Correlate → Investigate → Respond → Enrich → Automate → Visualize**
 
 The portfolio is designed to show how modern blue-team environments operate through **integrated detection, incident response, threat intelligence, automation, and security visibility**.
 
@@ -1171,6 +1270,7 @@ If you are reviewing this portfolio, the best places to start are:
 - **[19-capstone-soc-soar-malware-incident-response](./19-capstone-soc-soar-malware-incident-response/)**
 - **[20-ai-driven-soc-alert-triage-automation](./20-ai-driven-soc-alert-triage-automation/)**
 - **[24-aws-iam-identity-security-automation-capstone](./24-aws-iam-identity-security-automation-capstone/)**
+- **[26-genai-detection-as-code-cicd-wazuh-n8n-thehive](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/)**
 - **[21-dashboards](./21-dashboards/)**
 - **[00-installation-and-setup-guide](./00-installation-and-setup-guide/)**
 
