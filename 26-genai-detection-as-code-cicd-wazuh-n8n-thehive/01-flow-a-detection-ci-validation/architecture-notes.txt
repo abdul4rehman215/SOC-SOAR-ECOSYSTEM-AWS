@@ -1,0 +1,16 @@
+Flow A Architecture Notes
+
+Flow A has two main branches:
+
+1. No relevant detection changes
+2. Full detection CI validation
+
+The changed-file classifier is the pivot node. It categorizes paths into Wazuh rules, Wazuh decoders, Sigma rules, positive tests, negative tests, expected outputs, and metadata/mappings/schemas. A docs-only PR should not waste validation resources. A detection or metadata change should produce a full CI run.
+
+The workflow writes to three DataTables because a single CI summary row is not enough:
+
+- CI runs: summary of the run
+- Changed files: file-level inventory
+- Stage results: stage-level outcome evidence
+
+This is important for portfolio and audit value because it shows both decision-level and evidence-level tracking.
