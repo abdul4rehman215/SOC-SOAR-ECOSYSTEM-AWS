@@ -149,6 +149,69 @@ The flows are intentionally separated rather than merged into one large n8n canv
 
 ---
 
+## 🧰 Core technologies used
+
+| Tool / Platform | Why it is used in this prototype |
+|---|---|
+| **GitHub Pull Requests** | Source-control entry point for detection engineering changes, review workflow, CI status comments, labels, and deployment approval signals |
+| **n8n** | Main automation/orchestration layer for PR validation, deployment gating, Wazuh integration, Slack notifications, TheHive alert/case automation, DataTables, dashboards, and closure sync |
+| **Wazuh Manager** | Detection engine for custom GenAI security telemetry, custom rules, decoders, alert generation, and runtime monitoring |
+| **Wazuh Agent** | Runtime telemetry collector on the test/n8n instance, reading the AI demo JSONL log and forwarding events to the Wazuh manager |
+| **Custom Wazuh rules and decoders** | Detection content for GenAI prompt injection, indirect prompt injection, improper output handling, and schema-aligned guardrail telemetry |
+| **AI demo app** | Controlled runtime source that emits GenAI guardrail events into `/var/log/ai-demo/guardrail-events.jsonl` for end-to-end detection testing |
+| **Slack** | Analyst-facing notification channel for CI status, deployment decisions, runtime GenAI alerts, TheHive case updates, errors, and closure events |
+| **TheHive 5** | Case-management layer for alert creation, dedup/update behavior, alert comments, case promotion, case templates, case comments, and case closure tracking |
+| **n8n DataTables** | Lightweight state and audit layer for CI runs, changed files, validation stages, deployment runs, runtime alert status, audit events, case promotions, closure sync, dead-letter events, and dashboard summaries |
+| **OWASP LLM Top 10** | GenAI security classification framework used to label and explain LLM01 Prompt Injection and LLM05 Improper Output Handling scenarios |
+| **MITRE ATLAS-style mapping** | AI threat-technique context used for prompt-injection mapping and analyst-friendly triage language |
+| **Bash / Python / Flask / Gunicorn** | Supporting runtime pieces for CI scripts, deployment scripts, custom Wazuh integration, and the AI demo app service |
+
+---
+
+## 📈 SOC value and expected impact
+
+Because this is a prototype, the value is expressed as **expected operational impact**, not fictional production metrics.
+
+### Expected outcomes
+
+- **Lower detection engineering risk:** Wazuh rules, decoders, metadata, and test events are validated before deployment.
+- **Lower MTTR:** runtime GenAI alerts are enriched automatically with OWASP, ATLAS, risk score, request/session/user context, TheHive links, and recommended analyst action.
+- **Lower alert fatigue:** Flow C filters only target GenAI alerts and suppresses non-target events before Slack/TheHive escalation.
+- **Better deployment control:** Flow B blocks deployments unless the PR has CI pass, approval, ready-to-deploy state, and a valid deploy signal.
+- **Stronger auditability:** Flow A, Flow B, Flow C, closure sync, error handling, and dashboard events all write structured records into n8n DataTables.
+- **Improved case consistency:** high-risk GenAI alerts are promoted using specific TheHive case templates with prebuilt analyst tasks.
+- **Better AI-security readiness:** the project models how SOC teams can operationalize AI-app telemetry instead of treating LLM threats as only theoretical risks.
+
+### What this project proves
+
+This project proves that GenAI security telemetry can be handled like a real detection-engineering lifecycle:
+
+```text
+Detection code change
+→ PR validation
+→ controlled deployment
+→ runtime detection
+→ analyst notification
+→ TheHive alert
+→ case promotion
+→ audit trail
+→ closure sync
+→ dashboard summary
+```
+
+### Why this matters
+
+Most GenAI security demos stop at one of these layers:
+
+* a prompt-injection example,
+* a SIEM rule,
+* a Slack alert,
+* or a case ticket.
+
+This prototype connects all of them into one operational lifecycle. That makes it useful as a capstone-style SOC automation project, a portfolio artifact, and a blueprint for how AI-app detections can be governed before and after deployment.
+
+---
+
 ## 📁 Repository layout
 
 ```text
@@ -201,6 +264,150 @@ The workflow JSON files in `workflows/` are sanitized skeletons intended for por
 - Flow A includes CI validation scripts for Wazuh XML, Sigma, metadata, staging, and replay harness.
 - Flow B includes deployment scripts for backup, checkout, staging, XML check, smoke logtest, activation, restart, postdeploy test, and rollback.
 - Flow C includes AI demo app code, Wazuh rules/decoder, Wazuh integration script, localfile config snippet, metadata, schemas, mappings, and test events.
+
+---
+
+## 📘 How to use this repository
+
+### Portfolio / recruiter review
+
+Start with:
+
+- `README.md`
+- `project-pdfs/`
+- `00-project-overview/README.md`
+- `workflows/`
+- the five premium PDF documents:
+  - Flow A Detection CI Validation
+  - Flow B Controlled Deployment
+  - Flow C Runtime GenAI Triage
+  - Supporting Workflows
+  - Full Project Overview
+
+Recommended reading order:
+
+```text
+1. Main README
+2. Full Project Overview PDF
+3. Flow A PDF
+4. Flow B PDF
+5. Flow C PDF
+6. Supporting Workflows PDF
+7. Interview Q&A
+```
+
+### Technical review
+
+Open:
+
+* `architecture-notes.txt`
+* `FILE_INDEX.md`
+* `workflows/n8n/`
+* `data-tables/`
+* each flow folder:
+
+  * `01-flow-a-detection-ci-validation/`
+  * `02-flow-b-controlled-wazuh-deployment/`
+  * `03-flow-c-runtime-genai-triage-thehive/`
+  * `04-supporting-workflows-audit-dashboard-error-caseclosure/`
+
+For implementation details, review:
+
+* Flow A CI scripts
+* Flow B deployment scripts
+* Flow C AI demo app
+* Wazuh custom rule/decoder examples
+* custom Wazuh-to-n8n integration script
+* TheHive case-template notes
+* DataTable schemas
+
+### Demo / validation review
+
+Use:
+
+* `notes/validation-evidence-checklist.md`
+* each flow folder’s `notes/`
+* each flow folder’s `troubleshooting.md`
+* project PDFs under `project-pdfs/`
+
+The evidence set should show:
+
+
+Flow A:
+PR validation, GitHub CI comment, Slack PASS/SKIP, DataTable rows
+
+Flow B:
+blocked deployment gate, successful deployment, Slack result, deployment audit row
+
+Flow C:
+AI demo app event, Wazuh alert, Slack GenAI alert, TheHive alert, case promotion, DataTable audit
+
+Supporting workflows:
+dashboard rows, dead-letter event, TheHive case closure sync
+
+
+### Rebuild / lab recreation
+
+This repository is documentation-first. It includes the skeletons, scripts, configs, and notes needed to understand or recreate the lab, but live secrets are intentionally excluded.
+
+Before importing workflows or running scripts, create your own:
+
+* GitHub credential/token
+* Slack app credential
+* TheHive API key
+* Wazuh API/user credential
+* SSH key or trusted remote execution method
+* `.env.ci` from `.env.ci.example`
+
+Never commit live credentials.
+
+---
+
+## ⚠️ Prototype boundaries and honest limitations
+
+This repository documents a **high-value capstone prototype**, not a production SaaS product.
+
+### Environment-specific limitations
+
+- Live credentials, tokens, SSH keys, Slack credentials, and TheHive API keys are **not bundled**.
+- Imported n8n workflows still require local credential binding.
+- EC2 public IPs and lab hostnames may need to be changed before reuse.
+- The Wazuh manager, n8n instance, TheHive instance, and AI demo app were tested in a controlled lab environment.
+- Some paths, usernames, service names, and network addresses are lab-specific and must be adapted for another environment.
+
+### Workflow assumptions
+
+- **Flow A** assumes PR-based detection content changes.
+- **Flow B** assumes Flow A has already produced a pass/skip/fail state and that labels or review state are used as deployment gates.
+- **Flow C** assumes Wazuh is already ingesting `/var/log/ai-demo/guardrail-events.jsonl`.
+- **TheHive case promotion** depends on the configured case templates existing in TheHive.
+- **Closure sync** depends on TheHive cases retaining tags/source references that map back to Flow C alerts.
+- **Dashboard rows** are event-style KPI rows, not a full visual BI dashboard.
+
+### Security boundaries
+
+- This project intentionally avoids publishing live `.env.ci`, tokens, private keys, and API secrets.
+- Workflow JSONs may contain placeholder credential references but not usable secrets.
+- Any screenshots used for public posting should be reviewed for IPs, usernames, tokens, and sensitive identifiers.
+- The AI demo app should not be left publicly exposed unless protected by security group restrictions or authentication.
+
+### Production hardening that would be required
+
+Before adapting this to a real production SOC environment, add:
+
+- secrets manager integration,
+- stronger workflow-level error routing,
+- RBAC separation between CI, deployment, and runtime operations,
+- deployment approvals from a real review system,
+- TheHive search/update logic hardened against duplicate race conditions,
+- signed commits or CODEOWNERS enforcement,
+- Wazuh rule package versioning,
+- Slack alert-rate limiting,
+- case deduplication policies,
+- retention and archival controls for DataTables,
+- monitoring for n8n workflow failures and queue health.
+
+These limitations are part of the project’s credibility: they show where the prototype ends and where production engineering would begin.
 
 ---
 
@@ -344,6 +551,103 @@ The prototype uses n8n DataTables as a lightweight operational database.
 
 ---
 
+## 🧭 Suggested review path and production hardening roadmap
+
+### Suggested review path
+
+If you are reviewing this project for technical depth, use this path:
+
+```text
+1. Start with the overview README and architecture notes.
+2. Review Flow A to understand detection-as-code validation.
+3. Review Flow B to understand gated Wazuh deployment.
+4. Review Flow C to understand runtime GenAI triage and TheHive escalation.
+5. Review supporting workflows to understand audit, dashboard, error, and closure sync.
+6. Review the DataTable schemas to understand state tracking.
+7. Review troubleshooting notes to understand failure modes and recovery steps.
+````
+
+### What to look for during review
+
+| Area                  | What to verify                                                                               |
+| --------------------- | -------------------------------------------------------------------------------------------- |
+| Detection engineering | Flow A validates changed detection content before deployment                                 |
+| Deployment safety     | Flow B blocks unsafe deploys and only deploys after explicit gates                           |
+| Runtime SOC triage    | Flow C receives Wazuh alerts, enriches them, and sends analyst-ready Slack messages          |
+| Case management       | TheHive alerts, comments, case promotion, case templates, and closure sync are included      |
+| Auditability          | DataTables preserve CI, deployment, runtime, closure, and error records                      |
+| Dashboard readiness   | Dashboard summary rows provide lightweight KPI/event tracking                                |
+| Operational realism   | The system includes skip paths, blocked paths, success paths, error paths, and closure paths |
+
+### Production hardening roadmap
+
+This MVP can be improved in phases.
+
+#### Phase 1 — reliability hardening
+
+* Add retry policies for Slack, TheHive, and GitHub HTTP calls.
+* Add rate limiting for repeated GenAI alert bursts.
+* Add workflow-level dead-letter routing for all non-critical external integrations.
+* Add health checks for Wazuh manager, n8n, TheHive, and the AI demo service.
+
+#### Phase 2 — detection engineering hardening
+
+* Add rule package versioning.
+* Add CODEOWNERS approval requirements for detection folders.
+* Add signed commit verification.
+* Expand replay tests beyond the initial GenAI event set.
+* Add negative tests for false-positive control.
+
+#### Phase 3 — TheHive lifecycle hardening
+
+* Search/update existing alerts before create using stronger duplicate matching.
+* Add case deduplication based on user/session/request and sourceRef.
+* Add automatic case comments for repeated sessions.
+* Add closure reason normalization.
+* Add analyst assignment logic based on rule family or severity.
+
+#### Phase 4 — SOC dashboard hardening
+
+* Replace event-style dashboard rows with scheduled aggregation.
+* Add daily/weekly rollups.
+* Add metrics for:
+
+  * CI pass/fail count,
+  * deployment success/blocked/rollback count,
+  * GenAI alert volume,
+  * case promotion count,
+  * case closure count,
+  * dead-letter/error count.
+* Export summary rows to a dashboarding layer if needed.
+
+#### Phase 5 — production security controls
+
+* Move secrets into a managed secret store.
+* Replace direct lab IPs with DNS names.
+* Restrict n8n, TheHive, and demo app exposure with firewall/security group rules.
+* Add authentication to the AI demo app.
+* Add backup/restore process for n8n workflows and DataTables.
+* Add monitoring for n8n execution failures and queue saturation.
+
+### Final note
+
+This capstone intentionally focuses on showing the **complete SOC automation lifecycle** rather than only one alert or one workflow. The value is in the chain:
+
+```text
+secure detection change
+→ controlled deployment
+→ runtime AI-security detection
+→ analyst notification
+→ TheHive case workflow
+→ audit
+→ dashboard
+→ closure sync
+```
+
+That full lifecycle is what makes this project stronger than a single-rule or single-alert automation demo.
+
+---
+
 ## ⚠️ Security and secret-handling note
 
 This folder intentionally excludes:
@@ -449,4 +753,3 @@ SOC • SIEM • Detection Engineering • Incident Response • Threat Intellig
   </a>
 
 ---
-
