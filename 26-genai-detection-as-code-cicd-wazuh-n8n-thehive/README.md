@@ -216,31 +216,22 @@ This prototype connects all of them into one operational lifecycle. That makes i
 
 ```text
 26-genai-detection-as-code-cicd-wazuh-n8n-thehive/
-├── README.md
-├── architecture-notes.txt
-├── interview_qna.md
-├── SECURITY_NOTES.md
-├── data-tables/
-│   ├── exports/
-│   └── schemas/
-├── workflows/
-│   ├── flow-a-detection-ci-validation-audited-dashboard-v2.n8n.json
-│   ├── flow-b-controlled-deployment-audited-dashboard-v1.n8n.json
-│   ├── flow-c-runtime-genai-triage-thehive5-case-templates-comments-v5.n8n.json
-│   ├── flow-d-thehive-case-closure-sync-flowc-v1.n8n.json
-│   ├── flow-global-error-deadletter-v2.n8n.json
-│   └── flow-soc-dashboard-event-collector-v1.n8n.json
-├── project-pdfs/
-├── resources/
-├── notes/
-├── _shared/
-├── 00-project-overview/
-├── 01-flow-a-detection-ci-validation/
-├── 02-flow-b-controlled-wazuh-deployment/
-├── 03-flow-c-runtime-genai-triage-thehive/
-└── 04-supporting-workflows-audit-dashboard-error-caseclosure/
+├── README.md                                                              # Main project overview and navigation
+├── architecture-notes.txt                                                 # Architecture and design notes
+├── interview_qna.md                                                       # Interview Q&A and talking points
+├── SECURITY_NOTES.md                                                      # Security and operational safety notes
+├── data-tables/                                                           # Dashboard/reporting data tables
+├── workflows/                                                             # n8n automation workflow exports
+├── project-pdfs/                                                          # PDF artifacts and project evidence
+├── resources/                                                             # Supporting references and resources
+├── notes/                                                                 # Demo, positioning, and implementation notes
+├── _shared/                                                               # Shared scripts, schemas, mappings, tests, and metadata
+├── 00-project-overview/                                                   # Overall project documentation
+├── 01-flow-a-detection-ci-validation/                                     # Detection CI validation flow
+├── 02-flow-b-controlled-wazuh-deployment/                                 # Controlled Wazuh deployment flow
+├── 03-flow-c-runtime-genai-triage-thehive/                                # Runtime GenAI triage and TheHive flow
+└── 04-supporting-workflows-audit-dashboard-error-caseclosure/             # Audit, dashboard, error, and closure flows
 ```
-
 ---
 
 ## 🗂️ Included artifacts
