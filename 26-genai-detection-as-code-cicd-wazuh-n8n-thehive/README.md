@@ -10,9 +10,7 @@
 
 ### GenAI runtime detection engineering, Wazuh detection-as-code, controlled deployment, TheHive case handling, Slack notification, and audit/dashboard support.
 
-> **Architecture image placeholder:** add the generated master architecture image at `resources/genai-wazuh-capstone-architecture.png` and uncomment/update the image block below.
->
-> `<p align="center"><img src="resources/genai-wazuh-capstone-architecture.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>`
+<p align="center"><img src="resources/genai-wazuh-capstone-architecture.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
 
 ---
 
