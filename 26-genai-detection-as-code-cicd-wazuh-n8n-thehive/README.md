@@ -1,4 +1,4 @@
-# GenAI Detection-as-Code CI/CD for Wazuh - GitHub, n8n, OWASP LLM, ATLAS, TheHive
+# 🕵️ GenAI Detection-as-Code CI/CD for Wazuh - GitHub, n8n, OWASP LLM, ATLAS, TheHive
 
 <p align="center">
   <a href="https://www.linkedin.com/in/abdul4rehman215/"><img src="https://img.shields.io/badge/LinkedIn-abdul4rehman215-0A66C2?style=for-the-badge&logo=linkedin" alt="LinkedIn"></a>
@@ -8,10 +8,7 @@
   <img src="https://img.shields.io/badge/Orchestration-n8n-0EA5E9?style=for-the-badge" alt="n8n">
 </p>
 
-<p align="center">
-  <b>Portfolio project by <a href="https://www.linkedin.com/in/abdul4rehman215/">abdul4rehman215</a></b><br/>
-  GenAI runtime detection engineering, Wazuh detection-as-code, controlled deployment, TheHive case handling, Slack notification, and audit/dashboard support.
-</p>
+### GenAI runtime detection engineering, Wazuh detection-as-code, controlled deployment, TheHive case handling, Slack notification, and audit/dashboard support.
 
 > **Architecture image placeholder:** add the generated master architecture image at `resources/genai-wazuh-capstone-architecture.png` and uncomment/update the image block below.
 >
@@ -36,7 +33,7 @@ The result is not a single automation demo. It is a connected security engineeri
 
 ---
 
-## Table of contents
+## 📑 Table of contents
 
 - [What this capstone proves](#what-this-capstone-proves)
 - [Architecture](#architecture)
@@ -137,7 +134,7 @@ sequenceDiagram
 
 ---
 
-## How the flows work together
+## 🔗 How the flows work together
 
 | Flow | Purpose | Trigger | Main outputs |
 |---|---|---|---|
@@ -326,7 +323,7 @@ Supporting workflows keep the system observable:
 
 ---
 
-## Data model and audit strategy
+## 🗂️ Data model and audit strategy
 
 The prototype uses n8n DataTables as a lightweight operational database.
 
@@ -359,7 +356,7 @@ Workflow JSON files are sanitized skeletons. Re-map credentials in n8n after imp
 
 ---
 
-## Validation evidence summary
+## ☑️ Validation evidence summary
 
 The project was validated with the following evidence scenarios:
 
@@ -372,7 +369,7 @@ The project was validated with the following evidence scenarios:
 
 ---
 
-## Interview talking points
+## 🎤 Interview talking points
 
 - I separated CI, deployment, runtime triage, and support workflows to reduce blast radius and make evidence easier to reason about.
 - Flow A acts like a security quality gate for detection content before it can be considered deployable.
