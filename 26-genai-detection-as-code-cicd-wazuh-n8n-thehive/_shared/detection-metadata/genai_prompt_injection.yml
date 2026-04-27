@@ -1,0 +1,20 @@
+detection_id: genai_prompt_injection
+title: GenAI prompt injection attempt
+family: genai_prompt_injection
+status: experimental
+severity: high
+owner: abdul4rehman215
+owasp_category: LLM01 Prompt Injection
+atlas_techniques:
+  - ATLAS.T0043
+mitre_attack_ids:
+  - T1190
+positive_test_ids:
+  - genai_prompt_injection_pos_001
+negative_test_ids:
+  - genai_prompt_injection_neg_001
+expected_rule_ids:
+  - 100101
+tuning_notes: Initial MVP rule family for prompt-injection telemetry.
+
+# Flow A metadata CI test 2026-04-25T21:16:52+05:30
