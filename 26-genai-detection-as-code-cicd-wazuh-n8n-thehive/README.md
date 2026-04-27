@@ -1,5 +1,7 @@
 # 🕵️ GenAI Detection-as-Code CI/CD for Wazuh - GitHub, n8n, OWASP LLM, ATLAS, TheHive
 
+### GenAI runtime detection engineering, Wazuh detection-as-code, controlled deployment, TheHive case handling, Slack notification, and audit/dashboard support.
+
 <p align="center">
   <a href="https://www.linkedin.com/in/abdul4rehman215/"><img src="https://img.shields.io/badge/LinkedIn-abdul4rehman215-0A66C2?style=for-the-badge&logo=linkedin" alt="LinkedIn"></a>
   <a href="https://github.com/abdul4rehman215"><img src="https://img.shields.io/badge/GitHub-abdul4rehman215-111827?style=for-the-badge&logo=github" alt="GitHub"></a>
@@ -8,9 +10,9 @@
   <img src="https://img.shields.io/badge/Orchestration-n8n-0EA5E9?style=for-the-badge" alt="n8n">
 </p>
 
-### GenAI runtime detection engineering, Wazuh detection-as-code, controlled deployment, TheHive case handling, Slack notification, and audit/dashboard support.
-
-<p align="center"><img src="resources/genai-wazuh-capstone-architecture.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+<p align="center">
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/GENAI%20DETECTION%20AS%20CODE%20BANNER.png" alt="GENAI LOGOS" width="900"/>
+</p>
 
 ---
 
@@ -67,6 +69,8 @@ This project demonstrates hands-on ability to design, implement, test, and docum
 ---
 
 ## 🧩 Architecture
+
+<p align="center"><img src="resources/genai-wazuh-capstone-architecture.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
 
 ### Master lifecycle view
 
