@@ -1,0 +1,12 @@
+Project Overview Architecture Notes
+
+The capstone uses GitHub as the source of truth for detection content, n8n as the automation/orchestration layer, Wazuh as the detection engine, Slack as the analyst notification channel, TheHive as the alert/case system, and n8n DataTables as the MVP audit/state layer.
+
+The architecture intentionally separates the workflows into distinct operational stages:
+
+1. Build validation - Flow A
+2. Controlled release - Flow B
+3. Runtime detection and triage - Flow C
+4. Cross-cutting support - dashboard collector, error handler, case closure sync
+
+This separation keeps the system explainable and makes the evidence collection cleaner. It also creates practical failure boundaries: Flow C runtime triage should not depend on Flow A being actively executing, and Flow A CI should not be blocked by TheHive availability.

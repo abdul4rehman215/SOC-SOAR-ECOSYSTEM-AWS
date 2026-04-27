@@ -1,0 +1,21 @@
+version: 1
+scope: flow_c_v1
+families:
+  genai_prompt_injection:
+    action: block
+    indicators:
+      - role_reset
+      - policy_bypass
+      - system_prompt_request
+  genai_indirect_injection:
+    action: alert
+    indicators:
+      - untrusted_content_instruction
+      - retrieval_injection
+      - data_exfiltration_request
+  genai_output_handling:
+    action: block
+    indicators:
+      - unsafe_html
+      - script_tag
+      - output_not_sanitized

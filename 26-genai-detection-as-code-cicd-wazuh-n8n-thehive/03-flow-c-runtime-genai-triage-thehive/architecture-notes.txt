@@ -1,0 +1,10 @@
+Flow C Architecture Notes
+
+Flow C has four contracts:
+
+1. AI app telemetry contract: JSONL schema in /var/log/ai-demo/guardrail-events.jsonl.
+2. Wazuh detection contract: decoder and rules map fields into alerts with rule IDs 100201-100203.
+3. n8n triage contract: Wazuh alert JSON is normalized into stable fields such as request_id, risk_score, dedup_key, OWASP category, and target family.
+4. TheHive contract: thehive_source_ref is used for update-before-create and case promotion.
+
+The design intentionally scores before ticketing. Only high-risk direct and indirect injection alerts are promoted to cases. Improper output handling alerts still create alerts and audit rows, but skip automatic case promotion unless the threshold is changed.

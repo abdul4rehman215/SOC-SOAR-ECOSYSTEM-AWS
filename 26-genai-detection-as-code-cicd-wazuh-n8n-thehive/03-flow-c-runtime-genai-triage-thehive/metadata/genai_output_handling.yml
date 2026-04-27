@@ -1,0 +1,23 @@
+detection_id: genai_indirect_injection_001
+title: Indirect Prompt Injection In Retrieved Context
+family: genai_indirect_injection
+status: experimental
+severity: high
+wazuh_rule_ids:
+  - 100202
+sigma_rule_ids: []
+owasp_category: LLM01
+atlas_techniques:
+  - AML.T0051
+mitre_attack_ids: []
+log_sources:
+  - ai_demo_guardrail_json
+positive_test_ids:
+  - genai_indirect_injection_001
+negative_test_ids:
+  - genai_benign_retrieval_001
+expected_rule_ids:
+  - 100202
+owner: Abdul Rehman
+reviewer: TBD
+tuning_notes: Initial v1 indirect prompt injection rule for untrusted retrieved content that carries instructions to the model or agent.

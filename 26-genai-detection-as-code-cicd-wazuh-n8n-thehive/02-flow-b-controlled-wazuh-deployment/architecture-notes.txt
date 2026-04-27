@@ -1,0 +1,18 @@
+Flow B Architecture Notes
+
+Flow B is built around a gate-first pattern. The deployment path should only be reachable after the gate evaluates to true. The workflow uses script nodes for operational tasks because deployment operations require Bash, SSH, tar, git, and Wazuh-specific commands.
+
+Stages:
+
+1. Backup current Wazuh rules/decoders.
+2. Checkout the approved commit.
+3. Build deployment manifest.
+4. Stage deployable XML content.
+5. Run XML validation.
+6. Run smoke logtest.
+7. Activate content.
+8. Restart manager.
+9. Run postdeploy validation.
+10. Roll back if health fails.
+
+The flow records deployment state into `flow_b_deployment_runs` so the result is traceable after the Slack/GitHub messages are gone.

@@ -1,0 +1,52 @@
+GenAI Detection-as-Code CI/CD for Wazuh - Architecture Notes
+
+Author: abdul4rehman215
+LinkedIn: https://www.linkedin.com/in/abdul4rehman215/
+
+1. Architecture intent
+
+This capstone separates security automation into four responsibility boundaries:
+
+- Flow A validates detection content before deployment.
+- Flow B deploys only approved content into Wazuh.
+- Flow C handles live runtime AI-app detection and SOC triage.
+- Supporting workflows provide error handling, dashboard metric collection, and case closure synchronization.
+
+This separation makes the prototype easier to test, explain, operate, and extend. It also mirrors how real SOC engineering programs separate build-time validation, release governance, runtime detection, and lifecycle reporting.
+
+2. Key integration contracts
+
+GitHub -> Flow A:
+- Pull request actions: opened, reopened, synchronize.
+- Changed file categories: Wazuh rules, Wazuh decoders, Sigma, tests, expected outputs, metadata/mappings/schemas.
+
+Flow A -> Flow B:
+- GitHub labels and PR status act as the deployment gate.
+- Flow B expects detection-ci-pass, ready-to-deploy, approval, and a valid deploy signal.
+
+Flow B -> Wazuh:
+- Scripts deploy Wazuh XML rules and decoders.
+- Deployment includes backup, staging, XML checks, smoke logtest, activation, restart, and postdeploy validation.
+
+Wazuh -> Flow C:
+- Wazuh localfile monitors /var/log/ai-demo/guardrail-events.jsonl.
+- Rules 100201, 100202, and 100203 detect the three MVP GenAI risk families.
+- custom-n8n-genai forwards target alerts to the n8n webhook.
+
+Flow C -> TheHive/Slack/DataTables:
+- Flow C normalizes Wazuh alerts, enriches with OWASP LLM/ATLAS, scores risk, writes audit state, creates/updates TheHive alerts, promotes high-risk cases, and posts Slack analyst messages.
+
+3. Why n8n works well here
+
+n8n makes the prototype easy to inspect visually. Each node becomes evidence: GitHub context extraction, deploy gate decision, Wazuh script output parsing, TheHive action, Slack notification, and DataTable writes. For a capstone MVP, this is valuable because the project is not only working, it is explainable.
+
+4. Production considerations
+
+This prototype should not be treated as production without additional hardening:
+
+- Secrets should be stored in proper n8n credentials or a secret manager.
+- The AI demo app port should be restricted to trusted IPs.
+- The Wazuh integration should use TLS and a stable internal endpoint.
+- DataTables should be replaced with a stronger database if volume or retention requirements grow.
+- TheHive case templates should be controlled by the SOC process owner.
+- GitHub branch protection should enforce CI gates.

@@ -1,0 +1,9 @@
+Supporting Workflows Architecture Notes
+
+The support layer contains three patterns:
+
+1. Event collector pattern - main workflows emit metric events to a dashboard webhook.
+2. Dead-letter pattern - failed workflow executions are normalized into a table and Slack message.
+3. Closure sync pattern - TheHive case closure is polled and written back into the project state.
+
+These patterns are reusable across other SOC automations and represent a step toward production operations.
