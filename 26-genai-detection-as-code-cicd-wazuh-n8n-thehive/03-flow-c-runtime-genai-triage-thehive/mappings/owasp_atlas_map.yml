@@ -1,0 +1,31 @@
+version: 1
+source_scope: flow_c_v1
+families:
+  genai_prompt_injection:
+    title: Direct Prompt Injection
+    owasp_category: LLM01
+    owasp_name: Prompt Injection
+    atlas_techniques:
+      - id: AML.T0051
+        name: Prompt Injection
+    wazuh_rule_ids:
+      - 100201
+    rule_group: genai_prompt_injection
+  genai_indirect_injection:
+    title: Indirect Prompt Injection / Untrusted Content Injection
+    owasp_category: LLM01
+    owasp_name: Prompt Injection
+    atlas_techniques:
+      - id: AML.T0051
+        name: Prompt Injection
+    wazuh_rule_ids:
+      - 100202
+    rule_group: genai_indirect_injection
+  genai_output_handling:
+    title: Improper Output Handling
+    owasp_category: LLM05
+    owasp_name: Improper Output Handling
+    atlas_techniques: []
+    wazuh_rule_ids:
+      - 100203
+    rule_group: genai_output_handling

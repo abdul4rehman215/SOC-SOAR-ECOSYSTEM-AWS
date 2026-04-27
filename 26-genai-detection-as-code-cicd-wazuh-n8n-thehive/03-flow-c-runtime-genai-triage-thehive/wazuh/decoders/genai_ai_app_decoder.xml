@@ -1,0 +1,4 @@
+<decoder name="genai_ai_app_json">
+  <prematch type="pcre2">"event_source"\s*:\s*"ai_demo_guardrail"</prematch>
+  <plugin_decoder>JSON_Decoder</plugin_decoder>
+</decoder>

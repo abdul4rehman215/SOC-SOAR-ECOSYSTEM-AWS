@@ -1,0 +1,17 @@
+positive:
+  genai_direct_prompt_injection_001:
+    expected_rule_id: 100201
+    expected_group: genai_prompt_injection
+  genai_indirect_injection_001:
+    expected_rule_id: 100202
+    expected_group: genai_indirect_injection
+  genai_improper_output_handling_001:
+    expected_rule_id: 100203
+    expected_group: genai_output_handling
+negative:
+  genai_benign_prompt_001:
+    expected_rule_id: null
+  genai_benign_retrieval_001:
+    expected_rule_id: null
+  genai_benign_output_001:
+    expected_rule_id: null

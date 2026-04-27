@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/ai_app_telemetry.schema.json",
+  "title": "AI Demo Guardrail Telemetry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_source",
+    "event_type",
+    "request_id",
+    "session_id",
+    "user_id",
+    "model",
+    "source_type",
+    "guardrail_action",
+    "detection_family",
+    "severity",
+    "confidence",
+    "content_excerpt",
+    "risk_flags",
+    "risk_flags_csv",
+    "owasp_category"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "event_source": {
+      "type": "string",
+      "const": "ai_demo_guardrail"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "prompt_input",
+        "retrieved_context",
+        "guardrail_decision",
+        "tool_request",
+        "model_output",
+        "output_safety_result"
+      ]
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "user_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "user_input",
+        "retrieved_context",
+        "tool_output",
+        "model_output",
+        "system"
+      ]
+    },
+    "guardrail_action": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "block",
+        "redact",
+        "alert",
+        "review"
+      ]
+    },
+    "detection_family": {
+      "type": "string",
+      "enum": [
+        "none",
+        "genai_prompt_injection",
+        "genai_indirect_injection",
+        "genai_output_handling"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "none",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "content_excerpt": {
+      "type": "string",
+      "maxLength": 600
+    },
+    "risk_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risk_flags_csv": {
+      "type": "string"
+    },
+    "owasp_category": {
+      "type": "string",
+      "enum": [
+        "none",
+        "LLM01",
+        "LLM05"
+      ]
+    },
+    "atlas_techniques": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "mitre_attack_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "tool_name": {
+      "type": "string",
+      "default": ""
+    },
+    "tool_args_summary": {
+      "type": "string",
+      "default": ""
+    },
+    "retrieval_source": {
+      "type": "string",
+      "default": ""
+    },
+    "expected_wazuh_rule_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<group name="genai,ai_app,">
+  <rule id="100200" level="0">
+    <field name="event_source">ai_demo_guardrail</field>
+    <field name="schema_version">1.0</field>
+    <description>GenAI AI demo guardrail telemetry event</description>
+    <group>genai,ai_app,</group>
+  </rule>
+
+  <rule id="100201" level="12">
+    <if_sid>100200</if_sid>
+    <field name="detection_family">genai_prompt_injection</field>
+    <description>GenAI direct prompt injection detected for request $(request_id)</description>
+    <group>genai,genai_prompt_injection,owasp_llm01,atlas_aml_t0051,</group>
+  </rule>
+
+  <rule id="100202" level="12">
+    <if_sid>100200</if_sid>
+    <field name="detection_family">genai_indirect_injection</field>
+    <description>GenAI indirect prompt injection detected in retrieved context for request $(request_id)</description>
+    <group>genai,genai_indirect_injection,owasp_llm01,atlas_aml_t0051,</group>
+  </rule>
+
+  <rule id="100203" level="10">
+    <if_sid>100200</if_sid>
+    <field name="detection_family">genai_output_handling</field>
+    <description>GenAI improper output handling risk detected for request $(request_id)</description>
+    <group>genai,genai_output_handling,owasp_llm05,</group>
+  </rule>
+</group>
