@@ -2,6 +2,8 @@
 
 Flow A is the detection engineering quality gate. It watches GitHub pull requests, classifies changed files, validates detection artifacts, reports CI results, and records audit/dashboard data.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/26-genai-detection-as-code-cicd-wazuh-n8n-thehive/resources/GitHub%20Flow%20A.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+
 ## What it solves
 
 Detection content is risky to deploy without validation. A malformed Wazuh XML file, missing metadata mapping, broken test event, or mismatched replay expectation can break detection pipelines or create false confidence. Flow A catches these issues before deployment.
