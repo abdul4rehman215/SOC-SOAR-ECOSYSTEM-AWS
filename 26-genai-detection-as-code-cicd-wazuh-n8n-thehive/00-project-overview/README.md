@@ -2,6 +2,9 @@
 
 This overview folder explains the full capstone prototype as one connected SOC engineering lifecycle.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/26-genai-detection-as-code-cicd-wazuh-n8n-thehive/resources/GitHub%20and%20LinkedIn%20Overview.png" alt="Overview" width="900"/></p>
+
+
 ## Scope
 
 The project covers:
