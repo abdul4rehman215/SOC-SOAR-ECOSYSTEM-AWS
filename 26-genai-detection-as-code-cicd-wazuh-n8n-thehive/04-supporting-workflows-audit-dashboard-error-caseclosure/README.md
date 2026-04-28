@@ -2,6 +2,8 @@
 
 This folder contains the support layer around the three main workflows. These workflows do not replace Flow A, B, or C; they make the prototype observable, resilient, and lifecycle-complete.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/26-genai-detection-as-code-cicd-wazuh-n8n-thehive/resources/GitHub%20supporting%20Flow.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+
 ## Included supporting workflows
 
 | Workflow | Purpose |
