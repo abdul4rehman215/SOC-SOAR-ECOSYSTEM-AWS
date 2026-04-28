@@ -2,6 +2,8 @@
 
 Flow C is the runtime AI security workflow. It receives Wazuh alerts generated from AI demo guardrail telemetry, enriches them with GenAI context, notifies Slack, creates/updates TheHive alerts, comments on alerts, promotes high-risk cases, comments on cases, and writes audit/dashboard state.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/26-genai-detection-as-code-cicd-wazuh-n8n-thehive/resources/GitHub%20and%20LinkedIn%20Flow%20C.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+
 ## What it solves
 
 AI application abuse can happen at the prompt/context/output layer. Flow C makes that telemetry visible to the SOC by converting app guardrail events into Wazuh detections and then into analyst-ready triage artifacts.
