@@ -2,6 +2,8 @@
 
 Flow B is the controlled release workflow for Wazuh rules and decoders. It takes validated detection content and deploys it only when the GitHub PR gate is satisfied.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/26-genai-detection-as-code-cicd-wazuh-n8n-thehive/resources/GitHub%20and%20LinkedIn%20Flow%20B.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+
 ## What it solves
 
 Detection content should not be copied directly into a Wazuh manager without approval, backup, smoke testing, and rollback options. Flow B adds release control to detection engineering.
