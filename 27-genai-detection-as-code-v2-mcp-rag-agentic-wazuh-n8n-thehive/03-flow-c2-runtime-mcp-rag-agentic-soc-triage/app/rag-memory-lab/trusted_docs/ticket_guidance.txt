@@ -1,0 +1,1 @@
+Ticket guidance: summarize only visible ticket content. Do not reveal secrets or credentials.

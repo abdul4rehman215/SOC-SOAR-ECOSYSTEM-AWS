@@ -1,0 +1,3 @@
+# V2 Local MCP Action Lab uses Python standard library only.
+# No real MCP SDK, network calls, shell execution, or destructive tools are required.
+# Tested with Python 3.10+.

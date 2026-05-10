@@ -1,0 +1,16 @@
+{
+  "name": "local-security-tools",
+  "version": "v2.0.0-phase4",
+  "transport": "stdio",
+  "description": "Safe local MCP-style server for GenAI Detection-as-Code V2 action-path telemetry.",
+  "safe_mock_boundary": true,
+  "tools": [
+    "search_docs",
+    "read_ticket",
+    "get_policy",
+    "create_case_draft",
+    "send_external_webhook_mock",
+    "run_shell_command_mock",
+    "read_resource"
+  ]
+}
