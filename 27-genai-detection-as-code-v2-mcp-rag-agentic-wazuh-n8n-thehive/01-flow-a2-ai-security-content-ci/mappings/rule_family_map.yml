@@ -1,0 +1,192 @@
+# V2 rule family map. Purpose: central enrichment/catalog map for CI, Flow C2, docs, and replay.
+rules:
+  100301:
+    family: mcp_tool_poisoning
+    domain: mcp
+    severity: critical
+    expected_event_source: ai_demo_mcp_guardrail
+    datatable: flow_v2_mcp_runtime_events
+    case_template: flowc-mcp-tool-poisoning
+    owasp_category: LLM01
+    mcp_risk_category: prompt_injection_via_tool_result
+    agentic_risk_category: tool_misuse
+  100302:
+    family: mcp_schema_drift
+    domain: mcp
+    severity: high
+    expected_event_source: ai_demo_mcp_guardrail
+    datatable: flow_v2_mcp_runtime_events
+    case_template: flowc-mcp-schema-drift
+    owasp_category: MCP
+    mcp_risk_category: schema_or_description_drift
+    agentic_risk_category: tool_misuse
+  100303:
+    family: mcp_overprivileged_tool
+    domain: mcp
+    severity: high
+    expected_event_source: ai_demo_mcp_guardrail
+    datatable: flow_v2_mcp_runtime_events
+    case_template: flowc-mcp-sensitive-tool-call
+    owasp_category: MCP
+    mcp_risk_category: over_privileged_tool_use
+    agentic_risk_category: tool_misuse
+  100304:
+    family: mcp_sensitive_tool_without_hitl
+    domain: mcp
+    severity: critical
+    expected_event_source: ai_demo_mcp_guardrail
+    datatable: flow_v2_mcp_runtime_events
+    case_template: flowc-mcp-sensitive-tool-call
+    owasp_category: MCP
+    mcp_risk_category: sensitive_tool_without_hitl
+    agentic_risk_category: tool_misuse
+  100305:
+    family: mcp_tool_argument_injection
+    domain: mcp
+    severity: high
+    expected_event_source: ai_demo_mcp_guardrail
+    datatable: flow_v2_mcp_runtime_events
+    case_template: flowc-agentic-tool-misuse
+    owasp_category: MCP
+    mcp_risk_category: dangerous_tool_arguments
+    agentic_risk_category: tool_misuse
+  100306:
+    family: mcp_resource_exfiltration
+    domain: mcp
+    severity: critical
+    expected_event_source: ai_demo_mcp_guardrail
+    datatable: flow_v2_mcp_runtime_events
+    case_template: flowc-mcp-resource-exfiltration
+    owasp_category: MCP
+    mcp_risk_category: resource_exfiltration
+    agentic_risk_category: tool_misuse
+  100401:
+    family: rag_context_poisoning
+    domain: rag_memory
+    severity: high
+    expected_event_source: ai_demo_rag_memory_guardrail
+    datatable: flow_v2_rag_memory_events
+    case_template: flowc-rag-context-poisoning
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: memory_context_poisoning
+  100402:
+    family: memory_poisoning_attempt
+    domain: rag_memory
+    severity: critical
+    expected_event_source: ai_demo_rag_memory_guardrail
+    datatable: flow_v2_rag_memory_events
+    case_template: flowc-memory-poisoning
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: memory_context_poisoning
+  100403:
+    family: memory_scope_violation
+    domain: rag_memory
+    severity: high
+    expected_event_source: ai_demo_rag_memory_guardrail
+    datatable: flow_v2_rag_memory_events
+    case_template: flowc-memory-poisoning
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: memory_context_poisoning
+  100404:
+    family: unapproved_embedding_source
+    domain: rag_memory
+    severity: high
+    expected_event_source: ai_demo_rag_memory_guardrail
+    datatable: flow_v2_rag_memory_events
+    case_template: flowc-rag-context-poisoning
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: memory_context_poisoning
+  100405:
+    family: retrieval_to_tool_escalation
+    domain: rag_memory
+    severity: critical
+    expected_event_source: ai_demo_rag_memory_guardrail
+    datatable: flow_v2_rag_memory_events
+    case_template: flowc-rag-context-poisoning
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: memory_context_poisoning
+  100351:
+    family: agent_goal_hijack
+    domain: agentic
+    severity: critical
+    expected_event_source: ai_demo_agent_guardrail
+    datatable: flow_v2_agentic_incidents
+    case_template: flowc-agentic-goal-hijack
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: agent_goal_hijack
+  100352:
+    family: agent_plan_drift_tool_chain_escalation
+    domain: agentic
+    severity: critical
+    expected_event_source: ai_demo_agent_guardrail
+    datatable: flow_v2_agentic_incidents
+    case_template: flowc-agentic-plan-drift
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: tool_chain_escalation
+  100353:
+    family: agent_tool_loop_unbounded_consumption
+    domain: agentic
+    severity: high
+    expected_event_source: ai_demo_agent_guardrail
+    datatable: flow_v2_agentic_incidents
+    case_template: flowc-agentic-tool-loop
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: unbounded_consumption
+  100354:
+    family: agent_approval_manipulation
+    domain: agentic
+    severity: high
+    expected_event_source: ai_demo_agent_guardrail
+    datatable: flow_v2_agentic_incidents
+    case_template: flowc-agentic-approval-bypass
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: human_trust_exploitation
+  100355:
+    family: agent_identity_permission_mismatch
+    domain: agentic
+    severity: high
+    expected_event_source: ai_demo_agent_guardrail
+    datatable: flow_v2_agentic_incidents
+    case_template: flowc-agentic-identity-mismatch
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: identity_scope_mismatch
+  100356:
+    family: agent_confused_deputy_multi_server
+    domain: agentic
+    severity: critical
+    expected_event_source: ai_demo_agent_guardrail
+    datatable: flow_v2_agentic_incidents
+    case_template: flowc-agentic-confused-deputy
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: confused_deputy
+  100357:
+    family: agent_excessive_agency_rogue_action
+    domain: agentic
+    severity: critical
+    expected_event_source: ai_demo_agent_guardrail
+    datatable: flow_v2_agentic_incidents
+    case_template: flowc-agentic-excessive-agency
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: excessive_agency
+  100358:
+    family: agent_continued_action_after_blocked_risk
+    domain: agentic
+    severity: critical
+    expected_event_source: ai_demo_agent_guardrail
+    datatable: flow_v2_agentic_incidents
+    case_template: flowc-agentic-continued-after-block
+    owasp_category: LLM01
+    mcp_risk_category: none
+    agentic_risk_category: post_block_bypass

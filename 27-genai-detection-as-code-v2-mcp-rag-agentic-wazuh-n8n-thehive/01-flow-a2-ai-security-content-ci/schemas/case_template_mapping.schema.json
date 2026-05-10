@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "V2 Case Template Rule Map",
+  "type": "object",
+  "required": [
+    "rule_template_map"
+  ],
+  "properties": {
+    "rule_template_map": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "family",
+          "template",
+          "required",
+          "promotion_threshold"
+        ],
+        "properties": {
+          "family": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string",
+            "pattern": "^flowc-"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "promotion_threshold": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        }
+      }
+    }
+  }
+}
