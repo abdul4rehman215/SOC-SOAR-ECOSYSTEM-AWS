@@ -1,0 +1,30 @@
+# 📊 Supporting Workflows Architecture Notes
+
+## 🎯 Responsibility
+
+This module is responsible for **analytics and measurement layer** inside the GenAI Detection-as-Code V2 prototype.
+
+## 🧩 Core scope
+
+policy monitor, regression, false-positive analytics, dashboard rollup.
+
+## 🔄 Input and output boundary
+
+- Inputs are workflow triggers, runtime events, GitHub signals, Wazuh alerts, or scheduled/manual requests depending on the module.
+- Outputs are Slack messages, GitHub comments, TheHive alerts/cases, DataTable rows, or deployment/runtime artifacts.
+
+## 🏗️ Design pattern
+
+The workflow follows a consistent SOC automation pattern:
+
+```text
+trigger → normalize context → decision/gate → external action → audit row → analyst evidence
+```
+
+## ✅ Evidence expectation
+
+Each module should have at least one n8n execution screenshot, one external output screenshot, and one DataTable/evidence record.
+
+## 🏭 Production hardening
+
+For production, add credential vaulting, formal error handling, idempotency keys, durable state storage, and more granular test coverage.

@@ -1,0 +1,35 @@
+{
+  "repo_root_default": "/opt/detection-ci/wazuh-genai-ci",
+  "thehive_base_url": "http://100.30.129.36:9000",
+  "n8n_base_url": "http://44.217.125.123:5678",
+  "wazuh_alerts_json": "/var/ossec/logs/alerts/alerts.json",
+  "runtime_tables": {
+    "mcp_runtime": "flow_v2_mcp_runtime_events",
+    "mcp_policy_violations": "flow_v2_mcp_policy_violations",
+    "rag_memory": "flow_v2_rag_memory_events",
+    "agentic_incidents": "flow_v2_agentic_incidents",
+    "agentic_plan_steps": "flow_v2_agentic_plan_steps",
+    "agentic_policy_violations": "flow_v2_agentic_policy_violations"
+  },
+  "phase9_tables": {
+    "policy_monitor_events": "flow_v2_mcp_policy_monitor_events",
+    "regression_runs": "flow_v2_regression_runs",
+    "false_positive_analytics": "flow_v2_false_positive_analytics",
+    "dashboard_summary": "flow_v2_dashboard_summary",
+    "rule_tuning_recommendations": "flow_v2_rule_tuning_recommendations",
+    "alert_volume_baselines": "flow_v2_alert_volume_baselines",
+    "thehive_closure_analysis": "flow_v2_thehive_closure_analysis"
+  },
+  "thresholds": {
+    "false_positive_rate_warn": 0.25,
+    "false_positive_rate_critical": 0.5,
+    "noisy_rule_alert_count": 10,
+    "regression_pass_rate_minimum": 0.95
+  },
+  "safe_boundary": {
+    "no_real_shell_execution": true,
+    "no_real_external_send": true,
+    "no_production_secret_access": true,
+    "safe_mock_tools_only": true
+  }
+}

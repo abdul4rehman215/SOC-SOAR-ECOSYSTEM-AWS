@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Flow F Regression Run",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "regression_run_id",
+    "started_at",
+    "completed_at",
+    "regression_status",
+    "total_tests"
+  ],
+  "properties": {
+    "regression_run_id": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string"
+    },
+    "trigger_type": {
+      "type": "string"
+    },
+    "repo": {
+      "type": "string"
+    },
+    "commit_sha": {
+      "type": "string"
+    },
+    "corpus_version": {
+      "type": "string"
+    },
+    "total_tests": {
+      "type": "number"
+    },
+    "passed_tests": {
+      "type": "number"
+    },
+    "failed_tests": {
+      "type": "number"
+    },
+    "expected_rule_misses": {
+      "type": "number"
+    },
+    "unexpected_alerts": {
+      "type": "number"
+    },
+    "alert_volume_before": {
+      "type": "number"
+    },
+    "alert_volume_after": {
+      "type": "number"
+    },
+    "regression_status": {
+      "type": "string"
+    }
+  }
+}

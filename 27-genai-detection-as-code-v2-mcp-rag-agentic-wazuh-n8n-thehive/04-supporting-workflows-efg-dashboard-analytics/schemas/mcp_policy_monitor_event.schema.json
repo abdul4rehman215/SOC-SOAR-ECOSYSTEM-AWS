@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Flow E MCP Runtime Policy Monitor Event",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "event_source",
+    "event_type",
+    "request_id",
+    "tool_name",
+    "guardrail_action"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0"
+    },
+    "event_source": {
+      "enum": [
+        "ai_demo_mcp_policy_monitor",
+        "ai_demo_mcp_guardrail"
+      ]
+    },
+    "event_type": {
+      "enum": [
+        "mcp_policy_check",
+        "mcp_tool_call",
+        "mcp_tool_result",
+        "mcp_resource_read"
+      ]
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "agent_id": {
+      "type": "string"
+    },
+    "mcp_server_name": {
+      "type": "string"
+    },
+    "tool_name": {
+      "type": "string"
+    },
+    "tool_allowed": {
+      "type": "boolean"
+    },
+    "tool_allowlist_status": {
+      "type": "string"
+    },
+    "schema_hash_expected": {
+      "type": "string"
+    },
+    "schema_hash_observed": {
+      "type": "string"
+    },
+    "schema_hash_status": {
+      "type": "string"
+    },
+    "permission_scope_requested": {
+      "type": "string"
+    },
+    "permission_scope_allowed": {
+      "type": "string"
+    },
+    "permission_scope_status": {
+      "type": "string"
+    },
+    "approval_required": {
+      "type": "boolean"
+    },
+    "approval_status": {
+      "type": "string"
+    },
+    "resource_uri": {
+      "type": "string"
+    },
+    "resource_scope_violation": {
+      "type": "boolean"
+    },
+    "tool_result_risk_flags_csv": {
+      "type": "string"
+    },
+    "guardrail_action": {
+      "type": "string"
+    },
+    "risk_score": {
+      "type": "number"
+    },
+    "risk_flags_csv": {
+      "type": "string"
+    }
+  }
+}

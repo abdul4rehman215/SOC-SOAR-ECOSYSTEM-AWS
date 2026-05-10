@@ -1,0 +1,25 @@
+{
+  "corpus_version": "v2-phase9-regression-v1",
+  "families": [
+    "mcp",
+    "rag_memory",
+    "agentic"
+  ],
+  "event_roots": [
+    "tests/events/mcp",
+    "tests/events/rag_memory",
+    "tests/events/agentic"
+  ],
+  "expected_maps": [
+    "tests/expected/mcp_expected_rules.yml",
+    "tests/expected/rag_memory_expected_rules.yml",
+    "tests/expected/agentic_expected_rules.yml",
+    "tests/expected/v2_expected_rules.yml"
+  ],
+  "alert_volume": {
+    "before_window_minutes": 60,
+    "after_window_minutes": 60
+  },
+  "github_issue_on_failure": true,
+  "slack_report": true
+}

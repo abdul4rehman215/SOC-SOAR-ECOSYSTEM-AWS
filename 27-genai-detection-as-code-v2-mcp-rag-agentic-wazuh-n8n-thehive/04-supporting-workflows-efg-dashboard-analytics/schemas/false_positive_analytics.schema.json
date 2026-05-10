@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Flow G False Positive Analytics",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "analytics_id",
+    "window_start",
+    "window_end",
+    "rule_id",
+    "fp_rate",
+    "recommended_action"
+  ],
+  "properties": {
+    "analytics_id": {
+      "type": "string"
+    },
+    "window_start": {
+      "type": "string"
+    },
+    "window_end": {
+      "type": "string"
+    },
+    "rule_id": {
+      "type": "number"
+    },
+    "rule_family": {
+      "type": "string"
+    },
+    "alert_count": {
+      "type": "number"
+    },
+    "case_count": {
+      "type": "number"
+    },
+    "closed_false_positive_count": {
+      "type": "number"
+    },
+    "closed_true_positive_count": {
+      "type": "number"
+    },
+    "closed_benign_positive_count": {
+      "type": "number"
+    },
+    "fp_rate": {
+      "type": "number"
+    },
+    "recommended_action": {
+      "type": "string"
+    },
+    "tuning_priority": {
+      "type": "string"
+    }
+  }
+}
