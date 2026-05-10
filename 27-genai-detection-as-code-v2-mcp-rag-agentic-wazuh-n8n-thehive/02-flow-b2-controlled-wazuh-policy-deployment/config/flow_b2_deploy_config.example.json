@@ -1,0 +1,33 @@
+{
+  "repo_root": "/opt/detection-ci/wazuh-genai-ci",
+  "wazuh_rules_dir": "/var/ossec/etc/rules",
+  "wazuh_decoders_dir": "/var/ossec/etc/decoders",
+  "wazuh_manager_service": "wazuh-manager",
+  "policy_active_dir": "/opt/ai-demo-v2/policies",
+  "backup_root": "/opt/detection-ci/backups/flow-b2",
+  "staging_root": "/tmp/flow-b2-staging",
+  "required_labels": [
+    "ai-security-ci-pass",
+    "detection-ci-pass",
+    "mcp-policy-pass",
+    "rag-policy-pass",
+    "agentic-policy-pass",
+    "ready-to-deploy"
+  ],
+  "protected_rule_files": [
+    "genai_mcp_rules.xml",
+    "genai_rag_memory_rules.xml",
+    "genai_agentic_rules.xml"
+  ],
+  "protected_decoder_files": [
+    "genai_mcp_decoder.xml",
+    "genai_rag_memory_decoder.xml",
+    "genai_agentic_decoder.xml"
+  ],
+  "deploy_policy_subdirs": [
+    "mcp",
+    "rag_memory",
+    "agentic"
+  ],
+  "dry_run_default": true
+}

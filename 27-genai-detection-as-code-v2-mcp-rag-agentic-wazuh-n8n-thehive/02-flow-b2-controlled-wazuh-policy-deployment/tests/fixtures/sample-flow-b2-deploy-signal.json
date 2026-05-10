@@ -1,0 +1,22 @@
+{
+  "event_type": "flow_b2_manual_deploy_signal",
+  "deployment_id": "flow-b2-local-test-001",
+  "repo": "abdul4rehman215/wazuh-genai-ci",
+  "pr_number": 8,
+  "commit_sha": "phase8-local-test-sha",
+  "actor": "student-user-demo",
+  "approved": true,
+  "approval_status": "approved",
+  "deploy_environment": "lab",
+  "deploy_mode": "dry_run",
+  "labels": [
+    "ai-security-ci-pass",
+    "detection-ci-pass",
+    "mcp-policy-pass",
+    "rag-policy-pass",
+    "agentic-policy-pass",
+    "ready-to-deploy",
+    "needs-review"
+  ],
+  "notes": "Sample Phase 8 deploy signal used for import-safe n8n and local dry-run tests."
+}
