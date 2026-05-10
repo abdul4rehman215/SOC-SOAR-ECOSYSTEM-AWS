@@ -65,9 +65,9 @@
 
 <!-- ===================== SCOPE & STATUS ===================== -->
 
-![Projects](https://img.shields.io/badge/Projects-41-43A047?style=for-the-badge)
+![Projects](https://img.shields.io/badge/Projects-42-43A047?style=for-the-badge)
 ![Installations](https://img.shields.io/badge/INSTALLATIONS%20&%20SETUPS-11-546E7A?style=for-the-badge)
-![Capstones](https://img.shields.io/badge/Capstones-5-8E24AA?style=for-the-badge)
+![Capstones](https://img.shields.io/badge/Capstones-6-8E24AA?style=for-the-badge)
 ![Dashboards Count](https://img.shields.io/badge/Dashboards-6-0277BD?style=for-the-badge)
 ![Explorations](https://img.shields.io/badge/Learning%20Explorations-4-F57C00?style=for-the-badge)
 ![Portfolio](https://img.shields.io/badge/Portfolio-Project%20Based-00C853?style=for-the-badge)
@@ -96,6 +96,7 @@ This repository presents a **full self-built SOC/SOAR ecosystem on AWS**, design
 - ✅ **Secure AWS infrastructure engineering using Terraform, IAM guardrails, Checkov scanning, remediation automation, AWS Config, GuardDuty, and VPC Flow Logs**
 - ✅ **AI-assisted SOC alert triage and analyst reporting**
 - ✅ **GenAI detection-as-code CI/CD for Wazuh using GitHub, n8n, OWASP LLM, MITRE ATLAS, TheHive, Slack, and audit tables**
+- ✅ **GenAI Detection-as-Code V2 covering MCP tool security, RAG/memory poisoning, agentic AI risk detection, controlled deployment, regression testing, false-positive analytics, and SOC posture metrics**
 - ✅ **Dashboard engineering for monitoring, ATT&CK visibility, and compliance posture**
 
 This is **not a tool-installation showcase** and **not a collection of isolated mini-labs**.
@@ -104,7 +105,7 @@ It is a **project-based security operations portfolio** built from scratch to re
 
 **Detect → Enrich → Investigate → Respond → Share Intelligence → Automate → Visualize**
 
-The repository demonstrates hands-on implementation using **Wazuh, TheHive, Cortex, MISP, Sysmon, Osquery, auditd, Suricata, Snort, Zeek, ModSecurity, Fail2Ban, CloudTrail, AWS Config, GuardDuty, Terraform, Checkov, GitHub PR automation, n8n, Gemini, Slack, OWASP LLM mapping, and MITRE ATT&CK/ATLAS-style context** across multiple connected projects.
+The repository demonstrates hands-on implementation using **Wazuh, TheHive, Cortex, MISP, Sysmon, Osquery, auditd, Suricata, Snort, Zeek, ModSecurity, Fail2Ban, CloudTrail, AWS Config, GuardDuty, Terraform, Checkov, GitHub PR automation, n8n, Gemini, Slack, OWASP LLM mapping, MCP/RAG/agentic AI-security telemetry, and MITRE ATT&CK/ATLAS-style context** across multiple connected projects.
 
 ---
 
@@ -123,7 +124,7 @@ It includes hands-on work across:
 - **Threat intelligence enrichment and IOC sharing**
 - **SOAR-style automation and AI-assisted triage**
 - **Secure cloud infrastructure engineering using Terraform, IAM guardrails, assessment, remediation, and continuous monitoring**
-- **AI application security and GenAI detection-as-code workflowing**
+- **AI application security, GenAI detection-as-code workflowing, MCP tool-risk monitoring, RAG/memory security, and agentic AI runtime governance**
 - **Dashboards and security visualization** for analyst workflows and operational visibility
 
 This portfolio is designed to reflect **real security operations thinking**, with a strong emphasis on implementation depth, workflow continuity, and documentation discipline.
@@ -146,6 +147,7 @@ This repository demonstrates practical capability across:
 - **Secure AWS infrastructure MVP design using Terraform, public/private subnet separation, bastion access, IAM least privilege, encrypted logging, Checkov scanning, remediation scripts, AWS Config, GuardDuty, and VPC Flow Logs**
 - **AI-driven SOC alert triage automation using Wazuh + n8n + Gemini**
 - **GenAI application-security detection-as-code using GitHub PR validation, controlled Wazuh deployment, runtime guardrail telemetry, OWASP LLM mapping, MITRE ATLAS context, Slack, TheHive, and n8n DataTables**
+- **MCP, RAG/memory, and agentic AI security operations using Wazuh custom rules, n8n Flow C2 triage, Slack, TheHive, DataTables, regression testing, false-positive analytics, and dashboard rollups**
 - **Dashboard engineering for threat monitoring, MITRE ATT&CK coverage, and compliance reporting**
 - **Structured project documentation including configs, scripts, notes, troubleshooting, and interview-ready explanations**
 
@@ -217,12 +219,13 @@ The portfolio includes detection logic, enrichment flows, response steps, analys
 Endpoint, network, web, cloud, threat intel, dashboards, and automation are all covered.
 
 ### ✅ It includes portfolio-grade capstones
-The repository contains five strong flagship implementations:
+The repository contains six strong flagship implementations:
 - **SOC + SOAR malware incident response capstone**
 - **AI-driven SOC alert triage automation**
 - **AWS IAM identity security automation capstone**
 - **Secure AWS infrastructure MVP with Terraform, IAM hardening, scanning, remediation, AWS Config, GuardDuty, and VPC Flow Logs**
 - **GenAI detection-as-code CI/CD for Wazuh, n8n, OWASP LLM, MITRE ATLAS, Slack, and TheHive**
+- **GenAI Detection-as-Code V2 for MCP, RAG/memory, and agentic AI security operations with regression, false-positive analytics, and SOC posture metrics**
 
 ### ✅ It reflects analyst and engineering discipline
 Many projects include:
@@ -307,8 +310,21 @@ A next-level AI-security SOC automation capstone covering:
 
 ---
 
+## 6. 🧠 GenAI Detection-as-Code V2 — MCP, RAG/Memory & Agentic AI Security Operations
+**[27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive](./27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/)**
 
-## 6. 🌐 Detection Engineering Across Endpoint, Network, Web, and Cloud
+A capstone MVP V2 extension of the GenAI detection-as-code work, focused on the modern AI action path rather than only prompt/output detection. It covers:
+- GitHub-driven **Flow A2** validation for AI-security content, Wazuh rules, schemas, MCP policies, RAG/memory policies, agentic policies, mappings, DataTables, and replay harness evidence
+- **Flow B2** controlled Wazuh + AI policy deployment with labels, approval, `/deploy-lab`, backup, staging, restart, postdeploy validation, and rollback-aware reporting
+- **Flow C2** runtime SOC triage for MCP tool misuse, RAG/memory poisoning, and agentic AI risks through Wazuh → n8n → Slack → TheHive → DataTables
+- supporting engineering workflows for direct MCP policy monitoring, red-team replay regression, false-positive analytics, and SOC metrics rollup
+- five premium PDF project reports, workflow exports, rules/decoders, scripts, DataTable schemas, case templates, interview notes, and troubleshooting guides
+
+This project extends the previous GenAI CI/CD capstone from **prompt/output security** into **MCP + RAG/memory + agentic AI security operations**.
+
+---
+
+## 7. 🌐 Detection Engineering Across Endpoint, Network, Web, and Cloud
 The repository includes practical projects around:
 - SSH brute-force detection
 - HTTP anomaly detection using OpenSearch ML
@@ -322,7 +338,7 @@ The repository includes practical projects around:
 
 ---
 
-## 7. 📊 Dashboard Engineering and Visibility Projects
+## 8. 📊 Dashboard Engineering and Visibility Projects
 **[21-dashboards](./21-dashboards/)** contains dedicated security visualization work for:
 - SOC threat monitoring
 - MITRE ATT&CK coverage
@@ -476,6 +492,7 @@ Flagship portfolio work covering end-to-end SOC/SOAR execution, AI-assisted auto
 | 24 | [AWS IAM Identity Security Automation Capstone](./24-aws-iam-identity-security-automation-capstone/) | Cloud identity security automation capstone | Four-flow prototype for AWS identity triage, IAM containment, hygiene monitoring, TheHive integration, and closure sync |
 | 25 | [Secure AWS Infrastructure MVP](./25-aws-secure-infrastructure-mvp/) | Secure cloud infrastructure engineering MVP | Terraform VPC segmentation, bastion/private subnet design, IAM least privilege, Checkov scanning, remediation automation, CloudTrail, VPC Flow Logs, AWS Config, GuardDuty, and portfolio report packaging |
 | 26 | [GenAI Detection-as-Code CI/CD for Wazuh, n8n, TheHive & OWASP LLM](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/) | AI security + detection-as-code capstone | GitHub PR CI, Wazuh controlled deployment, AI-demo runtime telemetry, OWASP LLM/ATLAS enrichment, Slack, TheHive cases, audit tables, dashboard collector, error handling, and closure sync |
+| 27 | [GenAI Detection-as-Code V2 — MCP, RAG/Memory & Agentic AI Security Operations](./27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/) | Advanced AI security operations capstone | Flow A2 AI-security CI, Flow B2 controlled Wazuh/policy deployment, Flow C2 MCP/RAG/agentic runtime triage, Flow E policy monitor, Flow F regression replay, Flow G false-positive analytics, SOC dashboard rollup, TheHive case templates, Slack evidence, DataTables, Wazuh rules/decoders, and project reporting |
 
 ### 🧠 Skills Demonstrated
 - Full SOC + SOAR case lifecycle execution
@@ -483,6 +500,7 @@ Flagship portfolio work covering end-to-end SOC/SOAR execution, AI-assisted auto
 - Cloud identity security automation and orchestration
 - Secure AWS infrastructure design, Terraform provisioning, IAM hardening, assessment, remediation, and continuous monitoring
 - GenAI application-security telemetry and prompt-injection detection engineering
+- MCP, RAG/memory, and agentic AI runtime security workflowing
 - Detection-as-code CI/CD and controlled Wazuh deployment governance
 - TheHive alert-to-case lifecycle synchronization
 - Dashboard engineering for analyst workflows
@@ -557,7 +575,7 @@ Across this section, the learning projects support:
 
 # 🏁 Flagship Capstone Projects
 
-These two projects represent the **strongest end-to-end portfolio work** in this repository.  
+These flagship projects represent the **strongest end-to-end portfolio work** in this repository.  
 Together, they show practical capability across **SOC operations, detection engineering, case management, threat intelligence, automation, and analyst-ready reporting**.
 
 ## 🚨 Flagship Capstone 01 — End-to-End SOC + SOAR Malware Incident Response (Project 19)
@@ -833,6 +851,70 @@ This project demonstrates the ability to build an advanced **GenAI security SOC 
 
 ---
 
+## 🧠 Flagship Capstone 06 — GenAI Detection-as-Code V2 — MCP, RAG/Memory & Agentic AI Security Operations (Project 27)
+
+**[27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive](./27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/)**
+
+<div align="left">
+
+<img src="https://img.shields.io/badge/🧠%20MCP%20Security-7C3AED?style=flat-square"/>
+<img src="https://img.shields.io/badge/🔎%20RAG%20%2F%20Memory%20Security-0F766E?style=flat-square"/>
+<img src="https://img.shields.io/badge/🤖%20Agentic%20AI%20Risk-C62828?style=flat-square"/>
+<img src="https://img.shields.io/badge/🛡️%20Wazuh%20Runtime%20Detection-0052CC?style=flat-square"/>
+<img src="https://img.shields.io/badge/⚙️%20n8n%20SOC%20Automation-EA4B71?style=flat-square"/>
+<img src="https://img.shields.io/badge/📊%20Regression%20%2B%20FP%20Analytics-00897B?style=flat-square"/>
+
+</div>
+
+This capstone is the **MVP V2 expansion** of the previous GenAI detection-as-code project. The earlier V1 implementation focused on AI-app prompt/output telemetry, detection CI/CD, controlled Wazuh deployment, TheHive case lifecycle, and audit/dashboard flows. V2 expands that model into the full GenAI action path:
+
+```text
+prompt → agent plan → MCP tool discovery/call/result → RAG retrieval → memory write → approval decision → SOC triage
+```
+
+It is organized as a multi-workflow AI Security Operations prototype:
+
+- **Flow A2 — AI Security Content CI:** validates Wazuh XML, Sigma, metadata, MCP manifest/policy bundle, tool-schema hashes, prompt policies, RAG/memory policies, agentic policies, case-template mappings, rule-family maps, DataTable schemas, and replay harness results.
+- **Flow B2 — Controlled Wazuh + Policy Deployment:** gates deployment using A2 pass labels, approval, and `/deploy-lab`, then stages Wazuh rules/decoders and policy bundles with backup, activation, postdeploy validation, and rollback-aware reporting.
+- **Flow C2 — Runtime MCP/RAG/Agentic SOC Triage:** processes Wazuh alerts for MCP tool misuse, RAG/memory poisoning, and agentic AI risk into Slack, TheHive alerts/cases/comments, and domain-specific DataTables.
+- **Supporting workflows:** Flow E MCP runtime policy monitor, Flow F red-team replay/regression harness, Flow G false-positive analytics, and SOC dashboard V2 metrics rollup.
+
+### 🧩 Integrated Components Used
+
+- **GitHub PR events, labels, comments, and approval signals** for AI-security content governance
+- **Wazuh rules and decoders** for MCP, RAG/memory, and agentic AI runtime events
+- **n8n production workflows** for CI, deployment, runtime triage, analytics, and dashboard rollups
+- **TheHive 5** alert/case templates, comments, sourceRef deduplication, and case-promotion evidence
+- **Slack** for analyst-readable CI, deployment, runtime, regression, tuning, and dashboard notifications
+- **n8n DataTables** for CI runs, deployments, MCP runtime events, RAG/memory events, agentic incidents, policy violations, regression runs, false-positive analytics, and dashboard metrics
+- **Local demo labs** for MCP action security, RAG/memory poisoning, and agentic AI plan/approval misuse scenarios
+- **Python, Bash, JavaScript, JSON, YAML, XML, and CSV artifacts** for scripts, policies, schemas, mappings, configs, rules, and validation fixtures
+
+### 🎯 What This Capstone Simulates
+
+This capstone represents a prototype SOC program for AI systems where GenAI applications are treated as operational security assets, not only model prompts.
+
+It demonstrates how an AI-security workflow can:
+
+- validate detection/policy changes before deployment
+- gate Wazuh and policy-bundle deployment through approvals and CI labels
+- detect risky MCP tool calls, RAG/memory poisoning, and agentic plan drift
+- route alerts into Slack and TheHive with case templates and analyst context
+- store runtime and governance evidence in DataTables
+- replay red-team corpora to prevent rule regressions
+- use closure and false-positive data to improve tuning
+- summarize operational posture through dashboard rollup metrics
+
+It is a full **AI Security Content CI → Controlled Deployment → Runtime MCP/RAG/Agentic Detection → Case Handling → Regression → False-Positive Analytics → SOC Metrics** implementation.
+
+### ✅ Outcome Statement
+
+This project demonstrates the ability to build a modern **GenAI / AI Security Operations capstone** that extends detection engineering into MCP, RAG/memory, and agentic AI security while preserving SOC-grade evidence, workflow governance, analyst notification, TheHive case handling, and measurable operational metrics.
+
+**Project link:** [27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive](./27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/)
+
+---
+
 ## 🌟 Why These Flagship Capstones Matter
 
 Together, these flagship projects show:
@@ -842,9 +924,10 @@ Together, these flagship projects show:
 - **cloud-focused identity operations capability** through enrichment, containment, hygiene monitoring, and lifecycle synchronization
 - **cloud infrastructure security engineering capability** through Terraform provisioning, network segmentation, IAM hardening, scanning, remediation, AWS Config, GuardDuty, and defense-in-depth documentation
 - **AI-security detection engineering capability** through GenAI telemetry, OWASP LLM mapping, prompt-injection detection, controlled deployment, TheHive case promotion, and audit/dashboard workflows
+- **advanced GenAI security operations capability** through MCP tool-risk detection, RAG/memory poisoning detection, agentic AI plan/approval monitoring, regression testing, false-positive analytics, and SOC posture metrics
 - **portfolio-level execution** across both defensive operations and workflow engineering
 
-They are the strongest proof in this repository that the portfolio goes beyond tool setup and demonstrates **end-to-end security operations capability** across investigation, AI-assisted triage, cloud identity automation, secure AWS infrastructure engineering, GenAI detection-as-code, and lifecycle closure.
+They are the strongest proof in this repository that the portfolio goes beyond tool setup and demonstrates **end-to-end security operations capability** across investigation, AI-assisted triage, cloud identity automation, secure AWS infrastructure engineering, GenAI detection-as-code, MCP/RAG/agentic AI security operations, and lifecycle closure.
 
 # 🛠️ Tools & Technologies Used Across This Repository
 
@@ -917,6 +1000,10 @@ They are the strongest proof in this repository that the portfolio goes beyond t
 - Sigma rule validation
 - Wazuh XML rule/decoder validation
 - GenAI guardrail telemetry modeling
+- MCP tool-call and policy telemetry modeling
+- RAG/memory poisoning and retrieval-to-tool escalation modeling
+- Agentic AI plan, identity, approval, and tool-chain risk modeling
+- Regression replay and false-positive analytics for AI-security detections
 
 ## 🔍 Threat Intel / Enrichment / Notification
 - VirusTotal
@@ -949,6 +1036,7 @@ They are the strongest proof in this repository that the portfolio goes beyond t
 | Cloud Identity Security Automation | GuardDuty / Security Hub / IAM / CloudTrail workflows, containment logic, hygiene checks, and case-closure synchronization |
 | Secure Cloud Infrastructure Engineering | Terraform AWS foundation, VPC segmentation, bastion-only access, IAM least privilege, Checkov scanning, remediation automation, AWS Config, GuardDuty, and VPC Flow Logs |
 | AI-Assisted Security Ops | Structured alert summarization, analyst-ready triage reporting, decision support |
+| GenAI / AI-App Security Operations | Detection-as-code CI/CD, controlled deployment, MCP/RAG/agentic runtime triage, TheHive case promotion, Slack reporting, DataTables, regression, and false-positive analytics |
 | Dashboard Engineering | Threat monitoring, ATT&CK coverage views, compliance posture visualization |
 | Documentation Discipline | Commands, architecture notes, troubleshooting, interview Q&A, project walkthroughs |
 
@@ -1007,6 +1095,7 @@ SOC-SOAR-ECOSYSTEM-AWS/
 ├── 24-aws-iam-identity-security-automation-capstone/ # AWS IAM identity triage, containment, hygiene, and case-closure automation capstone
 ├── 25-aws-secure-infrastructure-mvp/                 # Secure AWS infrastructure MVP with Terraform, IAM hardening, scanning, remediation, Config, GuardDuty, and VPC Flow Logs
 ├── 26-genai-detection-as-code-cicd-wazuh-n8n-thehive/ # GenAI detection-as-code CI/CD, Wazuh deployment, runtime triage, TheHive cases, audit/dashboard workflows
+├── 27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/ # GenAI Detection-as-Code V2 for MCP, RAG/memory, agentic AI runtime security, regression, FP analytics, and SOC metrics
 ├── resources/                                        # Shared logos, diagrams, screenshots, and architecture visuals
 └── README.md
 ````
@@ -1059,6 +1148,7 @@ By working through this repository, the portfolio demonstrates the ability to:
 - Use **TheHive, Cortex, and MISP** for case management, enrichment, and intelligence sharing
 - Develop **active response and automation pipelines** for containment and analyst support
 - Improve visibility with **dashboards, MITRE mapping, and compliance-oriented monitoring**
+- Build **GenAI security operations prototypes** for MCP, RAG/memory, agentic AI risks, regression testing, false-positive analytics, and SOC metrics
 - Apply **threat hunting and behavioral analysis** using high-context telemetry sources
 - Document implementations clearly through configs, scripts, notes, troubleshooting, and interview-ready explanations
 
@@ -1139,7 +1229,8 @@ This heatmap reflects **hands-on implementation across a full AWS-based SOC/SOAR
 | 🧬 Threat Intelligence Operations | █████████░ **90%** | Enrichment, observable analysis, IOC validation, intelligence sharing | MISP, VirusTotal, AlienVault OTX, Cortex |
 | ⚙️ SOAR & Security Automation | █████████░ **90%** | Automated enrichment, workflowing, active response, orchestration | Wazuh integrations, n8n, Python, Bash, PowerShell |
 | 🤖 AI-Assisted SOC Operations | ████████░░ **80%** | Alert normalization, AI triage prompting, analyst-ready summaries | n8n, Gemini, JavaScript, HTML email formatting |
-| 🧬 GenAI / AI-App Security Detection | █████████░ **90%** | Prompt-injection telemetry, OWASP LLM mapping, MITRE ATLAS context, detection-as-code CI/CD, runtime triage, TheHive case promotion | Wazuh, GitHub, n8n, OWASP LLM, MITRE ATLAS, TheHive, Slack |
+| 🧬 GenAI / AI-App Security Detection | ██████████ **100%** | Prompt-injection telemetry, OWASP LLM mapping, MITRE ATLAS context, detection-as-code CI/CD, runtime triage, TheHive case promotion | Wazuh, GitHub, n8n, OWASP LLM, MITRE ATLAS, TheHive, Slack |
+| 🧠 MCP / RAG / Agentic AI Security Operations | █████████░ **90%** | MCP tool-risk detection, RAG/memory poisoning detection, agentic plan/approval monitoring, regression replay, false-positive analytics, and SOC metrics | Wazuh, n8n, TheHive, Slack, GitHub, DataTables, Python, JSONL, MCP/RAG/agentic demo labs |
 | 📈 Dashboard Engineering & Security Visualization | ████████░░ **80%** | Threat dashboards, ATT&CK visibility, compliance monitoring | Wazuh Dashboard, OpenSearch visualizations |
 | 🧾 Security Documentation & Reporting | ██████████ **100%** | Architecture notes, commands, troubleshooting, interview Q&A, project reporting | Markdown, JSON, configs, screenshots, notes |
 
@@ -1211,7 +1302,10 @@ This repository is best explored as a **connected portfolio**, not as random sta
 8. **[26-genai-detection-as-code-cicd-wazuh-n8n-thehive](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/)**
    Review the GenAI detection-as-code capstone covering GitHub PR validation, controlled Wazuh deployment, AI demo runtime telemetry, Slack triage, TheHive case promotion, audit tables, dashboard collection, error handling, and closure synchronization.
 
-9. **[21-dashboards](./21-dashboards/)** and **[22-learning-projects](./22-learning-projects/)**
+9. **[27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive](./27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/)**
+   Review the MVP V2 GenAI security operations capstone covering Flow A2 AI-security CI, Flow B2 controlled Wazuh/policy deployment, Flow C2 MCP/RAG/agentic runtime triage, Flow E policy monitoring, Flow F regression replay, Flow G false-positive analytics, and SOC dashboard metrics.
+
+10. **[21-dashboards](./21-dashboards/)** and **[22-learning-projects](./22-learning-projects/)**
    Explore visibility engineering, dashboarding, and feature/module exploration.
 
 ---
@@ -1304,6 +1398,7 @@ This portfolio is aligned with roles involving **security monitoring, detection 
 - **Threat Hunting Analyst**
 - **Security Automation / SOAR Engineer**
 - **Cloud Security Analyst / Cloud Security Engineer**
+- **AI Security / GenAI Security Operations Engineer**
 - **Blue Team Security Engineer**
 - **Security Operations Engineer**
 - **Junior-to-Mid Security Engineer** focused on defensive operations
@@ -1322,6 +1417,7 @@ This portfolio demonstrates the ability to:
 - Build **cloud identity security automation** using GuardDuty, Security Hub, IAM, CloudTrail, n8n, Slack, and TheHive
 - Build **secure AWS infrastructure MVPs** using Terraform, public/private network design, IAM least privilege, Checkov, remediation automation, AWS Config, GuardDuty, and VPC Flow Logs
 - Build **GenAI detection-as-code CI/CD** using GitHub, Wazuh, n8n, OWASP LLM, MITRE ATLAS, Slack, TheHive, and audit/dashboard workflows
+- Build **MCP, RAG/memory, and agentic AI runtime security workflows** with Wazuh rules, n8n Flow C2 triage, TheHive case templates, Slack reporting, DataTables, regression replay, false-positive analytics, and dashboard metrics
 - Enrich and validate IOCs using **threat intelligence sources**
 - Design **active response and automation workflows**
 - Create **dashboard-driven security visibility**
@@ -1341,6 +1437,7 @@ Key strengths shown through this repository include:
 - **SOAR-style workflow automation**
 - **Secure cloud infrastructure engineering and defense-in-depth AWS design**
 - **Detection-as-code CI/CD and AI-security workflow engineering**
+- **MCP, RAG/memory, and agentic AI security operations prototyping**
 - **Security dashboarding and operational visibility**
 - **Hands-on project execution from setup to validation**
 
@@ -1365,6 +1462,7 @@ If you are reviewing this portfolio, the best places to start are:
 - **[24-aws-iam-identity-security-automation-capstone](./24-aws-iam-identity-security-automation-capstone/)**
 - **[25-aws-secure-infrastructure-mvp](./25-aws-secure-infrastructure-mvp/)**
 - **[26-genai-detection-as-code-cicd-wazuh-n8n-thehive](./26-genai-detection-as-code-cicd-wazuh-n8n-thehive/)**
+- **[27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive](./27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/)**
 - **[21-dashboards](./21-dashboards/)**
 - **[00-installation-and-setup-guide](./00-installation-and-setup-guide/)**
 
