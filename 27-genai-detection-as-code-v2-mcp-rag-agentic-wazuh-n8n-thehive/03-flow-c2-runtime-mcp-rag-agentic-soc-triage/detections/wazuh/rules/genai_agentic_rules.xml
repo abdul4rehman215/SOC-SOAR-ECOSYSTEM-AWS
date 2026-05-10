@@ -1,0 +1,77 @@
+<!--
+  GenAI Detection-as-Code V2 Phase 6 - Agentic AI runtime rules
+  Custom rule ID layout:
+    100350-100399 = Agentic plan/approval/identity/tool-chain detections
+  Install on Wazuh manager: /var/ossec/etc/rules/genai_agentic_rules.xml
+
+  Important Wazuh behavior from Phase 1-5:
+  JSON events are decoded by the built-in JSON decoder and match Wazuh base rule 86600.
+  Therefore the custom Phase 6 base rule chains from 86600.
+-->
+<group name="genai,agentic_ai,agentic_runtime,">
+
+  <rule id="100350" level="1">
+    <if_sid>86600</if_sid>
+    <field name="event_source">^ai_demo_agent_guardrail$</field>
+    <field name="schema_version">^2\.0$</field>
+    <description>GenAI agentic runtime telemetry event</description>
+    <group>genai,agentic_ai,agentic_base_event,</group>
+  </rule>
+
+  <rule id="100351" level="14">
+    <if_sid>100350</if_sid>
+    <field name="detection_family">^agent_goal_hijack$</field>
+    <description>Agent goal hijack detected for request $(request_id)</description>
+    <group>genai,agentic_ai,agent_goal_hijack,owasp_llm01,atlas_aml_t0051,critical,</group>
+  </rule>
+
+  <rule id="100352" level="14">
+    <if_sid>100350</if_sid>
+    <field name="detection_family">^agent_plan_drift_tool_chain_escalation$</field>
+    <description>Agent plan drift with tool-chain escalation detected for request $(request_id)</description>
+    <group>genai,agentic_ai,agent_plan_drift,tool_chain_escalation,critical,</group>
+  </rule>
+
+  <rule id="100353" level="11">
+    <if_sid>100350</if_sid>
+    <field name="detection_family">^agent_tool_loop_unbounded_consumption$</field>
+    <description>Agent tool loop or unbounded consumption detected for request $(request_id)</description>
+    <group>genai,agentic_ai,agent_tool_loop,resource_consumption,</group>
+  </rule>
+
+  <rule id="100354" level="13">
+    <if_sid>100350</if_sid>
+    <field name="detection_family">^agent_approval_manipulation$</field>
+    <description>Agent approval manipulation or misleading HITL prompt detected for request $(request_id)</description>
+    <group>genai,agentic_ai,agent_approval_manipulation,hitl,</group>
+  </rule>
+
+  <rule id="100355" level="13">
+    <if_sid>100350</if_sid>
+    <field name="detection_family">^agent_identity_permission_mismatch$</field>
+    <description>Agent identity and permission scope mismatch detected for request $(request_id)</description>
+    <group>genai,agentic_ai,agent_identity_permission_mismatch,least_privilege,</group>
+  </rule>
+
+  <rule id="100356" level="14">
+    <if_sid>100350</if_sid>
+    <field name="detection_family">^agent_confused_deputy_multi_server$</field>
+    <description>Agent confused deputy across MCP servers detected for request $(request_id)</description>
+    <group>genai,agentic_ai,agent_confused_deputy,mcp,multi_server,critical,</group>
+  </rule>
+
+  <rule id="100357" level="15">
+    <if_sid>100350</if_sid>
+    <field name="detection_family">^agent_excessive_agency_rogue_action$</field>
+    <description>Agent excessive agency or rogue autonomous action detected for request $(request_id)</description>
+    <group>genai,agentic_ai,agent_excessive_agency,rogue_action,critical,</group>
+  </rule>
+
+  <rule id="100358" level="13">
+    <if_sid>100350</if_sid>
+    <field name="detection_family">^agent_continued_action_after_blocked_risk$</field>
+    <description>Agent continued action after blocked MCP/RAG/memory risk for request $(request_id)</description>
+    <group>genai,agentic_ai,agent_continued_after_block,policy_bypass,</group>
+  </rule>
+
+</group>
