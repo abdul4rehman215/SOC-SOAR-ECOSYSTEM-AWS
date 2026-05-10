@@ -1,0 +1,43 @@
+# 🏗️ Architecture Notes - GenAI Detection-as-Code V2
+
+## 1. Design principle
+
+The project separates the AI security lifecycle into three operational zones:
+
+1. **Pre-deployment validation** through Flow A2.
+2. **Controlled deployment** through Flow B2.
+3. **Runtime SOC triage** through Flow C2.
+
+Supporting workflows E/F/G/Dashboard add the measurement layer required for detection engineering maturity.
+
+## 2. Why this architecture is different from MVP V1
+
+MVP V1 already proved that GenAI detection content could be validated, deployed, and used to create Wazuh-to-n8n-to-TheHive/Slack triage. MVP V2 keeps that lifecycle but expands the protected surface.
+
+V1 focused mainly on prompt/output telemetry. V2 protects the AI action path:
+
+- MCP server/tool trust
+- tool schema drift
+- tool permission scope
+- HITL approval enforcement
+- RAG source trust
+- memory write control
+- agent goal drift
+- plan/tool-chain escalation
+- identity/permission mismatch
+- continued action after a block
+
+## 3. Macro architecture
+
+GitHub is the change-control system. n8n is the orchestration and evidence engine. Wazuh is the detection engine. TheHive is the case-management layer. Slack is the human notification layer. DataTables hold MVP-grade state and evidence.
+
+## 4. Failure boundaries
+
+- Flow A2 can fail without touching Wazuh.
+- Flow B2 can block before deployment.
+- Flow C2 can still alert even if DataTables or TheHive partially fail.
+- Flow E/F/G/Dashboard can be tested independently.
+
+## 5. Production notes
+
+Production usage should replace n8n DataTables with durable storage, move script execution to controlled runners, enforce secrets through vaulting, and use formal CI/CD plus deployment approvals.
