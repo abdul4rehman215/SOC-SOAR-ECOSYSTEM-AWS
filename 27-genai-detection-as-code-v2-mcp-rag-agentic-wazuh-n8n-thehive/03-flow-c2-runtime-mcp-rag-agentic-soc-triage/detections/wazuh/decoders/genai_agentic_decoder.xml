@@ -1,0 +1,5 @@
+<!-- GenAI Detection-as-Code V2 Phase 6 - Agentic runtime JSON decoder hint -->
+<decoder name="genai_agentic_json">
+  <prematch type="pcre2">"event_source"\s*:\s*"ai_demo_agent_guardrail"</prematch>
+  <plugin_decoder>JSON_Decoder</plugin_decoder>
+</decoder>

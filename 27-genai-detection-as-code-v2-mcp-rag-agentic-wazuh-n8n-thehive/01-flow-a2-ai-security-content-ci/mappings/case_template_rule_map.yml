@@ -1,0 +1,99 @@
+# V2 Flow C2/TheHive case template map.
+# Purpose: Phase 7 CI validates that every high-risk rule has a TheHive case template before merge.
+# This file does not create templates. It is the source-of-truth mapping used by Flow C2, docs, and CI.
+rule_template_map:
+  100301:
+    family: mcp_tool_poisoning
+    template: flowc-mcp-tool-poisoning
+    required: true
+    promotion_threshold: 95
+  100302:
+    family: mcp_schema_drift
+    template: flowc-mcp-schema-drift
+    required: false
+    promotion_threshold: 95
+  100303:
+    family: mcp_overprivileged_tool
+    template: flowc-mcp-sensitive-tool-call
+    required: true
+    promotion_threshold: 90
+  100304:
+    family: mcp_sensitive_tool_without_hitl
+    template: flowc-mcp-sensitive-tool-call
+    required: true
+    promotion_threshold: 90
+  100305:
+    family: mcp_tool_argument_injection
+    template: flowc-agentic-tool-misuse
+    required: false
+    promotion_threshold: 95
+  100306:
+    family: mcp_resource_exfiltration
+    template: flowc-mcp-resource-exfiltration
+    required: true
+    promotion_threshold: 90
+  100401:
+    family: rag_context_poisoning
+    template: flowc-rag-context-poisoning
+    required: true
+    promotion_threshold: 95
+  100402:
+    family: memory_poisoning_attempt
+    template: flowc-memory-poisoning
+    required: true
+    promotion_threshold: 90
+  100403:
+    family: memory_scope_violation
+    template: flowc-memory-poisoning
+    required: false
+    promotion_threshold: 95
+  100404:
+    family: unapproved_embedding_source
+    template: flowc-rag-context-poisoning
+    required: false
+    promotion_threshold: 95
+  100405:
+    family: retrieval_to_tool_escalation
+    template: flowc-rag-context-poisoning
+    required: true
+    promotion_threshold: 90
+  100351:
+    family: agent_goal_hijack
+    template: flowc-agentic-goal-hijack
+    required: true
+    promotion_threshold: 90
+  100352:
+    family: agent_plan_drift_tool_chain_escalation
+    template: flowc-agentic-plan-drift
+    required: true
+    promotion_threshold: 90
+  100353:
+    family: agent_tool_loop_unbounded_consumption
+    template: flowc-agentic-tool-loop
+    required: true
+    promotion_threshold: 95
+  100354:
+    family: agent_approval_manipulation
+    template: flowc-agentic-approval-bypass
+    required: true
+    promotion_threshold: 90
+  100355:
+    family: agent_identity_permission_mismatch
+    template: flowc-agentic-identity-mismatch
+    required: true
+    promotion_threshold: 90
+  100356:
+    family: agent_confused_deputy_multi_server
+    template: flowc-agentic-confused-deputy
+    required: true
+    promotion_threshold: 90
+  100357:
+    family: agent_excessive_agency_rogue_action
+    template: flowc-agentic-excessive-agency
+    required: true
+    promotion_threshold: 90
+  100358:
+    family: agent_continued_action_after_blocked_risk
+    template: flowc-agentic-continued-after-block
+    required: true
+    promotion_threshold: 90

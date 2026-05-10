@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "V2 AI Security CI Event",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_source",
+    "event_type",
+    "ci_run_id",
+    "decision",
+    "stage_results"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0"
+    },
+    "event_source": {
+      "const": "flow_a2_ai_security_ci"
+    },
+    "event_type": {
+      "enum": [
+        "ci_run_started",
+        "ci_run_completed",
+        "ci_stage_result"
+      ]
+    },
+    "ci_run_id": {
+      "type": "string"
+    },
+    "repo": {
+      "type": "string"
+    },
+    "pr_number": {
+      "type": "integer"
+    },
+    "head_sha": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "pass",
+        "fail",
+        "skip"
+      ]
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stage_results": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}
