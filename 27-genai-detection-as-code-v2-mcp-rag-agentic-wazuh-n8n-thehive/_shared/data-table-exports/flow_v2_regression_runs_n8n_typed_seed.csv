@@ -1,2 +1,0 @@
-regression_run_id,started_at,completed_at,trigger_type,repo,commit_sha,corpus_version,total_tests,passed_tests,failed_tests,expected_rule_misses,unexpected_alerts,alert_volume_before,alert_volume_after,regression_status,github_issue_url,slack_notified,notes,raw_result_json
-regression_run_id_seed_001,2026-01-01T00:00:00.000Z,2026-01-01T00:00:00.000Z,trigger_type_seed,seed/repo,0000000000000000000000000000000000000000,corpus_version_seed,1,1,1,1,1,1,1,seed_status,https://example.com/seed,true,seed row - delete after import,"{""seed"":true}"
