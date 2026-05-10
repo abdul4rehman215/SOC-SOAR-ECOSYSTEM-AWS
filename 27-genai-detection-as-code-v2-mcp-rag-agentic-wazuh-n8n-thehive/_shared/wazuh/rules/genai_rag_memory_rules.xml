@@ -1,0 +1,40 @@
+<!-- GenAI Detection-as-Code V2 - RAG + memory rules -->
+<group name="genai,rag_memory,agentic_ai,">
+  <rule id="100400" level="1">
+    <if_sid>86600</if_sid>
+    <field name="event_source">ai_demo_rag_memory_guardrail</field>
+    <field name="schema_version">2.0</field>
+    <description>GenAI RAG and memory runtime telemetry event</description>
+    <group>genai,rag_memory,rag_memory_base_event,</group>
+  </rule>
+  <rule id="100401" level="13">
+    <if_sid>100400</if_sid>
+    <field name="detection_family">rag_context_poisoning</field>
+    <description>RAG untrusted context injection detected for request $(request_id)</description>
+    <group>genai,rag_memory,rag_context_poisoning,owasp_llm01,</group>
+  </rule>
+  <rule id="100402" level="14">
+    <if_sid>100400</if_sid>
+    <field name="detection_family">memory_poisoning_attempt</field>
+    <description>Memory poisoning attempt detected for request $(request_id)</description>
+    <group>genai,rag_memory,memory_poisoning,owasp_llm01,</group>
+  </rule>
+  <rule id="100403" level="12">
+    <if_sid>100400</if_sid>
+    <field name="detection_family">memory_scope_violation</field>
+    <description>GenAI memory scope violation detected for request $(request_id)</description>
+    <group>genai,rag_memory,memory_scope_violation,</group>
+  </rule>
+  <rule id="100404" level="12">
+    <if_sid>100400</if_sid>
+    <field name="detection_family">unapproved_embedding_source</field>
+    <description>Unapproved RAG embedding/source registration detected for $(embedding_collection)</description>
+    <group>genai,rag_memory,embedding_source_policy_violation,</group>
+  </rule>
+  <rule id="100405" level="14">
+    <if_sid>100400</if_sid>
+    <field name="detection_family">retrieval_to_tool_escalation</field>
+    <description>RAG retrieval-to-tool escalation detected for request $(request_id)</description>
+    <group>genai,rag_memory,retrieval_to_tool_escalation,mcp,agentic_ai,</group>
+  </rule>
+</group>

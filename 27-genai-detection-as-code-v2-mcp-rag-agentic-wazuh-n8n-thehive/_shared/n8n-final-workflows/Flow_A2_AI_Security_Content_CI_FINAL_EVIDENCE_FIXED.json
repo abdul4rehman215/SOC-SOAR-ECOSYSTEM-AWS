@@ -1,0 +1,1072 @@
+{
+  "name": "Flow_A2_AI_Security_Content_CI",
+  "nodes": [
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/abdul4rehman215",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "wazuh-genai-ci",
+          "mode": "list",
+          "cachedResultName": "wazuh-genai-ci",
+          "cachedResultUrl": "https://github.com/abdul4rehman215/wazuh-genai-ci"
+        },
+        "events": [
+          "pull_request"
+        ],
+        "options": {}
+      },
+      "id": "a3554729-42d5-4c0d-931e-ccc8c5569e57",
+      "name": "GitHub_Trigger_PR_AI_Security_CI",
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2400,
+        608
+      ],
+      "webhookId": "flow-a2-ai-security-ci-real-github",
+      "credentials": {
+        "githubApi": {
+          "id": "KEwPT6mwPqVWXs0Y",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction b64(s){ return Buffer.from(String(s || ''), 'utf8').toString('base64'); }\nconst body = $json.body ?? $json;\nconst pr = body.pull_request || {};\nconst repo = body.repository || {};\nconst action = body.action || 'manual';\nconst allowed = ['opened','synchronize','reopened','ready_for_review'].includes(action);\nconst owner = repo.owner?.login || repo.owner?.name || (repo.full_name || '').split('/')[0] || 'abdul4rehman215';\nconst repoName = repo.name || (repo.full_name || 'wazuh-genai-ci').split('/').pop();\nconst repoPath = body.repo_path || '/opt/detection-ci/wazuh-genai-ci';\nreturn [{json:{\n  action,\n  pr_action_allowed: allowed,\n  owner,\n  repo_name: repoName,\n  repo: repo.full_name || `${owner}/${repoName}`,\n  pr_number: Number(pr.number || body.pr_number || 0),\n  head_sha: pr.head?.sha || body.head_sha || 'local',\n  branch: pr.head?.ref || body.branch || 'local',\n  actor: body.sender?.login || pr.user?.login || body.actor || 'github',\n  repo_path: repoPath,\n  pr_url: pr.html_url || '',\n  received_at: new Date().toISOString(),\n  changed_files: [],\n  changed_files_json: '[]',\n  changed_files_b64: b64('[]')\n}}];\n"
+      },
+      "id": "61c27b51-44bb-4a43-a76c-a0ff20d4e791",
+      "name": "Code_Extract_A2_Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2160,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.pr_action_allowed }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "c0fd3c3b-3d1f-41b7-9b2f-e43dcc656f72",
+      "name": "IF_PR_Action_Allowed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1920,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:{ignored:true, reason:'PR action not allowed', action:$json.action}}];"
+      },
+      "id": "e49de9e3-abb0-4dd7-a27e-5d44ea7acf92",
+      "name": "Code_Ignore_Non_PR_Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1680,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction classify(path){\n const p=String(path||'').toLowerCase();\n if(p.includes('detections/wazuh') && p.endsWith('.xml')) return ['wazuh_content','high'];\n if(p.includes('detections/sigma')) return ['sigma','medium'];\n if(p.startsWith('metadata/')) return ['metadata','medium'];\n if(p.startsWith('schemas/')) return ['schema','high'];\n if(p.startsWith('policies/mcp')) return ['mcp_policy','high'];\n if(p.startsWith('policies/rag_memory')) return ['rag_memory_policy','high'];\n if(p.startsWith('policies/agentic')) return ['agentic_policy','high'];\n if(p.startsWith('mappings/')) return ['mapping','high'];\n if(p.startsWith('tests/')) return ['test_corpus','medium'];\n if(p.startsWith('data-tables/')) return ['datatable_schema','medium'];\n if(p.startsWith('docs/')) return ['documentation','low'];\n return ['other','low'];\n}\nconst rows = ($json.changed_files || []).map((f,i)=>{ const path=f.filename || String(f); const [category,risk]=classify(path); return {change_id:`${$json.pr_number||0}-${i+1}`, file_path:path, change_status:f.status||'modified', category, risk_category:risk, validator_group:category, requires_review:risk==='high', notes:'classified by n8n Flow A2'}; });\nconst ciCategories = new Set(['wazuh_content','sigma','metadata','schema','mcp_policy','rag_memory_policy','agentic_policy','mapping','test_corpus','datatable_schema']);\nconst relevant = rows.filter(r=>ciCategories.has(r.category));\nreturn [{json:{...$json, changed_file_rows:rows, relevant_change_count:relevant.length, relevant_ai_security_changes: relevant.length > 0, docs_only_change: rows.length > 0 && relevant.length === 0 && rows.every(r=>r.category === 'documentation')}}];\n"
+      },
+      "id": "c54a4637-54ab-4e3d-8d79-441dd044d8db",
+      "name": "Code_Classify_A2_Changed_Files",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.relevant_ai_security_changes }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "01dced68-ce41-43d7-bb9b-f390ffcb81f0",
+      "name": "IF_Relevant_AI_Security_Changes",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst now = new Date().toISOString();\nconst changedRows = $json.changed_file_rows || [];\nconst reason = changedRows.length ? 'Docs/non-security-only change; full AI-security CI not required' : 'No changed files returned by GitHub API; full AI-security CI not required';\nreturn [{json:{...$json, ci_result:{\n  ci_run_id:`a2-skip-${Date.now()}`,\n  started_at:now,\n  completed_at:now,\n  duration_seconds:0,\n  repo:$json.repo,\n  pr_number:$json.pr_number,\n  head_sha:$json.head_sha,\n  actor:$json.actor,\n  decision:'skip',\n  status:'skipped',\n  labels:['ai-security-ci-skip'],\n  stage_results:[],\n  changed_files: changedRows,\n  relevant_change_count:0,\n  summary: reason\n}}}];\n"
+      },
+      "id": "a243e8ca-b628-492c-899d-dd30f64492d6",
+      "name": "Code_A2_Skip_No_Relevant_Changes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $json.repo_path }} && bash -lc '\nset +e\nif [ -f ./.env.ci ]; then set -a; . ./.env.ci; set +a; fi\nexport GIT_TERMINAL_PROMPT=0\nPR=\"{{ $json.pr_number }}\"\nSHA=\"{{ $json.head_sha }}\"\nREPO=\"{{ $json.repo }}\"\nACTOR=\"{{ $json.actor }}\"\nCHANGED_B64=\"{{ $json.changed_files_b64 }}\"\nWORKTREE=\"/tmp/flowa2-pr-${PR}\"\nOUT=\"/tmp/flow_a2_ci_result_${PR}.json\"\nFETCH_LOG=\"/tmp/flow_a2_fetch_${PR}.log\"\nWT_LOG=\"/tmp/flow_a2_worktree_${PR}.log\"\nRUN_LOG=\"/tmp/flow_a2_runner_${PR}.log\"\nREPO_URL=\"https://github.com/${REPO}.git\"\nrm -f \"$OUT\" \"$FETCH_LOG\" \"$WT_LOG\" \"$RUN_LOG\"\ngit worktree remove --force \"$WORKTREE\" >/dev/null 2>&1 || true\nrm -rf \"$WORKTREE\"\nTOKEN_PRESENT=false\nif [ -n \"${GITHUB_TOKEN:-}\" ]; then\n  TOKEN_PRESENT=true\n  BASIC_AUTH=\"$(printf \"x-access-token:%s\" \"${GITHUB_TOKEN}\" | base64 | tr -d \"\\n\\r\")\"\n  git -c http.https://github.com/.extraheader=\"AUTHORIZATION: basic ${BASIC_AUTH}\" fetch --no-tags --depth 1 \"$REPO_URL\" \"$SHA\" >\"$FETCH_LOG\" 2>&1\nelse\n  git fetch --no-tags --depth 1 \"$REPO_URL\" \"$SHA\" >\"$FETCH_LOG\" 2>&1\nfi\nFETCH_STATUS=$?\nif [ $FETCH_STATUS -ne 0 ]; then\n  python3 - <<PYERR\nimport json, pathlib, time\nlog = pathlib.Path(\"$FETCH_LOG\").read_text(errors=\"replace\") if pathlib.Path(\"$FETCH_LOG\").exists() else \"\"\nprint(json.dumps({\n  \"ci_run_id\": f\"a2-fetch-fail-{int(time.time())}\",\n  \"started_at\": \"\", \"completed_at\": \"\", \"duration_seconds\": 0,\n  \"repo\": \"$REPO\", \"pr_number\": int(\"$PR\" or 0), \"head_sha\": \"$SHA\", \"actor\": \"$ACTOR\",\n  \"changed_files\": [], \"stage_results\": [],\n  \"decision\": \"fail\", \"status\": \"failed\", \"labels\": [\"ai-security-ci-fail\"],\n  \"summary\": \"Flow A2 could not fetch PR head SHA in the local repo workspace\",\n  \"command_error\": log[-4000:],\n  \"diagnostics\": {\"token_present\": \"$TOKEN_PRESENT\", \"repo_url\": \"$REPO_URL\", \"fetch_method\": \"github_basic_extraheader\"},\n  \"fix_hint\": \"GITHUB_TOKEN was not accepted by git fetch or is unavailable to ExecuteCommand. Verify .env.ci is readable by n8n, token has repo access, and run the git fetch smoke command from the n8n host.\"\n}))\nPYERR\n  exit 0\nfi\nTARGET_REF=\"FETCH_HEAD\"\ngit worktree add --detach \"$WORKTREE\" \"$TARGET_REF\" >\"$WT_LOG\" 2>&1\nWT_STATUS=$?\nif [ $WT_STATUS -ne 0 ]; then\n  python3 - <<PYERR\nimport json, pathlib, time\nlog = pathlib.Path(\"$WT_LOG\").read_text(errors=\"replace\") if pathlib.Path(\"$WT_LOG\").exists() else \"\"\nprint(json.dumps({\n  \"ci_run_id\": f\"a2-worktree-fail-{int(time.time())}\",\n  \"repo\": \"$REPO\", \"pr_number\": int(\"$PR\" or 0), \"head_sha\": \"$SHA\", \"actor\": \"$ACTOR\",\n  \"changed_files\": [], \"stage_results\": [],\n  \"decision\": \"fail\", \"status\": \"failed\", \"labels\": [\"ai-security-ci-fail\"],\n  \"summary\": \"Flow A2 could not create a temporary git worktree for the PR SHA\",\n  \"command_error\": log[-4000:],\n  \"fix_hint\": \"Remove stale /tmp/flowa2-pr-${PR} worktree files or check repository permissions.\"\n}))\nPYERR\n  exit 0\nfi\ncd \"$WORKTREE\"\nif [ ! -f scripts/ci/run_flow_a2_local_ci.py ]; then\n  python3 - <<PYERR\nimport json, time\nprint(json.dumps({\n  \"ci_run_id\": f\"a2-missing-script-{int(time.time())}\",\n  \"repo\": \"$REPO\", \"pr_number\": int(\"$PR\" or 0), \"head_sha\": \"$SHA\", \"actor\": \"$ACTOR\",\n  \"changed_files\": [], \"stage_results\": [],\n  \"decision\": \"fail\", \"status\": \"failed\", \"labels\": [\"ai-security-ci-fail\"],\n  \"summary\": \"Flow A2 PR checkout does not contain scripts/ci/run_flow_a2_local_ci.py\",\n  \"command_error\": \"The PR branch or base commit does not include the Phase 7 CI runner. Rebase the PR branch on current main.\"\n}))\nPYERR\n  exit 0\nfi\npython3 scripts/ci/run_flow_a2_local_ci.py --repo-root . --changed-files-b64 \"$CHANGED_B64\" --pr-number \"$PR\" --repo \"$REPO\" --head-sha \"$SHA\" --actor \"$ACTOR\" --output-json \"$OUT\" >\"$RUN_LOG\" 2>&1\nif [ -f \"$OUT\" ]; then\n  cat \"$OUT\"\nelse\n  python3 - <<PYERR\nimport json, pathlib, time\nlog = pathlib.Path(\"$RUN_LOG\").read_text(errors=\"replace\") if pathlib.Path(\"$RUN_LOG\").exists() else \"\"\nprint(json.dumps({\n  \"ci_run_id\": f\"a2-runner-fail-{int(time.time())}\",\n  \"repo\": \"$REPO\", \"pr_number\": int(\"$PR\" or 0), \"head_sha\": \"$SHA\", \"actor\": \"$ACTOR\",\n  \"changed_files\": [], \"stage_results\": [],\n  \"decision\": \"fail\", \"status\": \"failed\", \"labels\": [\"ai-security-ci-fail\"],\n  \"summary\": \"Flow A2 runner did not create an output JSON file\",\n  \"command_error\": log[-4000:],\n  \"fix_hint\": \"Run scripts/ci/run_flow_a2_local_ci.py manually inside the temporary worktree to see the failing validator.\"\n}))\nPYERR\nfi\nexit 0\n' "
+      },
+      "id": "7bcb70e5-a5f3-4217-88ef-575f52afaa47",
+      "name": "ExecuteCommand_Run_FlowA2_Local_CI",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        432
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst ctx = $('Code_Classify_A2_Changed_Files').first().json;\nconst out = $json.stdout || $json.data || '';\nconst err = $json.stderr || '';\nlet result = null;\ntry { const start = String(out).indexOf('{'); result = JSON.parse(String(out).slice(start)); } catch(e) { result = null; }\nif(!result){ result = {ci_run_id:`a2-error-${Date.now()}`, started_at:new Date().toISOString(), completed_at:new Date().toISOString(), duration_seconds:0, repo:ctx.repo, pr_number:ctx.pr_number, head_sha:ctx.head_sha, actor:ctx.actor, changed_files:ctx.changed_file_rows||[], stage_results:[], decision:'fail', status:'failed', labels:['ai-security-ci-fail'], summary:'Flow A2 local CI command did not return parseable JSON', command_error:String(err).slice(0,2000)}; }\nreturn [{json:{...ctx, ci_result: result, command_stdout: String(out).slice(-6000), command_stderr: String(err).slice(-2000)}}];\n"
+      },
+      "id": "06b11c4b-a554-4ede-ad74-4bacbfe98174",
+      "name": "Code_Parse_FlowA2_CI_Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $json.ci_result || {};\nconst stages = r.stage_results || [];\nconst passed = stages.filter(s=>s.passed).length;\nconst failed = stages.length - passed;\nconst labels = (r.labels || []).join(',');\nconst stageLines = stages.map(s=>`- ${s.passed ? 'PASS' : 'FAIL'} ${s.stage_name}: ${s.summary || s.status}`).join('\\n');\nconst diag = r.command_error || r.fix_hint || $json.command_stderr || '';\nconst diagBlock = diag ? ['','### Diagnostics', '```', String(diag).slice(0,3500), '```'].join('\\n') : '';\nconst hintBlock = r.fix_hint ? ['','### Fix hint', String(r.fix_hint).slice(0,1000)].join('\\n') : '';\nconst body = [\n  `## Flow A2 AI Security Content CI`, '',\n  `Decision: **${String(r.decision || '').toUpperCase()}**`,\n  `Repo: ${r.repo || $json.repo}`,\n  `PR: ${r.pr_number || $json.pr_number}`,\n  `Commit: ${r.head_sha || $json.head_sha}`,\n  `Stages: ${passed}/${stages.length} passed, ${failed} failed`,\n  `Labels: ${labels}`, '',\n  `### Stage results`, stageLines || 'No stages',\n  diagBlock,\n  hintBlock,\n  '', `This workflow validates only. Deployment is handled by Phase 8 Flow B2.`\n].join('\\n');\nconst slack = [\n  `*Flow A2 AI Security Content CI*`,\n  `*Decision:* ${(r.decision || 'unknown').toUpperCase()}`,\n  `*Repo/PR:* ${r.repo || $json.repo} #${r.pr_number || $json.pr_number}`,\n  `*Commit:* ${r.head_sha || $json.head_sha}`,\n  `*Stages:* ${passed}/${stages.length} passed, ${failed} failed`,\n  `*Labels:* ${labels || 'n/a'}`,\n  `*Summary:* ${r.summary || 'n/a'}`,\n  r.fix_hint ? `*Fix hint:* ${r.fix_hint}` : ''\n].filter(Boolean).join('\\n');\nreturn [{json:{...$json, github_comment_body:body, slack_text:slack, labels_csv: labels}}];\n"
+      },
+      "id": "5c9e608a-b158-4d0f-88a3-2432c95e1a81",
+      "name": "Code_Build_A2_CI_Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A8JL8JAT0",
+          "mode": "list",
+          "cachedResultName": "soc-alerts"
+        },
+        "text": "={{ $json.slack_text }}",
+        "otherOptions": {}
+      },
+      "id": "8350ee79-2270-4f5e-a325-b3a81bd4a89b",
+      "name": "Slack_A2_CI_Report",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        432
+      ],
+      "webhookId": "flow-a2-slack",
+      "credentials": {
+        "slackApi": {
+          "id": "a2mEvpi3yknJlgLI",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst base = $('Code_Build_A2_CI_Report').first().json;\nconst slack = $json || {};\nconst r = base.ci_result || {};\nconst stages = r.stage_results || [];\nconst runRow = {\n ci_run_id:r.ci_run_id, started_at:r.started_at, completed_at:r.completed_at, repo:r.repo||base.repo, branch:base.branch||'', pr_number:Number(r.pr_number||base.pr_number||0), head_sha:r.head_sha||base.head_sha, actor:r.actor||base.actor,\n changed_file_count:(r.changed_files||[]).length, relevant_change_count:Number(r.relevant_change_count||base.relevant_change_count||0), stages_total:stages.length, stages_passed:stages.filter(s=>s.passed).length, stages_failed:stages.filter(s=>!s.passed).length,\n decision:r.decision, status:r.status, labels_csv:(r.labels||[]).join(','), github_comment_status:'github_comment_created', slack_notified:!!(slack.channel || slack.ts || slack.message), duration_seconds:Number(r.duration_seconds||0), error:r.command_error||'', raw_result_json:JSON.stringify(r).slice(0,12000)\n};\nconst changedRows = (r.changed_files || base.changed_file_rows || []).map((row,i)=>({...row, change_id: row.change_id || `${r.ci_run_id}-file-${i+1}`, ci_run_id:r.ci_run_id}));\nconst stageRows = stages.map((s,i)=>({ stage_result_id:`${r.ci_run_id}-${s.stage_name || i}`, ci_run_id:r.ci_run_id, stage_name:s.stage_name || `stage_${i}`, category:s.stage_name || '', status:s.status, passed:!!s.passed, duration_seconds:Number(s.duration_seconds||0), files_checked:Number(s.files_checked||0), findings_count:Number(s.findings_count||0), summary:s.summary||'', details_json:JSON.stringify(s.details||{}).slice(0,8000)}));\nconst replay = stages.find(s=>s.stage_name === 'v2_replay_harness') || {};\nconst parsed = replay.details?.parsed || {};\nconst regressionRow = { regression_run_id:`${r.ci_run_id}-replay`, started_at:r.started_at, completed_at:r.completed_at, trigger_type:'pr', repo:r.repo||base.repo, head_sha:r.head_sha||base.head_sha, corpus_version:parsed.corpus_version || 'v2-phase7-local-static', total_tests:Number(parsed.total_tests||0), positive_total:Number(parsed.positive_total||0), positive_passed:Number(parsed.positive_passed||0), positive_failed:Number(parsed.positive_failed||0), negative_total:Number(parsed.negative_total||0), negative_passed:Number(parsed.negative_passed||0), negative_failed:Number(parsed.negative_failed||0), expected_rule_mismatches:JSON.stringify(parsed.expected_rule_mismatches||[]), alert_volume_before:0, alert_volume_after:0, regression_status:replay.passed?'pass':'fail', github_issue_url:'', slack_notified:!!(slack.channel || slack.ts || slack.message), notes:replay.summary||'' };\nreturn [{json:{...base, slack_response:slack, ci_run_row:runRow, changed_file_rows:changedRows, stage_result_rows:stageRows, regression_row:regressionRow}}];\n"
+      },
+      "id": "681db0ec-7ead-4149-bccd-e8e3454dc911",
+      "name": "Code_A2_Audit_And_Row_Builder",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_a2_ci_runs",
+          "cachedResultName": "flow_a2_ci_runs"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "ci_run_id",
+              "keyValue": "={{ $json.ci_run_row.ci_run_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ci_run_id": "={{ $json.ci_run_row.ci_run_id }}",
+            "started_at": "={{ $json.ci_run_row.started_at }}",
+            "completed_at": "={{ $json.ci_run_row.completed_at }}",
+            "repo": "={{ $json.ci_run_row.repo }}",
+            "branch": "={{ $json.ci_run_row.branch }}",
+            "pr_number": "={{ $json.ci_run_row.pr_number }}",
+            "head_sha": "={{ $json.ci_run_row.head_sha }}",
+            "actor": "={{ $json.ci_run_row.actor }}",
+            "changed_file_count": "={{ $json.ci_run_row.changed_file_count }}",
+            "relevant_change_count": "={{ $json.ci_run_row.relevant_change_count }}",
+            "stages_total": "={{ $json.ci_run_row.stages_total }}",
+            "stages_passed": "={{ $json.ci_run_row.stages_passed }}",
+            "stages_failed": "={{ $json.ci_run_row.stages_failed }}",
+            "decision": "={{ $json.ci_run_row.decision }}",
+            "status": "={{ $json.ci_run_row.status }}",
+            "labels_csv": "={{ $json.ci_run_row.labels_csv }}",
+            "github_comment_status": "={{ $json.ci_run_row.github_comment_status }}",
+            "slack_notified": "={{ $json.ci_run_row.slack_notified }}",
+            "duration_seconds": "={{ $json.ci_run_row.duration_seconds }}",
+            "error": "={{ $json.ci_run_row.error }}",
+            "raw_result_json": "={{ $json.ci_run_row.raw_result_json }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "148a698a-7464-4461-be91-ca6607cd2b47",
+      "name": "DataTable_Upsert_FlowA2_CI_Run",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        704,
+        224
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($json.changed_file_rows || []).map(row => ({json:{...$json, changed_file_row: row}}));"
+      },
+      "id": "0559dbf3-575b-4781-a509-18b64c5b425b",
+      "name": "Code_Split_A2_Changed_File_Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_a2_ci_changed_files",
+          "cachedResultName": "flow_a2_ci_changed_files"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "change_id": "={{ $json.changed_file_row.change_id }}",
+            "ci_run_id": "={{ $json.changed_file_row.ci_run_id }}",
+            "file_path": "={{ $json.changed_file_row.file_path }}",
+            "change_status": "={{ $json.changed_file_row.change_status }}",
+            "category": "={{ $json.changed_file_row.category }}",
+            "risk_category": "={{ $json.changed_file_row.risk_category }}",
+            "validator_group": "={{ $json.changed_file_row.validator_group }}",
+            "requires_review": "={{ $json.changed_file_row.requires_review }}",
+            "notes": "={{ $json.changed_file_row.notes }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "change_id",
+              "displayName": "change_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ci_run_id",
+              "displayName": "ci_run_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "file_path",
+              "displayName": "file_path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "change_status",
+              "displayName": "change_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "risk_category",
+              "displayName": "risk_category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "validator_group",
+              "displayName": "validator_group",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "requires_review",
+              "displayName": "requires_review",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "27943e68-7b17-40b4-a4d4-af2bc6de2087",
+      "name": "DataTable_Insert_FlowA2_Changed_File",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        704,
+        432
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($json.stage_result_rows || []).map(row => ({json:{...$json, stage_result_row: row}}));"
+      },
+      "id": "63d11820-fad9-452e-8f60-a6a7be3e7840",
+      "name": "Code_Split_A2_Stage_Result_Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_a2_ci_stage_results",
+          "cachedResultName": "flow_a2_ci_stage_results"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "stage_result_id": "={{ $json.stage_result_row.stage_result_id }}",
+            "ci_run_id": "={{ $json.stage_result_row.ci_run_id }}",
+            "stage_name": "={{ $json.stage_result_row.stage_name }}",
+            "category": "={{ $json.stage_result_row.category }}",
+            "status": "={{ $json.stage_result_row.status }}",
+            "passed": "={{ $json.stage_result_row.passed }}",
+            "duration_seconds": "={{ $json.stage_result_row.duration_seconds }}",
+            "files_checked": "={{ $json.stage_result_row.files_checked }}",
+            "findings_count": "={{ $json.stage_result_row.findings_count }}",
+            "summary": "={{ $json.stage_result_row.summary }}",
+            "details_json": "={{ $json.stage_result_row.details_json }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "3e1be7e5-91f3-41d9-a926-60017d957f34",
+      "name": "DataTable_Insert_FlowA2_Stage_Result",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        704,
+        672
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_v2_regression_runs",
+          "cachedResultName": "flow_v2_regression_runs"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "regression_run_id",
+              "keyValue": "={{ $json.regression_row.regression_run_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "regression_run_id": "={{ $json.regression_row.regression_run_id }}",
+            "started_at": "={{ $json.regression_row.started_at }}",
+            "completed_at": "={{ $json.regression_row.completed_at }}",
+            "trigger_type": "={{ $json.regression_row.trigger_type }}",
+            "repo": "={{ $json.regression_row.repo }}",
+            "head_sha": "={{ $json.regression_row.head_sha }}",
+            "corpus_version": "={{ $json.regression_row.corpus_version }}",
+            "total_tests": "={{ $json.regression_row.total_tests }}",
+            "positive_total": "={{ $json.regression_row.positive_total }}",
+            "positive_passed": "={{ $json.regression_row.positive_passed }}",
+            "positive_failed": "={{ $json.regression_row.positive_failed }}",
+            "negative_total": "={{ $json.regression_row.negative_total }}",
+            "negative_passed": "={{ $json.regression_row.negative_passed }}",
+            "negative_failed": "={{ $json.regression_row.negative_failed }}",
+            "expected_rule_mismatches": "={{ $json.regression_row.expected_rule_mismatches }}",
+            "alert_volume_before": "={{ $json.regression_row.alert_volume_before }}",
+            "alert_volume_after": "={{ $json.regression_row.alert_volume_after }}",
+            "regression_status": "={{ $json.regression_row.regression_status }}",
+            "github_issue_url": "={{ $json.regression_row.github_issue_url }}",
+            "slack_notified": "={{ $json.regression_row.slack_notified }}",
+            "notes": "={{ $json.regression_row.notes }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "regression_run_id",
+              "displayName": "regression_run_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "completed_at",
+              "displayName": "completed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "trigger_type",
+              "displayName": "trigger_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "repo",
+              "displayName": "repo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "head_sha",
+              "displayName": "head_sha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "corpus_version",
+              "displayName": "corpus_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "total_tests",
+              "displayName": "total_tests",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "positive_total",
+              "displayName": "positive_total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "positive_passed",
+              "displayName": "positive_passed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "positive_failed",
+              "displayName": "positive_failed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "negative_total",
+              "displayName": "negative_total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "negative_passed",
+              "displayName": "negative_passed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "negative_failed",
+              "displayName": "negative_failed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "expected_rule_mismatches",
+              "displayName": "expected_rule_mismatches",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "alert_volume_before",
+              "displayName": "alert_volume_before",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "alert_volume_after",
+              "displayName": "alert_volume_after",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "regression_status",
+              "displayName": "regression_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "github_issue_url",
+              "displayName": "github_issue_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "slack_notified",
+              "displayName": "slack_notified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f15ff8ec-1fac-4b04-a1b2-3528605c49ad",
+      "name": "DataTable_Upsert_FlowV2_Regression_Run",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        704,
+        896
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo_name }}/issues/{{ $json.pr_number }}/comments",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"body\": $json.github_comment_body } }}",
+        "options": {}
+      },
+      "id": "31bc6a32-008f-4150-b1dd-6bdc22fcfc49",
+      "name": "HTTP_GitHub_Post_A2_PR_Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        192
+      ],
+      "credentials": {
+        "githubApi": {
+          "id": "KEwPT6mwPqVWXs0Y",
+          "name": "GitHub account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo_name }}/pulls/{{ $json.pr_number }}/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f05f1b7e-4c73-45cd-80f9-0353ddf4bcb6",
+      "name": "HTTP_List_A2_PR_Files",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1680,
+        480
+      ],
+      "credentials": {
+        "githubApi": {
+          "id": "KEwPT6mwPqVWXs0Y",
+          "name": "GitHub account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction b64(s){ return Buffer.from(String(s || ''), 'utf8').toString('base64'); }\nconst ctx = $('Code_Extract_A2_Context').first().json;\nconst items = $input.all().map(i => i.json);\nlet files = [];\nif (items.length === 1 && Array.isArray(items[0])) files = items[0]; else files = items;\nfiles = files.filter(Boolean).map(f => ({\n  filename: f.filename || f.name || String(f),\n  status: f.status || 'modified',\n  additions: Number(f.additions || 0),\n  deletions: Number(f.deletions || 0),\n  changes: Number(f.changes || 0)\n}));\nconst filesJson = JSON.stringify(files);\nreturn [{ json: { ...ctx, changed_files: files, changed_files_json: filesJson, changed_files_b64: b64(filesJson) } }];\n"
+      },
+      "id": "d097db3c-0374-429d-8bed-060af1a53bda",
+      "name": "Code_Attach_A2_PR_Files",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1440,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo_name }}/issues/{{ $json.pr_number }}/labels",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"labels\": ($json.ci_result && $json.ci_result.labels) ? $json.ci_result.labels : [] } }}",
+        "options": {}
+      },
+      "id": "adb28671-1d8b-4bc2-803d-b3c132290b18",
+      "name": "HTTP_GitHub_Apply_A2_PR_Labels",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "githubApi": {
+          "id": "KEwPT6mwPqVWXs0Y",
+          "name": "GitHub account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GitHub_Trigger_PR_AI_Security_CI": {
+      "main": [
+        [
+          {
+            "node": "Code_Extract_A2_Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Extract_A2_Context": {
+      "main": [
+        [
+          {
+            "node": "IF_PR_Action_Allowed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF_PR_Action_Allowed": {
+      "main": [
+        [
+          {
+            "node": "HTTP_List_A2_PR_Files",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code_Ignore_Non_PR_Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_List_A2_PR_Files": {
+      "main": [
+        [
+          {
+            "node": "Code_Attach_A2_PR_Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Attach_A2_PR_Files": {
+      "main": [
+        [
+          {
+            "node": "Code_Classify_A2_Changed_Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Classify_A2_Changed_Files": {
+      "main": [
+        [
+          {
+            "node": "IF_Relevant_AI_Security_Changes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF_Relevant_AI_Security_Changes": {
+      "main": [
+        [
+          {
+            "node": "ExecuteCommand_Run_FlowA2_Local_CI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code_A2_Skip_No_Relevant_Changes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteCommand_Run_FlowA2_Local_CI": {
+      "main": [
+        [
+          {
+            "node": "Code_Parse_FlowA2_CI_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Parse_FlowA2_CI_Result": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_A2_CI_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_A2_Skip_No_Relevant_Changes": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_A2_CI_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_A2_CI_Report": {
+      "main": [
+        [
+          {
+            "node": "Slack_A2_CI_Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP_GitHub_Post_A2_PR_Comment",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP_GitHub_Apply_A2_PR_Labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack_A2_CI_Report": {
+      "main": [
+        [
+          {
+            "node": "Code_A2_Audit_And_Row_Builder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_A2_Audit_And_Row_Builder": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Upsert_FlowA2_CI_Run",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code_Split_A2_Changed_File_Rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code_Split_A2_Stage_Result_Rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "DataTable_Upsert_FlowV2_Regression_Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Split_A2_Changed_File_Rows": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Insert_FlowA2_Changed_File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Split_A2_Stage_Result_Rows": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Insert_FlowA2_Stage_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7340d793-d7e3-46f9-b82d-c265e26ed5b5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "93ff8be1883ecacc5b799d02484badf480c20d9fd8b891233cca432d8616cb8b"
+  },
+  "id": "ZOlaPaz0jDwJHAXO",
+  "tags": []
+}

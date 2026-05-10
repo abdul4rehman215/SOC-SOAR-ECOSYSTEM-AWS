@@ -1,0 +1,749 @@
+{
+  "name": "Flow_B2_Controlled_Wazuh_AI_Security_Deployment_FIXED_V5",
+  "nodes": [
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/abdul4rehman215",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "wazuh-genai-ci",
+          "mode": "list",
+          "cachedResultName": "wazuh-genai-ci",
+          "cachedResultUrl": "https://github.com/abdul4rehman215/wazuh-genai-ci"
+        },
+        "events": [
+          "pull_request",
+          "pull_request_review",
+          "issue_comment",
+          "push"
+        ],
+        "options": {}
+      },
+      "id": "9d656858-cb3f-46f2-a87c-ea1035b05f57",
+      "name": "GitHub_Trigger_B2_Deploy_Signal",
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2432,
+        304
+      ],
+      "webhookId": "flow-b2-controlled-deploy-real-github",
+      "credentials": {
+        "githubApi": {
+          "id": "KEwPT6mwPqVWXs0Y",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst body = $json.body ?? $json;\nconst eventName = body.pull_request ? (body.review ? 'pull_request_review' : 'pull_request') : (body.comment ? 'issue_comment' : (body.ref ? 'push' : 'unknown'));\nlet deploy_signal = 'ignore';\nif (eventName === 'pull_request' && body.action === 'labeled' && body.label?.name === 'ready-to-deploy') deploy_signal = 'label_ready_to_deploy';\nelse if (eventName === 'pull_request_review' && String(body.review?.state || '').toLowerCase() === 'approved') deploy_signal = 'review_approved';\nelse if (eventName === 'issue_comment' && /^\\/deploy-lab\\b/i.test(body.comment?.body || '')) deploy_signal = 'manual_deploy_comment';\nelse if (eventName === 'push' && /refs\\/heads\\/main$/i.test(body.ref || '')) deploy_signal = 'merge_to_main';\nconst repo = body.repository || {};\nconst owner = repo.owner?.login || repo.owner?.name || (repo.full_name || '').split('/')[0] || 'abdul4rehman215';\nconst repoName = repo.name || (repo.full_name || 'wazuh-genai-ci').split('/').pop();\nconst prNumber = Number(body.pull_request?.number || body.issue?.number || 0);\nreturn [{json:{\n  event_name: eventName,\n  event_action: body.action || '',\n  deploy_signal,\n  owner,\n  repo_name: repoName,\n  repo: repo.full_name || `${owner}/${repoName}`,\n  pr_number: prNumber,\n  issue_number: prNumber,\n  review_state: body.review?.state || '',\n  comment_body: body.comment?.body || '',\n  actor: body.sender?.login || 'github',\n  head_sha: body.pull_request?.head?.sha || body.after || '',\n  base_sha: body.pull_request?.base?.sha || '',\n  base_ref: body.pull_request?.base?.ref || 'main',\n  received_at: new Date().toISOString()\n}}];\n"
+      },
+      "id": "31b2d313-bf32-404b-854f-c260d3819703",
+      "name": "Code_Extract_B2_GitHub_Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2160,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst c = $json.deploy_context;\nconst missing = c.required_labels.filter(x => !c.labels.includes(x));\nconst allowed = missing.length === 0 && c.approved === true && c.deploy_signal_ok === true;\nconst parts = [];\nif (missing.length) parts.push(`missing=${missing.join(',')}`);\nif (!c.approved) parts.push('approval=false');\nif (!c.deploy_signal_ok) parts.push(`signal=${c.deploy_signal}`);\nreturn [{ json: { ...$json, deploy_allowed: allowed, missing_labels: missing, gate_reason: allowed ? 'gate_passed' : `blocked ${parts.join(' ')}` } }];\n"
+      },
+      "id": "5ec6a6f4-55cb-4562-b605-0e3d6947acd6",
+      "name": "Code_Check_B2_Deploy_Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1344,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e15f8ae2-da28-44d5-9ca2-742dc6f1e870",
+              "leftValue": "={{ $json.deploy_allowed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1594a1b0-5462-4e37-a7ee-b770d87c5fe0",
+      "name": "IF_Deploy_Allowed_Gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "command": "={{ `cd /opt/detection-ci/wazuh-genai-ci || exit 1\nset -a\n[ -r ./.env.ci ] && . ./.env.ci || true\nset +a\n# Fresh-host safety: create parent dirs before the Python runner starts.\n# This fixes FileNotFoundError for /opt/detection-ci/backups/flow-b2/<run>/wazuh.\nmkdir -p /opt/detection-ci/backups/flow-b2 /opt/detection-ci/backups/flow-b2-policies /tmp/flowb /tmp/flowb/stage 2>/dev/null || true\nmkdir -p /var/ossec/tmp/deploy-flowb 2>/dev/null || true\nrm -f /tmp/flow_b2_deploy_result.json /tmp/flow_b2_deploy_signal.json /tmp/flow_b2_deploy_stdout.log /tmp/flow_b2_deploy_stderr.log\ncat > /tmp/flow_b2_deploy_signal.json <<'EOF'\n${JSON.stringify($json.deploy_context || {})}\nEOF\npython3 scripts/deploy/run_flow_b2_local_deploy.py --repo-root . --signal-json /tmp/flow_b2_deploy_signal.json --execute --output-json /tmp/flow_b2_deploy_result.json > /tmp/flow_b2_deploy_stdout.log 2> /tmp/flow_b2_deploy_stderr.log\nrc=$?\nif [ -s /tmp/flow_b2_deploy_result.json ]; then\n  cat /tmp/flow_b2_deploy_result.json\nelif [ -s /tmp/flow_b2_deploy_stdout.log ] && grep -q '\"decision\"' /tmp/flow_b2_deploy_stdout.log; then\n  cat /tmp/flow_b2_deploy_stdout.log\nelse\n  python3 - <<'PYEOF'\nimport json, os\nerr = ''\ntry:\n    err = open('/tmp/flow_b2_deploy_stderr.log', 'r', encoding='utf-8', errors='ignore').read()[-3500:]\nexcept Exception:\n    pass\nout = ''\ntry:\n    out = open('/tmp/flow_b2_deploy_stdout.log', 'r', encoding='utf-8', errors='ignore').read()[-1500:]\nexcept Exception:\n    pass\nprint(json.dumps({\"decision\":\"fail\",\"deployment_status\":\"failed\",\"error\":\"run_flow_b2_local_deploy did not create result json\",\"stderr_tail\":err,\"stdout_tail\":out,\"returncode\":int(os.environ.get('rc','1') or 1)}))\nPYEOF\nfi\nexit 0` }}"
+      },
+      "id": "0a3cfcb9-b1a9-492f-95ef-388e225b89eb",
+      "name": "ExecuteCommand_Run_FlowB2_Local_Deploy",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        160
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Code_Check_B2_Deploy_Gate').first().json;\nconst rawOut = String($json.stdout || $json.data || '');\nconst rawErr = String($json.stderr || $json.error || '');\nlet result = null;\ntry {\n  result = JSON.parse(rawOut || '{}');\n} catch (e1) {\n  try {\n    const start = rawOut.indexOf('{');\n    const end = rawOut.lastIndexOf('}');\n    result = start >= 0 && end > start ? JSON.parse(rawOut.slice(start, end + 1)) : null;\n  } catch (e2) {\n    result = null;\n  }\n}\nif (!result || typeof result !== 'object') {\n  result = {\n    decision: 'fail',\n    deployment_status: 'failed',\n    error: rawErr || rawOut || 'Flow B2 local deploy command did not return parseable JSON',\n    stdout: rawOut,\n    stderr: rawErr\n  };\n}\nreturn [{ json: { ...ctx, deploy_result: result, deploy_decision: result.decision || 'fail', deployment_status: result.deployment_status || 'unknown' } }];"
+      },
+      "id": "556bf0de-bcdb-494a-ad16-fff203ab3783",
+      "name": "Code_Parse_FlowB2_Deploy_Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function esc(v) { return String(v ?? '').replace(/\\|/g, '\\\\|'); }\nfunction arr(v) { return Array.isArray(v) ? v : []; }\nfunction pick(...vals) { for (const v of vals) if (v !== undefined && v !== null && v !== '') return v; return ''; }\nconst c = $json.deploy_context || {};\nconst r = $json.deploy_result || {};\nconst now = new Date().toISOString();\nconst stages = arr(r.stages || r.stage_results || r.stage_results_json);\nconst stageRows = stages.map(s => ({\n  stage_name: s.stage_name || s.stage || s.name || 'unknown',\n  status: s.status || (s.passed === true ? 'pass' : s.passed === false ? 'fail' : 'unknown'),\n  passed: s.passed === true || s.status === 'pass',\n  summary: s.summary || s.detail || s.error || ''\n}));\nconst passed = stageRows.filter(s => s.passed).length;\nconst failed = stageRows.length ? stageRows.length - passed : (String(r.decision || '').toLowerCase() === 'pass' ? 0 : 1);\nconst decision = String(pick(r.decision, $json.deploy_decision, 'fail')).toLowerCase();\nconst status = String(pick(r.deployment_status, r.deployment_run_row?.deployment_status, decision === 'pass' ? 'deployed' : 'failed')).toLowerCase();\nconst existingRun = r.deployment_run_row || {};\nconst existingBundle = r.policy_bundle_deployment_row || {};\nconst deploymentRunId = pick(existingRun.deployment_run_id, c.deployment_id, `flow-b2-${String(c.repo || 'repo').replace('/','-')}-pr-${c.pr_number || 'na'}-${Date.now()}`);\nconst labels = arr(r.labels).length ? arr(r.labels) : arr(c.labels);\nconst deploymentRunRow = {\n  deployment_run_id: deploymentRunId,\n  timestamp: pick(existingRun.timestamp, existingRun.started_at, now),\n  deployment_mode: pick(existingRun.deployment_mode, c.deploy_mode, 'execute'),\n  deployment_status: pick(existingRun.deployment_status, status),\n  repo: pick(existingRun.repo, c.repo),\n  pr_number: Number(pick(existingRun.pr_number, c.pr_number, 0)),\n  commit_sha: pick(existingRun.commit_sha, c.commit_sha),\n  actor: pick(existingRun.actor, c.actor),\n  approved: Boolean(pick(existingRun.approved, c.approved, false)),\n  gate_passed: existingRun.gate_passed === undefined ? true : Boolean(existingRun.gate_passed),\n  required_labels_csv: pick(existingRun.required_labels_csv, arr(c.required_labels).join(',')),\n  observed_labels_csv: pick(existingRun.observed_labels_csv, labels.join(',')),\n  backup_root: pick(existingRun.backup_root, r.backup_root),\n  wazuh_backup_path: pick(existingRun.wazuh_backup_path, r.wazuh_backup_path, r.backup_path),\n  policy_backup_path: pick(existingRun.policy_backup_path, r.policy_backup_path),\n  staging_dir: pick(existingRun.staging_dir, r.staging_dir, r.stage_dir),\n  wazuh_rules_count: Number(pick(existingRun.wazuh_rules_count, r.wazuh_rules_count, 0)),\n  wazuh_decoders_count: Number(pick(existingRun.wazuh_decoders_count, r.wazuh_decoders_count, 0)),\n  policy_files_count: Number(pick(existingRun.policy_files_count, r.policy_files_count, existingBundle.policy_files_count, 0)),\n  predeploy_status: pick(existingRun.predeploy_status, r.predeploy_status, stageRows.find(s => /predeploy|xml|smoke/i.test(s.stage_name))?.status, ''),\n  postdeploy_status: pick(existingRun.postdeploy_status, r.postdeploy_status, stageRows.find(s => /postdeploy/i.test(s.stage_name))?.status, ''),\n  rollback_performed: Boolean(pick(existingRun.rollback_performed, r.rollback_performed, false)),\n  rollback_reason: pick(existingRun.rollback_reason, r.rollback_reason),\n  slack_notified: Boolean(existingRun.slack_notified || false),\n  github_comment_posted: Boolean(existingRun.github_comment_posted || false),\n  error: pick(existingRun.error, r.error, r.parse_error),\n  stage_results_json: pick(existingRun.stage_results_json, JSON.stringify(stageRows)),\n  notes: pick(existingRun.notes, r.notes, r.slack_summary, `Flow B2 deployment ${decision}`)\n};\nconst policyBundleRow = {\n  policy_deployment_id: pick(existingBundle.policy_deployment_id, `${deploymentRunId}:policy-bundle`),\n  timestamp: pick(existingBundle.timestamp, deploymentRunRow.timestamp, now),\n  deployment_run_id: pick(existingBundle.deployment_run_id, deploymentRunId),\n  repo: pick(existingBundle.repo, c.repo),\n  commit_sha: pick(existingBundle.commit_sha, c.commit_sha),\n  actor: pick(existingBundle.actor, c.actor),\n  policy_bundle_version: pick(existingBundle.policy_bundle_version, r.policy_bundle_version, 'v2-policy-bundle'),\n  policy_bundle_hash: pick(existingBundle.policy_bundle_hash, r.policy_bundle_hash, ''),\n  mcp_policy_files_count: Number(pick(existingBundle.mcp_policy_files_count, r.mcp_policy_files_count, 0)),\n  rag_memory_policy_files_count: Number(pick(existingBundle.rag_memory_policy_files_count, r.rag_memory_policy_files_count, 0)),\n  agentic_policy_files_count: Number(pick(existingBundle.agentic_policy_files_count, r.agentic_policy_files_count, 0)),\n  policy_target_dir: pick(existingBundle.policy_target_dir, r.policy_target_dir, ''),\n  policy_backup_path: pick(existingBundle.policy_backup_path, deploymentRunRow.policy_backup_path),\n  policy_staging_path: pick(existingBundle.policy_staging_path, r.policy_staging_path, deploymentRunRow.staging_dir),\n  deployment_status: pick(existingBundle.deployment_status, deploymentRunRow.deployment_status),\n  rollback_performed: Boolean(pick(existingBundle.rollback_performed, deploymentRunRow.rollback_performed, false)),\n  active_mcp_bundle_hash: pick(existingBundle.active_mcp_bundle_hash, r.active_mcp_bundle_hash, ''),\n  active_rag_memory_bundle_hash: pick(existingBundle.active_rag_memory_bundle_hash, r.active_rag_memory_bundle_hash, ''),\n  active_agentic_bundle_hash: pick(existingBundle.active_agentic_bundle_hash, r.active_agentic_bundle_hash, ''),\n  postdeploy_validation_status: pick(existingBundle.postdeploy_validation_status, deploymentRunRow.postdeploy_status),\n  error: pick(existingBundle.error, deploymentRunRow.error),\n  notes: pick(existingBundle.notes, 'Flow B2 policy bundle deployment row')\n};\nconst title = decision === 'pass' ? 'Flow B2 Controlled Wazuh + AI Security Policy Deployment' : 'Flow B2 Controlled Wazuh + AI Security Policy Deployment FAILED';\nconst stageMd = stageRows.length ? stageRows.map(s => `- ${s.passed ? 'PASS' : 'FAIL'} ${s.stage_name}: ${s.status}${s.summary ? ` - ${s.summary}` : ''}`).join('\\n') : '- No stage rows returned by deploy script';\nconst githubBody = `## ${title}\\n\\n**Decision:** ${decision.toUpperCase()}  \\n**Deployment status:** ${deploymentRunRow.deployment_status}  \\n**Repo/PR:** ${deploymentRunRow.repo} #${deploymentRunRow.pr_number}  \\n**Commit:** ${deploymentRunRow.commit_sha}  \\n**Actor:** ${deploymentRunRow.actor}  \\n**Gate:** PASS | approved=${deploymentRunRow.approved} | signal=${c.deploy_signal || 'n/a'}\\n\\n### Deployed content\\n- Wazuh rules: ${deploymentRunRow.wazuh_rules_count}\\n- Wazuh decoders: ${deploymentRunRow.wazuh_decoders_count}\\n- Policy files: ${deploymentRunRow.policy_files_count}\\n- Policy bundle: ${policyBundleRow.policy_bundle_version}${policyBundleRow.policy_bundle_hash ? ` (${policyBundleRow.policy_bundle_hash})` : ''}\\n\\n### Deployment safety\\n- Backup root: ${deploymentRunRow.backup_root || 'n/a'}\\n- Wazuh backup: ${deploymentRunRow.wazuh_backup_path || 'n/a'}\\n- Policy backup: ${deploymentRunRow.policy_backup_path || 'n/a'}\\n- Staging dir: ${deploymentRunRow.staging_dir || 'n/a'}\\n- Rollback performed: ${deploymentRunRow.rollback_performed}${deploymentRunRow.rollback_reason ? ` - ${deploymentRunRow.rollback_reason}` : ''}\\n\\n### Stage results\\n${stageMd}\\n\\n### Gate labels\\n- Required: ${deploymentRunRow.required_labels_csv}\\n- Observed: ${deploymentRunRow.observed_labels_csv}\\n\\n${deploymentRunRow.error ? `### Error\\n\\`${deploymentRunRow.error}\\`\\n` : ''}`;\nconst slackText = `*Flow B2 Controlled Deployment ${decision.toUpperCase()}*\\n*Status:* ${deploymentRunRow.deployment_status} | *Repo/PR:* ${deploymentRunRow.repo} #${deploymentRunRow.pr_number}\\n*Commit:* ${deploymentRunRow.commit_sha}\\n*Stages:* ${passed}/${stageRows.length || (passed + failed)} passed, ${failed} failed\\n*Backup:* ${deploymentRunRow.wazuh_backup_path || 'n/a'} | ${deploymentRunRow.policy_backup_path || 'n/a'}\\n*Rollback:* ${deploymentRunRow.rollback_performed}\\n*Error:* ${deploymentRunRow.error || 'none'}`;\nreturn [{ json: { ...$json, github_body: githubBody, slack_text: slackText, deployment_run_row: deploymentRunRow, policy_bundle_deployment_row: policyBundleRow, labels } }];"
+      },
+      "id": "e1a72e0a-b0ab-4a80-8364-6ff7ae9d93ba",
+      "name": "Code_Build_B2_Deployment_Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $json.deploy_context.repo }}/issues/{{ $json.deploy_context.pr_number }}/comments",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"body\": $json.github_body || $json.slack_text } }}",
+        "options": {}
+      },
+      "id": "a3bfb9ae-c723-49f1-868c-714693a18317",
+      "name": "HTTP_GitHub_Post_B2_Deployment_Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "githubApi": {
+          "id": "KEwPT6mwPqVWXs0Y",
+          "name": "GitHub account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A8JL8JAT0",
+          "mode": "list",
+          "cachedResultName": "soc-alerts"
+        },
+        "text": "={{ $(\"Code_Build_B2_Deployment_Report\").first().json.slack_text }}",
+        "otherOptions": {}
+      },
+      "id": "5204df9f-16c0-4c0d-a2cf-4aca0e7f4d97",
+      "name": "Slack_B2_Deployment_Report",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        160
+      ],
+      "webhookId": "e3c313e2-75ef-489e-a109-8cb0b04c7d77",
+      "credentials": {
+        "slackApi": {
+          "id": "a2mEvpi3yknJlgLI",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $('Code_Build_B2_Deployment_Report').first().json;\nlet github = {};\ntry { github = $('HTTP_GitHub_Post_B2_Deployment_Comment').first().json || {}; } catch (e) { github = {}; }\nconst slack = $json || {};\nconst slackErr = slack.error?.message || slack.error?.description || slack.error || '';\nconst githubErr = github.error?.message || github.error?.description || github.error || '';\nconst githubPosted = Boolean(github.id || github.url || github.html_url) && !githubErr;\nconst slackNotified = Boolean(slack.ok === true || slack.ts || slack.message?.ts) && !slackErr;\nreturn [{ json: {\n  ...base,\n  github_response: github,\n  slack_response: slack,\n  deployment_run_row: {\n    ...base.deployment_run_row,\n    github_comment_posted: githubPosted,\n    slack_notified: slackNotified,\n    notes: [base.deployment_run_row?.notes || '', base.deployment_run_row?.commit_sha ? `commit_sha=${base.deployment_run_row.commit_sha}` : '', githubPosted ? `github_comment=${github.html_url || github.url || ''}` : '', slackNotified ? `slack_ts=${slack.ts || slack.message?.ts || ''}` : ''].filter(Boolean).join(' | '),\n    error: [base.deployment_run_row?.error || '', githubErr ? `github=${githubErr}` : '', slackErr ? `slack=${slackErr}` : ''].filter(Boolean).join(' | ')\n  },\n  policy_bundle_deployment_row: {\n    ...base.policy_bundle_deployment_row,\n    deployment_status: base.deployment_run_row?.deployment_status || base.policy_bundle_deployment_row?.deployment_status || 'unknown',\n    error: [base.policy_bundle_deployment_row?.error || '', githubErr ? `github=${githubErr}` : '', slackErr ? `slack=${slackErr}` : ''].filter(Boolean).join(' | ')\n  }\n}}];"
+      },
+      "id": "d962240f-5cfe-4246-9a7a-ce20e6221afa",
+      "name": "Code_Audit_B2_Slack_And_Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_b2_deployment_runs",
+          "cachedResultName": "flow_b2_deployment_runs"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "deployment_run_id",
+              "keyValue": "={{ String(($json.deployment_run_row || {}).deployment_run_id || '') }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "deployment_run_id": "={{ String(($json.deployment_run_row || {}).deployment_run_id || '') }}",
+            "timestamp": "={{ ($json.deployment_run_row || {}).timestamp || new Date().toISOString() }}",
+            "deployment_mode": "={{ String(($json.deployment_run_row || {}).deployment_mode || '') }}",
+            "deployment_status": "={{ String(($json.deployment_run_row || {}).deployment_status || '') }}",
+            "repo": "={{ String(($json.deployment_run_row || {}).repo || '') }}",
+            "pr_number": "={{ Number(($json.deployment_run_row || {}).pr_number || 0) }}",
+            "actor": "={{ String(($json.deployment_run_row || {}).actor || '') }}",
+            "approved": "={{ Boolean(($json.deployment_run_row || {}).approved) }}",
+            "gate_passed": "={{ Boolean(($json.deployment_run_row || {}).gate_passed) }}",
+            "required_labels_csv": "={{ String(($json.deployment_run_row || {}).required_labels_csv || '') }}",
+            "observed_labels_csv": "={{ String(($json.deployment_run_row || {}).observed_labels_csv || '') }}",
+            "backup_root": "={{ String(($json.deployment_run_row || {}).backup_root || '') }}",
+            "wazuh_backup_path": "={{ String(($json.deployment_run_row || {}).wazuh_backup_path || '') }}",
+            "policy_backup_path": "={{ String(($json.deployment_run_row || {}).policy_backup_path || '') }}",
+            "staging_dir": "={{ String(($json.deployment_run_row || {}).staging_dir || '') }}",
+            "wazuh_rules_count": "={{ Number(($json.deployment_run_row || {}).wazuh_rules_count || 0) }}",
+            "wazuh_decoders_count": "={{ Number(($json.deployment_run_row || {}).wazuh_decoders_count || 0) }}",
+            "policy_files_count": "={{ Number(($json.deployment_run_row || {}).policy_files_count || 0) }}",
+            "predeploy_status": "={{ String(($json.deployment_run_row || {}).predeploy_status || '') }}",
+            "postdeploy_status": "={{ String(($json.deployment_run_row || {}).postdeploy_status || '') }}",
+            "rollback_performed": "={{ Boolean(($json.deployment_run_row || {}).rollback_performed) }}",
+            "rollback_reason": "={{ String(($json.deployment_run_row || {}).rollback_reason || '') }}",
+            "slack_notified": "={{ Boolean(($json.deployment_run_row || {}).slack_notified) }}",
+            "github_comment_posted": "={{ Boolean(($json.deployment_run_row || {}).github_comment_posted) }}",
+            "error": "={{ String(($json.deployment_run_row || {}).error || '').slice(0, 2000) }}",
+            "stage_results_json": "={{ String(($json.deployment_run_row || {}).stage_results_json || '[]').slice(0, 12000) }}",
+            "notes": "={{ String(($json.deployment_run_row || {}).notes || '').slice(0, 2000) }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ff4fb5dd-cfd2-4bab-9611-5b11e823e295",
+      "name": "DataTable_Upsert_FlowB2_Deployment_Run",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        544,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_v2_policy_bundle_deployments",
+          "cachedResultName": "flow_v2_policy_bundle_deployments"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "policy_deployment_id",
+              "keyValue": "={{ String(($json.policy_bundle_deployment_row || {}).policy_deployment_id || '') }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "policy_deployment_id": "={{ String(($json.policy_bundle_deployment_row || {}).policy_deployment_id || '') }}",
+            "timestamp": "={{ ($json.policy_bundle_deployment_row || {}).timestamp || new Date().toISOString() }}",
+            "deployment_run_id": "={{ String(($json.policy_bundle_deployment_row || {}).deployment_run_id || '') }}",
+            "repo": "={{ String(($json.policy_bundle_deployment_row || {}).repo || '') }}",
+            "actor": "={{ String(($json.policy_bundle_deployment_row || {}).actor || '') }}",
+            "policy_bundle_version": "={{ String(($json.policy_bundle_deployment_row || {}).policy_bundle_version || '') }}",
+            "policy_bundle_hash": "={{ String(($json.policy_bundle_deployment_row || {}).policy_bundle_hash || '') }}",
+            "mcp_policy_files_count": "={{ Number(($json.policy_bundle_deployment_row || {}).mcp_policy_files_count || 0) }}",
+            "rag_memory_policy_files_count": "={{ Number(($json.policy_bundle_deployment_row || {}).rag_memory_policy_files_count || 0) }}",
+            "agentic_policy_files_count": "={{ Number(($json.policy_bundle_deployment_row || {}).agentic_policy_files_count || 0) }}",
+            "policy_target_dir": "={{ String(($json.policy_bundle_deployment_row || {}).policy_target_dir || '') }}",
+            "policy_backup_path": "={{ String(($json.policy_bundle_deployment_row || {}).policy_backup_path || '') }}",
+            "policy_staging_path": "={{ String(($json.policy_bundle_deployment_row || {}).policy_staging_path || '') }}",
+            "deployment_status": "={{ String(($json.policy_bundle_deployment_row || {}).deployment_status || '') }}",
+            "rollback_performed": "={{ Boolean(($json.policy_bundle_deployment_row || {}).rollback_performed) }}",
+            "active_mcp_bundle_hash": "={{ String(($json.policy_bundle_deployment_row || {}).active_mcp_bundle_hash || '') }}",
+            "active_rag_memory_bundle_hash": "={{ String(($json.policy_bundle_deployment_row || {}).active_rag_memory_bundle_hash || '') }}",
+            "active_agentic_bundle_hash": "={{ String(($json.policy_bundle_deployment_row || {}).active_agentic_bundle_hash || '') }}",
+            "postdeploy_validation_status": "={{ String(($json.policy_bundle_deployment_row || {}).postdeploy_validation_status || '') }}",
+            "error": "={{ String(($json.policy_bundle_deployment_row || {}).error || '').slice(0, 2000) }}",
+            "notes": "={{ String(($json.policy_bundle_deployment_row || {}).notes || '').slice(0, 2000) }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f5e03028-b50f-4a25-97c9-5b87d5202377",
+      "name": "DataTable_Upsert_FlowV2_Policy_Bundle_Deployment",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        544,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const c = $json.deploy_context || {};\nif (!c.deploy_signal_ok && String(c.deploy_signal || '') === 'ignore') {\n  return [];\n}\nconst now = new Date().toISOString();\nconst missing = $json.missing_labels || [];\nconst reason = $json.gate_reason || `blocked ${missing.length ? `missing=${missing.join(',')}` : 'deploy gate not satisfied'}`;\nconst row = {\n  deployment_run_id: c.deployment_id || `blocked-${Date.now()}`,\n  timestamp: now,\n  deployment_mode: c.deploy_mode || 'execute',\n  deployment_status: 'blocked',\n  repo: c.repo || '',\n  pr_number: Number(c.pr_number || 0),\n  commit_sha: c.commit_sha || '',\n  actor: c.actor || '',\n  approved: Boolean(c.approved),\n  gate_passed: false,\n  required_labels_csv: (c.required_labels || []).join(','),\n  observed_labels_csv: (c.labels || []).join(','),\n  backup_root: '',\n  wazuh_backup_path: '',\n  policy_backup_path: '',\n  staging_dir: '',\n  wazuh_rules_count: 0,\n  wazuh_decoders_count: 0,\n  policy_files_count: 0,\n  predeploy_status: 'blocked_before_predeploy',\n  postdeploy_status: 'not_started',\n  rollback_performed: false,\n  rollback_reason: '',\n  slack_notified: false,\n  github_comment_posted: false,\n  error: reason,\n  stage_results_json: JSON.stringify([{stage_name:'deploy_gate', status:'blocked', passed:false, summary:reason}]),\n  notes: `Flow B2 gate blocked before deployment; signal=${c.deploy_signal}; approval=${c.approval_status || 'missing'}`\n};\nconst githubBody = `## Flow B2 Controlled Wazuh + AI Security Policy Deployment\\n\\n**Decision:** BLOCKED  \\n**Deployment status:** blocked  \\n**Repo/PR:** ${row.repo} #${row.pr_number}  \\n**Commit:** ${row.commit_sha}  \\n**Actor:** ${row.actor}  \\n**Signal:** ${c.deploy_signal || 'n/a'}  \\n**Gate:** FAIL | approved=${row.approved}\\n\\n### Block reason\\n${reason}\\n\\n### Required gate\\n- Required labels: ${row.required_labels_csv}\\n- Observed labels: ${row.observed_labels_csv}\\n- Approval required: true\\n- Valid deploy signal required: true\\n\\n### Safety result\\nNo Wazuh files were staged, activated, or restarted. Deployment stopped before touching the Wazuh manager.`;\nconst slackText = `*Flow B2 Controlled Deployment BLOCKED*\\n*Repo/PR:* ${row.repo} #${row.pr_number}\\n*Commit:* ${row.commit_sha}\\n*Signal:* ${c.deploy_signal || 'n/a'}\\n*Reason:* ${reason}\\n*Observed labels:* ${row.observed_labels_csv}\\n*Required labels:* ${row.required_labels_csv}\\n*Safety:* no Wazuh changes applied`;\nreturn [{ json: { ...$json, github_body: githubBody, slack_text: slackText, deployment_run_row: row } }];"
+      },
+      "id": "02d58798-c35d-49fb-9393-eca5341a1161",
+      "name": "Code_Build_B2_Blocked_Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A8JL8JAT0",
+          "mode": "list",
+          "cachedResultName": "soc-alerts"
+        },
+        "text": "={{ $(\"Code_Build_B2_Blocked_Report\").first().json.slack_text }}",
+        "otherOptions": {}
+      },
+      "id": "08fd8f18-608b-42db-bf1e-05b371fbf8ea",
+      "name": "Slack_B2_Blocked_Report",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -272,
+        480
+      ],
+      "webhookId": "47ea0e7f-52b5-4e06-a8bc-bcec19f29a34",
+      "credentials": {
+        "slackApi": {
+          "id": "a2mEvpi3yknJlgLI",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_b2_deployment_runs",
+          "cachedResultName": "flow_b2_deployment_runs"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "deployment_run_id",
+              "keyValue": "={{ String(($json.deployment_run_row || {}).deployment_run_id || '') }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "deployment_run_id": "={{ String(($json.deployment_run_row || {}).deployment_run_id || '') }}",
+            "timestamp": "={{ ($json.deployment_run_row || {}).timestamp || new Date().toISOString() }}",
+            "deployment_mode": "={{ String(($json.deployment_run_row || {}).deployment_mode || '') }}",
+            "deployment_status": "={{ String(($json.deployment_run_row || {}).deployment_status || '') }}",
+            "repo": "={{ String(($json.deployment_run_row || {}).repo || '') }}",
+            "pr_number": "={{ Number(($json.deployment_run_row || {}).pr_number || 0) }}",
+            "actor": "={{ String(($json.deployment_run_row || {}).actor || '') }}",
+            "approved": "={{ Boolean(($json.deployment_run_row || {}).approved) }}",
+            "gate_passed": "={{ Boolean(($json.deployment_run_row || {}).gate_passed) }}",
+            "required_labels_csv": "={{ String(($json.deployment_run_row || {}).required_labels_csv || '') }}",
+            "observed_labels_csv": "={{ String(($json.deployment_run_row || {}).observed_labels_csv || '') }}",
+            "backup_root": "={{ String(($json.deployment_run_row || {}).backup_root || '') }}",
+            "wazuh_backup_path": "={{ String(($json.deployment_run_row || {}).wazuh_backup_path || '') }}",
+            "policy_backup_path": "={{ String(($json.deployment_run_row || {}).policy_backup_path || '') }}",
+            "staging_dir": "={{ String(($json.deployment_run_row || {}).staging_dir || '') }}",
+            "wazuh_rules_count": "={{ Number(($json.deployment_run_row || {}).wazuh_rules_count || 0) }}",
+            "wazuh_decoders_count": "={{ Number(($json.deployment_run_row || {}).wazuh_decoders_count || 0) }}",
+            "policy_files_count": "={{ Number(($json.deployment_run_row || {}).policy_files_count || 0) }}",
+            "predeploy_status": "={{ String(($json.deployment_run_row || {}).predeploy_status || '') }}",
+            "postdeploy_status": "={{ String(($json.deployment_run_row || {}).postdeploy_status || '') }}",
+            "rollback_performed": "={{ Boolean(($json.deployment_run_row || {}).rollback_performed) }}",
+            "rollback_reason": "={{ String(($json.deployment_run_row || {}).rollback_reason || '') }}",
+            "slack_notified": "={{ Boolean(($json.deployment_run_row || {}).slack_notified) }}",
+            "github_comment_posted": "={{ Boolean(($json.deployment_run_row || {}).github_comment_posted) }}",
+            "error": "={{ String(($json.deployment_run_row || {}).error || '').slice(0, 2000) }}",
+            "stage_results_json": "={{ String(($json.deployment_run_row || {}).stage_results_json || '[]').slice(0, 12000) }}",
+            "notes": "={{ String(($json.deployment_run_row || {}).notes || '').slice(0, 2000) }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ae0ac56e-f478-4bca-a266-63ffc54e6d53",
+      "name": "DataTable_Upsert_FlowB2_Blocked_Run",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        272,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo_name }}/pulls/{{ $json.pr_number }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ad31ed6f-e371-4386-b13b-ac2dfc022008",
+      "name": "HTTP_Get_B2_PR_State",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1888,
+        304
+      ],
+      "credentials": {
+        "githubApi": {
+          "id": "KEwPT6mwPqVWXs0Y",
+          "name": "GitHub account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const e = $('Code_Extract_B2_GitHub_Event').first().json;\nconst pr = $json || {};\nconst labels = Array.isArray(pr.labels) ? pr.labels.map(x => x.name).filter(Boolean) : [];\nconst reviewApproved = String(e.review_state || '').toLowerCase() === 'approved';\nconst labelApproved = labels.includes('approved') || labels.includes('review-approved');\nconst approved = reviewApproved || labelApproved;\nconst signalOk = ['label_ready_to_deploy','manual_deploy_comment','review_approved','merge_to_main'].includes(e.deploy_signal);\nconst ctx = {\n  event_type: 'flow_b2_github_deploy_signal',\n  deployment_id: `flow-b2-${e.repo.replace('/','-')}-pr-${e.pr_number}-${Date.now()}`,\n  repo: e.repo,\n  repo_owner: e.owner,\n  repo_name: e.repo_name,\n  pr_number: Number(e.pr_number || 0),\n  issue_number: Number(e.issue_number || e.pr_number || 0),\n  commit_sha: pr.head?.sha || e.head_sha || 'unknown',\n  base_sha: pr.base?.sha || e.base_sha || '',\n  base_ref: pr.base?.ref || e.base_ref || 'main',\n  actor: e.actor,\n  approved,\n  approval_status: approved ? 'approved' : 'missing',\n  deploy_environment: 'lab',\n  deploy_mode: 'execute',\n  deploy_signal: e.deploy_signal,\n  deploy_signal_ok: signalOk,\n  labels,\n  required_labels: ['ai-security-ci-pass','detection-ci-pass','mcp-policy-pass','rag-policy-pass','agentic-policy-pass','ready-to-deploy'],\n  notes: `event=${e.event_name}; action=${e.event_action}; signal=${e.deploy_signal}`\n};\nreturn [{ json: { received_at: new Date().toISOString(), deploy_context: ctx, deploy_context_json: JSON.stringify(ctx), deploy_context_b64: Buffer.from(JSON.stringify(ctx), 'utf8').toString('base64') } }];"
+      },
+      "id": "16469b41-95e3-44d5-b047-e58582e5c944",
+      "name": "Code_Build_B2_Deploy_Context_From_PR",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1616,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $json.deploy_context.repo }}/issues/{{ $json.deploy_context.pr_number }}/comments",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"body\": $json.github_body || $json.slack_text } }}",
+        "options": {}
+      },
+      "id": "473c89e9-d781-4815-8a98-f84c3b005ff1",
+      "name": "HTTP_GitHub_Post_B2_Blocked_Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -544,
+        480
+      ],
+      "credentials": {
+        "githubApi": {
+          "id": "KEwPT6mwPqVWXs0Y",
+          "name": "GitHub account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $('Code_Build_B2_Blocked_Report').first().json;\nlet github = {};\ntry { github = $('HTTP_GitHub_Post_B2_Blocked_Comment').first().json || {}; } catch (e) { github = {}; }\nconst slack = $json || {};\nconst slackErr = slack.error?.message || slack.error?.description || slack.error || '';\nconst githubErr = github.error?.message || github.error?.description || github.error || '';\nconst githubPosted = Boolean(github.id || github.url || github.html_url) && !githubErr;\nconst slackNotified = Boolean(slack.ok === true || slack.ts || slack.message?.ts) && !slackErr;\nreturn [{ json: {\n  ...base,\n  github_response: github,\n  slack_response: slack,\n  deployment_run_row: {\n    ...base.deployment_run_row,\n    github_comment_posted: githubPosted,\n    slack_notified: slackNotified,\n    notes: [base.deployment_run_row?.notes || '', base.deployment_run_row?.commit_sha ? `commit_sha=${base.deployment_run_row.commit_sha}` : '', githubPosted ? `github_comment=${github.html_url || github.url || ''}` : '', slackNotified ? `slack_ts=${slack.ts || slack.message?.ts || ''}` : ''].filter(Boolean).join(' | '),\n    error: [base.deployment_run_row?.error || '', githubErr ? `github=${githubErr}` : '', slackErr ? `slack=${slackErr}` : ''].filter(Boolean).join(' | ')\n  }\n}}];"
+      },
+      "id": "3d28dbde-ed92-4f6e-8cd0-4d1b1c26928a",
+      "name": "Code_Audit_B2_Blocked_And_Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        480
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GitHub_Trigger_B2_Deploy_Signal": {
+      "main": [
+        [
+          {
+            "node": "Code_Extract_B2_GitHub_Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Extract_B2_GitHub_Event": {
+      "main": [
+        [
+          {
+            "node": "HTTP_Get_B2_PR_State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_Get_B2_PR_State": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_B2_Deploy_Context_From_PR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_B2_Deploy_Context_From_PR": {
+      "main": [
+        [
+          {
+            "node": "Code_Check_B2_Deploy_Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Check_B2_Deploy_Gate": {
+      "main": [
+        [
+          {
+            "node": "IF_Deploy_Allowed_Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF_Deploy_Allowed_Gate": {
+      "main": [
+        [
+          {
+            "node": "ExecuteCommand_Run_FlowB2_Local_Deploy",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code_Build_B2_Blocked_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteCommand_Run_FlowB2_Local_Deploy": {
+      "main": [
+        [
+          {
+            "node": "Code_Parse_FlowB2_Deploy_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Parse_FlowB2_Deploy_Result": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_B2_Deployment_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_B2_Deployment_Report": {
+      "main": [
+        [
+          {
+            "node": "HTTP_GitHub_Post_B2_Deployment_Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack_B2_Deployment_Report": {
+      "main": [
+        [
+          {
+            "node": "Code_Audit_B2_Slack_And_Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Audit_B2_Slack_And_Rows": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Upsert_FlowB2_Deployment_Run",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "DataTable_Upsert_FlowV2_Policy_Bundle_Deployment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_B2_Blocked_Report": {
+      "main": [
+        [
+          {
+            "node": "HTTP_GitHub_Post_B2_Blocked_Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack_B2_Blocked_Report": {
+      "main": [
+        [
+          {
+            "node": "Code_Audit_B2_Blocked_And_Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_GitHub_Post_B2_Deployment_Comment": {
+      "main": [
+        [
+          {
+            "node": "Slack_B2_Deployment_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_GitHub_Post_B2_Blocked_Comment": {
+      "main": [
+        [
+          {
+            "node": "Slack_B2_Blocked_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Audit_B2_Blocked_And_Rows": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Upsert_FlowB2_Blocked_Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fixed-v4-local-runner-datatables",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "93ff8be1883ecacc5b799d02484badf480c20d9fd8b891233cca432d8616cb8b"
+  },
+  "id": "gD4At9BopTxbYZJM-v3",
+  "tags": []
+}

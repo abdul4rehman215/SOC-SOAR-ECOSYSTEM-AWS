@@ -1,0 +1,341 @@
+{
+  "name": "Flow_SOC_Dashboard_V2_Metrics_Rollup_PRODUCTION_FIXED",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "flow-v2-dashboard-rollup",
+        "options": {}
+      },
+      "id": "flowh-webhook",
+      "name": "Webhook_Run_V2_Dashboard_Rollup",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        0
+      ],
+      "webhookId": "flow-v2-dashboard-rollup"
+    },
+    {
+      "parameters": {
+        "command": "python3 /opt/detection-ci/wazuh-genai-ci/scripts/analytics/run_phase9_regression_harness.py --repo-root /opt/detection-ci/wazuh-genai-ci --trigger-type dashboard --output-json /tmp/flow_f_regression_for_dashboard.json"
+      },
+      "id": "flowh-run-reg",
+      "name": "ExecuteCommand_Run_Regression_For_Dashboard",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python3 /opt/detection-ci/wazuh-genai-ci/scripts/analytics/run_phase9_false_positive_analytics.py --repo-root /opt/detection-ci/wazuh-genai-ci --output-json /tmp/flow_g_fp_for_dashboard.json"
+      },
+      "id": "flowh-run-fp",
+      "name": "ExecuteCommand_Run_FP_For_Dashboard",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python3 /opt/detection-ci/wazuh-genai-ci/scripts/analytics/run_phase9_dashboard_rollups.py --repo-root /opt/detection-ci/wazuh-genai-ci --regression-json /tmp/flow_f_regression_for_dashboard.json --fp-json /tmp/flow_g_fp_for_dashboard.json --output-json /tmp/flow_v2_dashboard_rollup_result.json"
+      },
+      "id": "flowh-roll",
+      "name": "ExecuteCommand_Build_Dashboard_Rollups",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseStdout(item) {\n  const stdout = item.stdout ?? item.data?.stdout ?? '';\n  const stderr = item.stderr ?? item.data?.stderr ?? '';\n  if (!stdout || !String(stdout).trim()) {\n    return { decision: 'fail', error: 'ExecuteCommand produced empty stdout', stderr: String(stderr || '') };\n  }\n  try {\n    return JSON.parse(stdout);\n  } catch (e) {\n    return {\n      decision: 'fail',\n      error: 'Could not parse ExecuteCommand stdout as JSON: ' + e.message,\n      stdout_preview: String(stdout).slice(0, 2000),\n      stderr: String(stderr || '').slice(0, 2000)\n    };\n  }\n}\nreturn [{ json: parseStdout($json) }];"
+      },
+      "id": "flowh-parse",
+      "name": "Code_Parse_Dashboard_Rollup",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A8JL8JAT0",
+          "mode": "list",
+          "cachedResultName": "soc-alerts"
+        },
+        "text": "={{ $json.slack_text }}",
+        "otherOptions": {}
+      },
+      "id": "flowh-slack",
+      "name": "Slack_Dashboard_Rollup_Report",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -240,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "let base = $json;\ntry { base = $('Code_Parse_Dashboard_Rollup').first().json; } catch (e) {}\nconst rows = base.dashboard_metric_rows || [];\nreturn rows.map(metric => ({ json: { ...metric, metric } }));"
+      },
+      "id": "flowh-split",
+      "name": "Code_Split_Dashboard_Rollup_Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_v2_dashboard_summary",
+          "cachedResultName": "flow_v2_dashboard_summary"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "metric_id": "={{ $json.metric_id ?? $json.row?.metric_id ?? $json.monitor_event_row?.metric_id ?? $json.regression_run_row?.metric_id ?? $json.metric?.metric_id ?? '' }}",
+            "window_start": "={{ $json.window_start ?? $json.row?.window_start ?? $json.monitor_event_row?.window_start ?? $json.regression_run_row?.window_start ?? $json.metric?.window_start ?? '' }}",
+            "window_end": "={{ $json.window_end ?? $json.row?.window_end ?? $json.monitor_event_row?.window_end ?? $json.regression_run_row?.window_end ?? $json.metric?.window_end ?? '' }}",
+            "metric_name": "={{ $json.metric_name ?? $json.row?.metric_name ?? $json.monitor_event_row?.metric_name ?? $json.regression_run_row?.metric_name ?? $json.metric?.metric_name ?? '' }}",
+            "metric_value": "={{ $json.metric_value ?? $json.row?.metric_value ?? $json.monitor_event_row?.metric_value ?? $json.regression_run_row?.metric_value ?? $json.metric?.metric_value ?? '' }}",
+            "dimension_key": "={{ $json.dimension_key ?? $json.row?.dimension_key ?? $json.monitor_event_row?.dimension_key ?? $json.regression_run_row?.dimension_key ?? $json.metric?.dimension_key ?? '' }}",
+            "dimension_value": "={{ $json.dimension_value ?? $json.row?.dimension_value ?? $json.monitor_event_row?.dimension_value ?? $json.regression_run_row?.dimension_value ?? $json.metric?.dimension_value ?? '' }}",
+            "source_table": "={{ $json.source_table ?? $json.row?.source_table ?? $json.monitor_event_row?.source_table ?? $json.regression_run_row?.source_table ?? $json.metric?.source_table ?? '' }}",
+            "generated_at": "={{ $json.generated_at ?? $json.row?.generated_at ?? $json.monitor_event_row?.generated_at ?? $json.regression_run_row?.generated_at ?? $json.metric?.generated_at ?? '' }}",
+            "notes": "={{ $json.notes ?? $json.row?.notes ?? $json.monitor_event_row?.notes ?? $json.regression_run_row?.notes ?? $json.metric?.notes ?? '' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "metric_id",
+              "displayName": "metric_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "window_start",
+              "displayName": "window_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "window_end",
+              "displayName": "window_end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "metric_name",
+              "displayName": "metric_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "metric_value",
+              "displayName": "metric_value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "dimension_key",
+              "displayName": "dimension_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "dimension_value",
+              "displayName": "dimension_value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_table",
+              "displayName": "source_table",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "generated_at",
+              "displayName": "generated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "metric_id",
+              "keyValue": "={{ $json.metric_id ?? $json.row?.metric_id ?? $json.monitor_event_row?.metric_id ?? $json.regression_run_row?.metric_id ?? $json.metric?.metric_id }}"
+            }
+          ]
+        }
+      },
+      "id": "flowh-dt",
+      "name": "DataTable_Upsert_FlowV2_Dashboard_Rollup_Metric",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Webhook_Run_V2_Dashboard_Rollup": {
+      "main": [
+        [
+          {
+            "node": "ExecuteCommand_Run_Regression_For_Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteCommand_Run_Regression_For_Dashboard": {
+      "main": [
+        [
+          {
+            "node": "ExecuteCommand_Run_FP_For_Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteCommand_Run_FP_For_Dashboard": {
+      "main": [
+        [
+          {
+            "node": "ExecuteCommand_Build_Dashboard_Rollups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteCommand_Build_Dashboard_Rollups": {
+      "main": [
+        [
+          {
+            "node": "Code_Parse_Dashboard_Rollup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Parse_Dashboard_Rollup": {
+      "main": [
+        [
+          {
+            "node": "Slack_Dashboard_Rollup_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack_Dashboard_Rollup_Report": {
+      "main": [
+        [
+          {
+            "node": "Code_Split_Dashboard_Rollup_Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Split_Dashboard_Rollup_Metrics": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Upsert_FlowV2_Dashboard_Rollup_Metric",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

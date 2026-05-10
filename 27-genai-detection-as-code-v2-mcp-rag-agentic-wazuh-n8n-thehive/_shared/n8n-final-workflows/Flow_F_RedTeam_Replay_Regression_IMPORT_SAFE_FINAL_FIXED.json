@@ -1,0 +1,478 @@
+{
+  "name": "Flow_F_RedTeam_Replay_Regression_IMPORT_SAFE_FIXED",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "flow-f-redteam-regression-test",
+        "options": {}
+      },
+      "id": "flowf-webhook",
+      "name": "Webhook_Manual_Regression_Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        0
+      ],
+      "webhookId": "flow-f-redteam-regression-test"
+    },
+    {
+      "parameters": {
+        "command": "python3 /opt/detection-ci/wazuh-genai-ci/scripts/analytics/run_phase9_regression_harness.py --repo-root /opt/detection-ci/wazuh-genai-ci --trigger-type webhook --output-json /tmp/flow_f_regression_result.json"
+      },
+      "id": "flowf-run",
+      "name": "ExecuteCommand_Run_V2_RedTeam_Regression",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseStdout(item) {\n  const stdout = item.stdout ?? item.data?.stdout ?? '';\n  const stderr = item.stderr ?? item.data?.stderr ?? '';\n  if (!stdout || !String(stdout).trim()) {\n    return { decision: 'fail', error: 'ExecuteCommand produced empty stdout', stderr: String(stderr || '') };\n  }\n  try {\n    return JSON.parse(stdout);\n  } catch (e) {\n    return {\n      decision: 'fail',\n      error: 'Could not parse ExecuteCommand stdout as JSON: ' + e.message,\n      stdout_preview: String(stdout).slice(0, 2000),\n      stderr: String(stderr || '').slice(0, 2000)\n    };\n  }\n}\nreturn [{ json: parseStdout($json) }];"
+      },
+      "id": "flowf-parse",
+      "name": "Code_Parse_Regression_Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.decision !== 'pass' }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "flowf-if",
+      "name": "IF_Regression_Failed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:{...$json, github_issue_url:'disabled_until_token_configured'}}];"
+      },
+      "id": "flowf-github-disabled",
+      "name": "HTTP_GitHub_Create_Issue_If_Failed_DISABLED",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:$json}];"
+      },
+      "id": "flowf-noissue",
+      "name": "Code_No_GitHub_Issue_Needed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A8JL8JAT0",
+          "mode": "list",
+          "cachedResultName": "soc-alerts"
+        },
+        "text": "={{ $json.slack_text }}",
+        "otherOptions": {}
+      },
+      "id": "flowf-slack",
+      "name": "Slack_Regression_Report",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "let base = $json;\ntry { base = $('Code_Parse_Regression_Result').first().json; } catch (e) {}\nconst slackOrCurrent = $json || {};\nconst row = base.regression_run_row || {};\nconst slackError = slackOrCurrent.error?.message || slackOrCurrent.error || '';\nreturn [{ json: { ...base, ...row, row, slack_error: String(slackError || ''), slack_notified: !slackError } }];"
+      },
+      "id": "flowf-flatten",
+      "name": "Code_Flatten_Regression_Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_v2_phase9_regression_runs",
+          "cachedResultName": "flow_v2_phase9_regression_runs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "regression_run_id": "={{ $json.regression_run_id ?? $json.row?.regression_run_id ?? $json.monitor_event_row?.regression_run_id ?? $json.regression_run_row?.regression_run_id ?? $json.metric?.regression_run_id ?? '' }}",
+            "started_at": "={{ $json.started_at ?? $json.row?.started_at ?? $json.monitor_event_row?.started_at ?? $json.regression_run_row?.started_at ?? $json.metric?.started_at ?? '' }}",
+            "completed_at": "={{ $json.completed_at ?? $json.row?.completed_at ?? $json.monitor_event_row?.completed_at ?? $json.regression_run_row?.completed_at ?? $json.metric?.completed_at ?? '' }}",
+            "trigger_type": "={{ $json.trigger_type ?? $json.row?.trigger_type ?? $json.monitor_event_row?.trigger_type ?? $json.regression_run_row?.trigger_type ?? $json.metric?.trigger_type ?? '' }}",
+            "repo": "={{ $json.repo ?? $json.row?.repo ?? $json.monitor_event_row?.repo ?? $json.regression_run_row?.repo ?? $json.metric?.repo ?? '' }}",
+            "commit_sha": "={{ $json.commit_sha ?? $json.row?.commit_sha ?? $json.monitor_event_row?.commit_sha ?? $json.regression_run_row?.commit_sha ?? $json.metric?.commit_sha ?? '' }}",
+            "corpus_version": "={{ $json.corpus_version ?? $json.row?.corpus_version ?? $json.monitor_event_row?.corpus_version ?? $json.regression_run_row?.corpus_version ?? $json.metric?.corpus_version ?? '' }}",
+            "total_tests": "={{ $json.total_tests ?? $json.row?.total_tests ?? $json.monitor_event_row?.total_tests ?? $json.regression_run_row?.total_tests ?? $json.metric?.total_tests ?? '' }}",
+            "passed_tests": "={{ $json.passed_tests ?? $json.row?.passed_tests ?? $json.monitor_event_row?.passed_tests ?? $json.regression_run_row?.passed_tests ?? $json.metric?.passed_tests ?? '' }}",
+            "failed_tests": "={{ $json.failed_tests ?? $json.row?.failed_tests ?? $json.monitor_event_row?.failed_tests ?? $json.regression_run_row?.failed_tests ?? $json.metric?.failed_tests ?? '' }}",
+            "expected_rule_misses": "={{ $json.expected_rule_misses ?? $json.row?.expected_rule_misses ?? $json.monitor_event_row?.expected_rule_misses ?? $json.regression_run_row?.expected_rule_misses ?? $json.metric?.expected_rule_misses ?? '' }}",
+            "unexpected_alerts": "={{ $json.unexpected_alerts ?? $json.row?.unexpected_alerts ?? $json.monitor_event_row?.unexpected_alerts ?? $json.regression_run_row?.unexpected_alerts ?? $json.metric?.unexpected_alerts ?? '' }}",
+            "alert_volume_before": "={{ $json.alert_volume_before ?? $json.row?.alert_volume_before ?? $json.monitor_event_row?.alert_volume_before ?? $json.regression_run_row?.alert_volume_before ?? $json.metric?.alert_volume_before ?? '' }}",
+            "alert_volume_after": "={{ $json.alert_volume_after ?? $json.row?.alert_volume_after ?? $json.monitor_event_row?.alert_volume_after ?? $json.regression_run_row?.alert_volume_after ?? $json.metric?.alert_volume_after ?? '' }}",
+            "regression_status": "={{ $json.regression_status ?? $json.row?.regression_status ?? $json.monitor_event_row?.regression_status ?? $json.regression_run_row?.regression_status ?? $json.metric?.regression_status ?? '' }}",
+            "github_issue_url": "={{ $json.github_issue_url ?? $json.row?.github_issue_url ?? $json.monitor_event_row?.github_issue_url ?? $json.regression_run_row?.github_issue_url ?? $json.metric?.github_issue_url ?? '' }}",
+            "slack_notified": "={{ $json.slack_notified ?? $json.row?.slack_notified ?? $json.monitor_event_row?.slack_notified ?? $json.regression_run_row?.slack_notified ?? $json.metric?.slack_notified ?? '' }}",
+            "notes": "={{ $json.notes ?? $json.row?.notes ?? $json.monitor_event_row?.notes ?? $json.regression_run_row?.notes ?? $json.metric?.notes ?? '' }}",
+            "raw_result_json": "={{ $json.raw_result_json ?? $json.row?.raw_result_json ?? $json.monitor_event_row?.raw_result_json ?? $json.regression_run_row?.raw_result_json ?? $json.metric?.raw_result_json ?? '' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "regression_run_id",
+              "displayName": "regression_run_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "completed_at",
+              "displayName": "completed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "trigger_type",
+              "displayName": "trigger_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "repo",
+              "displayName": "repo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "commit_sha",
+              "displayName": "commit_sha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "corpus_version",
+              "displayName": "corpus_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "total_tests",
+              "displayName": "total_tests",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "passed_tests",
+              "displayName": "passed_tests",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "failed_tests",
+              "displayName": "failed_tests",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "expected_rule_misses",
+              "displayName": "expected_rule_misses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "unexpected_alerts",
+              "displayName": "unexpected_alerts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "alert_volume_before",
+              "displayName": "alert_volume_before",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "alert_volume_after",
+              "displayName": "alert_volume_after",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "regression_status",
+              "displayName": "regression_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "github_issue_url",
+              "displayName": "github_issue_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "slack_notified",
+              "displayName": "slack_notified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "raw_result_json",
+              "displayName": "raw_result_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "regression_run_id",
+              "keyValue": "={{ $json.regression_run_id ?? $json.row?.regression_run_id ?? $json.monitor_event_row?.regression_run_id ?? $json.regression_run_row?.regression_run_id ?? $json.metric?.regression_run_id }}"
+            }
+          ]
+        }
+      },
+      "id": "flowf-dt-regression",
+      "name": "DataTable_Upsert_FlowV2_Regression_Run",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Webhook_Manual_Regression_Trigger": {
+      "main": [
+        [
+          {
+            "node": "ExecuteCommand_Run_V2_RedTeam_Regression",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteCommand_Run_V2_RedTeam_Regression": {
+      "main": [
+        [
+          {
+            "node": "Code_Parse_Regression_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Parse_Regression_Result": {
+      "main": [
+        [
+          {
+            "node": "IF_Regression_Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF_Regression_Failed": {
+      "main": [
+        [
+          {
+            "node": "HTTP_GitHub_Create_Issue_If_Failed_DISABLED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code_No_GitHub_Issue_Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_GitHub_Create_Issue_If_Failed_DISABLED": {
+      "main": [
+        [
+          {
+            "node": "Slack_Regression_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_No_GitHub_Issue_Needed": {
+      "main": [
+        [
+          {
+            "node": "Slack_Regression_Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack_Regression_Report": {
+      "main": [
+        [
+          {
+            "node": "Code_Flatten_Regression_Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Flatten_Regression_Row": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Upsert_FlowV2_Regression_Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

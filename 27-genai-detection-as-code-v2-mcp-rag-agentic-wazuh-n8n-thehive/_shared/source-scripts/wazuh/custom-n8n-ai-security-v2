@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+import json, sys, urllib.request, urllib.error
+SCRIPT_NAME='custom-n8n-ai-security-v2'
+def fail(msg): print(f'{SCRIPT_NAME} error: {msg}', file=sys.stderr); sys.exit(1)
+if len(sys.argv)<4: fail(f'usage: {SCRIPT_NAME} <alert_file> <api_key> <hook_url>')
+alert_file=sys.argv[1]; api_key=sys.argv[2] if len(sys.argv)>2 else ''; hook_url=sys.argv[3] if len(sys.argv)>3 else ''
+if not hook_url: fail('missing hook_url')
+try:
+    with open(alert_file,'r',encoding='utf-8') as f: alert=json.load(f)
+except Exception as e: fail(f'could not read alert file: {e}')
+rule_id=str(alert.get('rule',{}).get('id','')); groups=alert.get('rule',{}).get('groups',[]) or []; data=alert.get('data',{}) or {}
+target_rule_ids={'100301','100302','100303','100304','100305','100306','100401','100402','100403','100404','100405'}
+target_groups={'mcp','agentic_ai','rag_memory','rag_context_poisoning','memory_poisoning','memory_scope_violation','embedding_source_policy_violation','retrieval_to_tool_escalation'}
+is_target_event_source=data.get('event_source') in {'ai_demo_mcp_guardrail','ai_demo_rag_memory_guardrail'}
+if not (rule_id in target_rule_ids or any(g in target_groups for g in groups) or is_target_event_source):
+    print(f'{SCRIPT_NAME} ignored non-target alert rule_id={rule_id} groups={groups}'); sys.exit(0)
+payload=json.dumps(alert).encode('utf-8'); headers={'Content-Type':'application/json','User-Agent':'wazuh-custom-n8n-ai-security-v2/2.0'}
+if api_key and api_key not in {'none','NONE','-'}: headers['Authorization']=f'Bearer {api_key}'
+req=urllib.request.Request(hook_url,data=payload,headers=headers,method='POST')
+try:
+    with urllib.request.urlopen(req,timeout=10) as resp:
+        body=resp.read().decode('utf-8',errors='replace'); print(f'{SCRIPT_NAME} delivered rule_id={rule_id} status={resp.status} body={body[:200]}')
+except urllib.error.HTTPError as e:
+    body=e.read().decode('utf-8',errors='replace'); fail(f'http error {e.code}: {body[:500]}')
+except Exception as e: fail(f'delivery failed: {e}')

@@ -1,0 +1,5 @@
+<!-- GenAI Detection-as-Code V2 - RAG + memory JSON decoder -->
+<decoder name="genai_rag_memory_json">
+  <prematch type="pcre2">"event_source"\s*:\s*"ai_demo_rag_memory_guardrail"</prematch>
+  <plugin_decoder>JSON_Decoder</plugin_decoder>
+</decoder>

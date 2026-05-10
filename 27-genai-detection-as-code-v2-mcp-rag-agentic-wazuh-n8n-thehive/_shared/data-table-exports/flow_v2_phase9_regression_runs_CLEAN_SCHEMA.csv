@@ -1,0 +1,1 @@
+regression_run_id,started_at,completed_at,trigger_type,repo,commit_sha,corpus_version,total_tests,passed_tests,failed_tests,expected_rule_misses,unexpected_alerts,alert_volume_before,alert_volume_after,regression_status,github_issue_url,slack_notified,notes,raw_result_json

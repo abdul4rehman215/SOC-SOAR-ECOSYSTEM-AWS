@@ -1,0 +1,732 @@
+{
+  "name": "Flow_E_MCP_Runtime_Policy_Monitor_IMPORT_SAFE_FIXED",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "flow-e-mcp-policy-monitor-test",
+        "options": {}
+      },
+      "id": "flowe-webhook",
+      "name": "Webhook_MCP_Policy_Event",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        0
+      ],
+      "webhookId": "flow-e-mcp-policy-monitor-test"
+    },
+    {
+      "parameters": {
+        "jsCode": "const event = $json.body ?? $json;\nconst eventJson = JSON.stringify(event);\nconst eventB64 = Buffer.from(eventJson, 'utf8').toString('base64');\nreturn [{\n  json: {\n    event_b64: eventB64,\n    event_preview: eventJson.slice(0, 1000),\n    repo_root: '/opt/detection-ci/wazuh-genai-ci'\n  }\n}];"
+      },
+      "id": "flowe-write-event",
+      "name": "Code_Write_Event_To_Temp_File",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "command": "={{ \"printf '%s' '\" + $json.event_b64 + \"' | base64 -d > /tmp/flow_e_mcp_policy_event.json && python3 /opt/detection-ci/wazuh-genai-ci/scripts/analytics/run_phase9_mcp_policy_monitor_local.py --repo-root /opt/detection-ci/wazuh-genai-ci --event-json /tmp/flow_e_mcp_policy_event.json --output-json /tmp/flow_e_mcp_policy_result.json\" }}"
+      },
+      "id": "flowe-run",
+      "name": "ExecuteCommand_Run_FlowE_Policy_Monitor",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseStdout(item) {\n  const stdout = item.stdout ?? item.data?.stdout ?? '';\n  const stderr = item.stderr ?? item.data?.stderr ?? '';\n  if (!stdout || !String(stdout).trim()) {\n    return { decision: 'fail', error: 'ExecuteCommand produced empty stdout', stderr: String(stderr || '') };\n  }\n  try {\n    return JSON.parse(stdout);\n  } catch (e) {\n    return {\n      decision: 'fail',\n      error: 'Could not parse ExecuteCommand stdout as JSON: ' + e.message,\n      stdout_preview: String(stdout).slice(0, 2000),\n      stderr: String(stderr || '').slice(0, 2000)\n    };\n  }\n}\nreturn [{ json: parseStdout($json) }];"
+      },
+      "id": "flowe-parse",
+      "name": "Code_Parse_FlowE_Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.policy_violation }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "flowe-if",
+      "name": "IF_Policy_Violation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A8JL8JAT0",
+          "mode": "list",
+          "cachedResultName": "soc-alerts"
+        },
+        "text": "={{ ':warning: ' + $json.slack_text }}",
+        "otherOptions": {}
+      },
+      "id": "flowe-slack-violation",
+      "name": "Slack_MCP_Policy_Violation",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        -120
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A8JL8JAT0",
+          "mode": "list",
+          "cachedResultName": "soc-alerts"
+        },
+        "text": "={{ ':white_check_mark: ' + $json.slack_text }}",
+        "otherOptions": {}
+      },
+      "id": "flowe-slack-allow",
+      "name": "Slack_MCP_Policy_Allow",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        160
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "let base = $json;\ntry { base = $('Code_Parse_FlowE_Result').first().json; } catch (e) {}\nconst slackOrCurrent = $json || {};\nconst row = base.monitor_event_row || {};\nconst slackError = slackOrCurrent.error?.message || slackOrCurrent.error || '';\nreturn [{ json: { ...base, ...row, row, slack_error: String(slackError || ''), slack_notified: !slackError } }];"
+      },
+      "id": "flowe-row",
+      "name": "Code_Flatten_Monitor_Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_v2_mcp_policy_monitor_events",
+          "cachedResultName": "flow_v2_mcp_policy_monitor_events"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "monitor_event_id": "={{ $json.monitor_event_id ?? $json.row?.monitor_event_id ?? $json.monitor_event_row?.monitor_event_id ?? $json.regression_run_row?.monitor_event_id ?? $json.metric?.monitor_event_id ?? '' }}",
+            "timestamp": "={{ $json.timestamp ?? $json.row?.timestamp ?? $json.monitor_event_row?.timestamp ?? $json.regression_run_row?.timestamp ?? $json.metric?.timestamp ?? '' }}",
+            "request_id": "={{ $json.request_id ?? $json.row?.request_id ?? $json.monitor_event_row?.request_id ?? $json.regression_run_row?.request_id ?? $json.metric?.request_id ?? '' }}",
+            "session_id": "={{ $json.session_id ?? $json.row?.session_id ?? $json.monitor_event_row?.session_id ?? $json.regression_run_row?.session_id ?? $json.metric?.session_id ?? '' }}",
+            "user_id": "={{ $json.user_id ?? $json.row?.user_id ?? $json.monitor_event_row?.user_id ?? $json.regression_run_row?.user_id ?? $json.metric?.user_id ?? '' }}",
+            "agent_id": "={{ $json.agent_id ?? $json.row?.agent_id ?? $json.monitor_event_row?.agent_id ?? $json.regression_run_row?.agent_id ?? $json.metric?.agent_id ?? '' }}",
+            "mcp_server_name": "={{ $json.mcp_server_name ?? $json.row?.mcp_server_name ?? $json.monitor_event_row?.mcp_server_name ?? $json.regression_run_row?.mcp_server_name ?? $json.metric?.mcp_server_name ?? '' }}",
+            "tool_name": "={{ $json.tool_name ?? $json.row?.tool_name ?? $json.monitor_event_row?.tool_name ?? $json.regression_run_row?.tool_name ?? $json.metric?.tool_name ?? '' }}",
+            "tool_allowed": "={{ $json.tool_allowed ?? $json.row?.tool_allowed ?? $json.monitor_event_row?.tool_allowed ?? $json.regression_run_row?.tool_allowed ?? $json.metric?.tool_allowed ?? '' }}",
+            "schema_hash_status": "={{ $json.schema_hash_status ?? $json.row?.schema_hash_status ?? $json.monitor_event_row?.schema_hash_status ?? $json.regression_run_row?.schema_hash_status ?? $json.metric?.schema_hash_status ?? '' }}",
+            "permission_scope_status": "={{ $json.permission_scope_status ?? $json.row?.permission_scope_status ?? $json.monitor_event_row?.permission_scope_status ?? $json.regression_run_row?.permission_scope_status ?? $json.metric?.permission_scope_status ?? '' }}",
+            "approval_required": "={{ $json.approval_required ?? $json.row?.approval_required ?? $json.monitor_event_row?.approval_required ?? $json.regression_run_row?.approval_required ?? $json.metric?.approval_required ?? '' }}",
+            "approval_status": "={{ $json.approval_status ?? $json.row?.approval_status ?? $json.monitor_event_row?.approval_status ?? $json.regression_run_row?.approval_status ?? $json.metric?.approval_status ?? '' }}",
+            "resource_scope_violation": "={{ $json.resource_scope_violation ?? $json.row?.resource_scope_violation ?? $json.monitor_event_row?.resource_scope_violation ?? $json.regression_run_row?.resource_scope_violation ?? $json.metric?.resource_scope_violation ?? '' }}",
+            "tool_result_risk": "={{ $json.tool_result_risk ?? $json.row?.tool_result_risk ?? $json.monitor_event_row?.tool_result_risk ?? $json.regression_run_row?.tool_result_risk ?? $json.metric?.tool_result_risk ?? '' }}",
+            "policy_violation": "={{ $json.policy_violation ?? $json.row?.policy_violation ?? $json.monitor_event_row?.policy_violation ?? $json.regression_run_row?.policy_violation ?? $json.metric?.policy_violation ?? '' }}",
+            "violation_type": "={{ $json.violation_type ?? $json.row?.violation_type ?? $json.monitor_event_row?.violation_type ?? $json.regression_run_row?.violation_type ?? $json.metric?.violation_type ?? '' }}",
+            "severity": "={{ $json.severity ?? $json.row?.severity ?? $json.monitor_event_row?.severity ?? $json.regression_run_row?.severity ?? $json.metric?.severity ?? '' }}",
+            "risk_score": "={{ $json.risk_score ?? $json.row?.risk_score ?? $json.monitor_event_row?.risk_score ?? $json.regression_run_row?.risk_score ?? $json.metric?.risk_score ?? '' }}",
+            "guardrail_action": "={{ $json.guardrail_action ?? $json.row?.guardrail_action ?? $json.monitor_event_row?.guardrail_action ?? $json.regression_run_row?.guardrail_action ?? $json.metric?.guardrail_action ?? '' }}",
+            "risk_flags_csv": "={{ $json.risk_flags_csv ?? $json.row?.risk_flags_csv ?? $json.monitor_event_row?.risk_flags_csv ?? $json.regression_run_row?.risk_flags_csv ?? $json.metric?.risk_flags_csv ?? '' }}",
+            "slack_notified": "={{ $json.slack_notified ?? $json.row?.slack_notified ?? $json.monitor_event_row?.slack_notified ?? $json.regression_run_row?.slack_notified ?? $json.metric?.slack_notified ?? '' }}",
+            "thehive_alert_id": "={{ $json.thehive_alert_id ?? $json.row?.thehive_alert_id ?? $json.monitor_event_row?.thehive_alert_id ?? $json.regression_run_row?.thehive_alert_id ?? $json.metric?.thehive_alert_id ?? '' }}",
+            "status": "={{ $json.status ?? $json.row?.status ?? $json.monitor_event_row?.status ?? $json.regression_run_row?.status ?? $json.metric?.status ?? '' }}",
+            "raw_event_json": "={{ $json.raw_event_json ?? $json.row?.raw_event_json ?? $json.monitor_event_row?.raw_event_json ?? $json.regression_run_row?.raw_event_json ?? $json.metric?.raw_event_json ?? '' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "monitor_event_id",
+              "displayName": "monitor_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "agent_id",
+              "displayName": "agent_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mcp_server_name",
+              "displayName": "mcp_server_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "tool_name",
+              "displayName": "tool_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "tool_allowed",
+              "displayName": "tool_allowed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "schema_hash_status",
+              "displayName": "schema_hash_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "permission_scope_status",
+              "displayName": "permission_scope_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "approval_required",
+              "displayName": "approval_required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "approval_status",
+              "displayName": "approval_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "resource_scope_violation",
+              "displayName": "resource_scope_violation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "tool_result_risk",
+              "displayName": "tool_result_risk",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "policy_violation",
+              "displayName": "policy_violation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "violation_type",
+              "displayName": "violation_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "severity",
+              "displayName": "severity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "risk_score",
+              "displayName": "risk_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "guardrail_action",
+              "displayName": "guardrail_action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "risk_flags_csv",
+              "displayName": "risk_flags_csv",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "slack_notified",
+              "displayName": "slack_notified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "thehive_alert_id",
+              "displayName": "thehive_alert_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "raw_event_json",
+              "displayName": "raw_event_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "monitor_event_id",
+              "keyValue": "={{ $json.monitor_event_id ?? $json.row?.monitor_event_id ?? $json.monitor_event_row?.monitor_event_id ?? $json.regression_run_row?.monitor_event_id ?? $json.metric?.monitor_event_id }}"
+            }
+          ]
+        }
+      },
+      "id": "flowe-dt-monitor",
+      "name": "DataTable_Upsert_FlowV2_MCP_Policy_Monitor_Event",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "let base = $json;\ntry { base = $('Code_Parse_FlowE_Result').first().json; } catch (e) {}\nconst rows = base.dashboard_metric_rows || [];\nreturn rows.map(metric => ({ json: { ...metric, metric } }));"
+      },
+      "id": "flowe-split-metrics",
+      "name": "Code_Split_Dashboard_Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "flow_v2_dashboard_summary",
+          "cachedResultName": "flow_v2_dashboard_summary"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "metric_id": "={{ $json.metric_id ?? $json.row?.metric_id ?? $json.monitor_event_row?.metric_id ?? $json.regression_run_row?.metric_id ?? $json.metric?.metric_id ?? '' }}",
+            "window_start": "={{ $json.window_start ?? $json.row?.window_start ?? $json.monitor_event_row?.window_start ?? $json.regression_run_row?.window_start ?? $json.metric?.window_start ?? '' }}",
+            "window_end": "={{ $json.window_end ?? $json.row?.window_end ?? $json.monitor_event_row?.window_end ?? $json.regression_run_row?.window_end ?? $json.metric?.window_end ?? '' }}",
+            "metric_name": "={{ $json.metric_name ?? $json.row?.metric_name ?? $json.monitor_event_row?.metric_name ?? $json.regression_run_row?.metric_name ?? $json.metric?.metric_name ?? '' }}",
+            "metric_value": "={{ $json.metric_value ?? $json.row?.metric_value ?? $json.monitor_event_row?.metric_value ?? $json.regression_run_row?.metric_value ?? $json.metric?.metric_value ?? '' }}",
+            "dimension_key": "={{ $json.dimension_key ?? $json.row?.dimension_key ?? $json.monitor_event_row?.dimension_key ?? $json.regression_run_row?.dimension_key ?? $json.metric?.dimension_key ?? '' }}",
+            "dimension_value": "={{ $json.dimension_value ?? $json.row?.dimension_value ?? $json.monitor_event_row?.dimension_value ?? $json.regression_run_row?.dimension_value ?? $json.metric?.dimension_value ?? '' }}",
+            "source_table": "={{ $json.source_table ?? $json.row?.source_table ?? $json.monitor_event_row?.source_table ?? $json.regression_run_row?.source_table ?? $json.metric?.source_table ?? '' }}",
+            "generated_at": "={{ $json.generated_at ?? $json.row?.generated_at ?? $json.monitor_event_row?.generated_at ?? $json.regression_run_row?.generated_at ?? $json.metric?.generated_at ?? '' }}",
+            "notes": "={{ $json.notes ?? $json.row?.notes ?? $json.monitor_event_row?.notes ?? $json.regression_run_row?.notes ?? $json.metric?.notes ?? '' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "metric_id",
+              "displayName": "metric_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "window_start",
+              "displayName": "window_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "window_end",
+              "displayName": "window_end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "metric_name",
+              "displayName": "metric_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "metric_value",
+              "displayName": "metric_value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "dimension_key",
+              "displayName": "dimension_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "dimension_value",
+              "displayName": "dimension_value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_table",
+              "displayName": "source_table",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "generated_at",
+              "displayName": "generated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "metric_id",
+              "keyValue": "={{ $json.metric_id ?? $json.row?.metric_id ?? $json.monitor_event_row?.metric_id ?? $json.regression_run_row?.metric_id ?? $json.metric?.metric_id }}"
+            }
+          ]
+        }
+      },
+      "id": "flowe-dt-dashboard",
+      "name": "DataTable_Upsert_FlowV2_Dashboard_Summary",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        720,
+        240
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Webhook_MCP_Policy_Event": {
+      "main": [
+        [
+          {
+            "node": "Code_Write_Event_To_Temp_File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Write_Event_To_Temp_File": {
+      "main": [
+        [
+          {
+            "node": "ExecuteCommand_Run_FlowE_Policy_Monitor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteCommand_Run_FlowE_Policy_Monitor": {
+      "main": [
+        [
+          {
+            "node": "Code_Parse_FlowE_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Parse_FlowE_Result": {
+      "main": [
+        [
+          {
+            "node": "IF_Policy_Violation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF_Policy_Violation": {
+      "main": [
+        [
+          {
+            "node": "Slack_MCP_Policy_Violation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack_MCP_Policy_Allow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack_MCP_Policy_Violation": {
+      "main": [
+        [
+          {
+            "node": "Code_Flatten_Monitor_Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack_MCP_Policy_Allow": {
+      "main": [
+        [
+          {
+            "node": "Code_Flatten_Monitor_Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Flatten_Monitor_Row": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Upsert_FlowV2_MCP_Policy_Monitor_Event",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code_Split_Dashboard_Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Split_Dashboard_Metrics": {
+      "main": [
+        [
+          {
+            "node": "DataTable_Upsert_FlowV2_Dashboard_Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
