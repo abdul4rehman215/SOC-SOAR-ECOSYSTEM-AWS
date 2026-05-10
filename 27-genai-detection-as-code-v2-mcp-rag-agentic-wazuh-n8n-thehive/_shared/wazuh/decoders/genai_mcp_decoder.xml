@@ -1,9 +1,0 @@
-<!--
-  GenAI Detection-as-Code V2 - MCP JSON decoder
-  Purpose: decode MCP action-path telemetry written to /var/log/ai-demo/mcp-events.jsonl.
-  Install on Wazuh manager: /var/ossec/etc/decoders/genai_mcp_decoder.xml
--->
-<decoder name="genai_mcp_json">
-  <prematch type="pcre2">"event_source"\s*:\s*"ai_demo_mcp_guardrail"</prematch>
-  <plugin_decoder>JSON_Decoder</plugin_decoder>
-</decoder>
