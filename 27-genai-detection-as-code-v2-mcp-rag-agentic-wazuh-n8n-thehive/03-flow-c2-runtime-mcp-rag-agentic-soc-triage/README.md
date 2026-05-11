@@ -2,6 +2,8 @@
 
 Flow C2 is the main star workflow of the MVP V2 project. It takes Wazuh alerts generated from AI runtime telemetry and turns them into Slack alerts, TheHive alerts/cases, and domain-specific DataTable evidence.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/resources/flow%20c2%20github.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+
 ## 🌟 Why this is the star workflow
 
 One workflow handles three modern AI security domains:
