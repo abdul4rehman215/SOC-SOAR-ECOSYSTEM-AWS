@@ -2,6 +2,8 @@
 
 Flow A2 is the GitHub pull-request validation gate for the MVP V2 project. It extends the previous V1 CI idea beyond prompt/output detections and validates MCP, RAG/memory, agentic policy, mappings, schemas, and replay logic.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/resources/flow%20A2%20github.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+
 ## 🎯 Purpose
 
 Flow A2 prevents unsafe or broken AI-security content from being deployed. It reads a real GitHub PR, lists changed files, classifies risk areas, runs local validators, posts a PR comment, applies labels, sends Slack, and writes DataTable evidence.
