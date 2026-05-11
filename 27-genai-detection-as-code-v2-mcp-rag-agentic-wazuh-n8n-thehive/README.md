@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <img src="resources/genai-detection-v2-master-architecture.png" alt="GenAI Detection-as-Code V2 master architecture placeholder" width="900"/>
+  <img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/resources/genai-rag-mcp-agenticai-v2.png" alt="GENAI LOGOS" width="900"/>
 </p>
 
 ---
@@ -72,6 +72,11 @@ Framework-wise, this project is best described as **OWASP GenAI / OWASP LLM-alig
 ---
 
 ## 🏗️ Architecture
+
+<p align="center">
+  <img src="resources/genai-detection-v2-master-architecture.png" alt="GenAI Detection-as-Code V2 master architecture placeholder" width="900"/>
+</p>
+
 
 ```mermaid
 flowchart LR
