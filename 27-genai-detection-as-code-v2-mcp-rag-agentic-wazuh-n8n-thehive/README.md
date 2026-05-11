@@ -298,6 +298,59 @@ This is an MVP prototype. For production-grade use, improve:
 
 ---
 
-## 👤 Author
+## 🌐 Project Posts on LinkedIn
+
+I also shared this project on LinkedIn through multiple posts covering the implementation, workflow, and key outcomes.
+
+> To be added Soon....
+
+<!--
+
+<p align="left">
+  <a href="https://tinyurl.com/aws-iam-flow-a"><img src="https://img.shields.io/badge/LinkedIn-Post%2001-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 01" /></a>
+  <a href="https://tinyurl.com/aws-iam-flow-b"><img src="https://img.shields.io/badge/LinkedIn-Post%2002-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 02" /></a>
+  <a href="https://tinyurl.com/aws-iam-flow-c"><img src="https://img.shields.io/badge/LinkedIn-Post%2003-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 03" /></a>
+  <a href="https://tinyurl.com/aws-iam-flow-d"><img src="https://img.shields.io/badge/LinkedIn-Post%2004-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 04" /></a>
+  <a href="https://tinyurl.com/3w7uaz74"><img src="https://img.shields.io/badge/LinkedIn-Post%2005-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 05" /></a>
+  <a href="https://tinyurl.com/kjbzxyb8"><img src="https://img.shields.io/badge/Capstone-Post%2006-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 06" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_detectionengineering-securityoperations-soar-activity-7452698979034660865-N8iD?"><img src="https://img.shields.io/badge/Architecture-Post%2007-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 07" /></a>
+  <a href="https://www.linkedin.com/posts/abdul4rehman215_opentowork-cybersecurity-socanalyst-share-7450140849482645505-eXr4?"><img src="https://img.shields.io/badge/Recruiter-Post%2008-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Post 08" /></a>
+</p>
+
+---
+
+-->
+
+## ⭐ Final Note
+
+This project reflects **real hands-on implementation** focused on practical security workflow execution, technical depth, and portfolio-grade documentation.
+
+It demonstrates the ability to:
+
+> **Build → Validate → Investigate → Document → Present**
+
+If this project adds value, consider starring the repository ⭐
+
+---
+
+## 👨‍💻 Author
 
 Built and documented by **[abdul4rehman215](https://www.linkedin.com/in/abdul4rehman215/)** as a capstone-style SOC + AI Security automation MVP.
+
+SOC • SIEM • Detection Engineering • Incident Response • Threat Intelligence • Security Automation
+
+---
+
+### 📧 Reach Out
+
+  <a href="https://github.com/abdul4rehman215">
+    <img src="https://img.shields.io/badge/Follow-181717?style=for-the-badge&logo=github&logoColor=white" alt="Follow" />
+  </a>
+  <a href="https://linkedin.com/in/abdul4rehman215">
+    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white&v=1" alt="LinkedIn" />
+  </a>
+  <a href="mailto:abdul4rehman215@gmail.com">
+    <img src="https://img.shields.io/badge/Email-EE0000?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+  </a>
+
+---
