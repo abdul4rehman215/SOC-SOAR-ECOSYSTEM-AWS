@@ -2,6 +2,8 @@
 
 Flow B2 is the controlled deployment gate. It only deploys Wazuh content and AI security policy bundles after Flow A2 has passed and the PR has the required approval/deploy signal.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/resources/Flow%20B2%20github.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+
 ## 🎯 Purpose
 
 Flow B2 reduces deployment risk by enforcing labels, approval, and a valid `/deploy-lab` signal before staging and activating Wazuh rules/decoders and MCP/RAG/agentic policy bundles.
