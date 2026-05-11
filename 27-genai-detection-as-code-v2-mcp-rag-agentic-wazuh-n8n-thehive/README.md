@@ -14,8 +14,6 @@
   <img src="resources/genai-detection-v2-master-architecture.png" alt="GenAI Detection-as-Code V2 master architecture placeholder" width="900"/>
 </p>
 
-> **Architecture image note:** `resources/genai-detection-v2-master-architecture.png` is intentionally a placeholder path. Use the prompt in `resources/architecture-image-prompt.md` to generate the final hero image, then place it at that path.
-
 ---
 
 ## 🎯 Problem vs solution
