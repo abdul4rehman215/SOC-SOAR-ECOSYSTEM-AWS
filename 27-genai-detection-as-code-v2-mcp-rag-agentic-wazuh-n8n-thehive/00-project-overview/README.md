@@ -2,6 +2,8 @@
 
 This folder contains the master narrative for the capstone MVP V2 prototype. It explains how the individual flows connect into one AI Security Operations lifecycle.
 
+<p align="center"><img src="https://github.com/abdul4rehman215/SOC-SOAR-ECOSYSTEM-AWS/blob/main/27-genai-detection-as-code-v2-mcp-rag-agentic-wazuh-n8n-thehive/resources/overview%20github.png" alt="GenAI Detection-as-Code Wazuh Capstone Architecture" width="900"/></p>
+
 ## 📌 What is included
 
 ```text
