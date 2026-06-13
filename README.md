@@ -1445,6 +1445,14 @@ Key strengths shown through this repository include:
 
 ---
 
+## 🌐 Project Post on LinkedIn
+
+I also shared this project on LinkedIn with a concise portfolio summary, key highlights, and implementation context.
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-View%20Project%20Post-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/abdul4rehman215_soc-soar-ecosystem-on-aws-portfolio-activity-7436500914733215744-H781?)
+
+---
+
 # ⭐ Final Note
 
 This repository reflects **real hands-on SOC/SOAR project work** — not isolated tool setup and not theoretical notes.
