@@ -8,7 +8,7 @@
 
 <p align="center">
   
-### A complete **self-built, hands-on SOC/SOAR ecosystem portfolio on AWS** demonstrating practical blue-team capability across **detection, triage, investigation, response, threat intelligence, automation, and security visualization**.
+### A complete **self-built, hands-on SOC/SOAR ecosystem portfolio on AWS** demonstrating practical blue-team capability across **detection, triage, investigation, response, threat detection & intelligence, automation, and security visualization**.
 
 ### This repository is **not a collection of isolated labs** — it is a **connected security operations environment** built from scratch to show how modern SOC workflows operate across multiple integrated projects.
 
@@ -65,7 +65,7 @@
 
 <!-- ===================== SCOPE & STATUS ===================== -->
 
-![Projects](https://img.shields.io/badge/Projects-42-43A047?style=for-the-badge)
+![Projects](https://img.shields.io/badge/Projects-30-43A047?style=for-the-badge)
 ![Installations](https://img.shields.io/badge/INSTALLATIONS%20&%20SETUPS-11-546E7A?style=for-the-badge)
 ![Capstones](https://img.shields.io/badge/Capstones-6-8E24AA?style=for-the-badge)
 ![Dashboards Count](https://img.shields.io/badge/Dashboards-6-0277BD?style=for-the-badge)
