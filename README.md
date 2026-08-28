@@ -179,30 +179,226 @@ It is intended for readers who want to see **hands-on implementation, real workf
 ### High-Level Workflow
 
 ```mermaid
-flowchart TD
-    A["☁️ AWS Lab Environment"] --> B["🖥️ Telemetry Sources"]
-    B --> B1["Windows Endpoint<br/>Sysmon + Wazuh Agent"]
-    B --> B2["Linux Endpoint<br/>Sysmon / auditd / Osquery"]
-    B --> B3["Network Sensors<br/>Suricata / Snort / Zeek"]
-    B --> B4["Web Layer<br/>Apache / NGINX / ModSecurity / Fail2Ban"]
-    B --> B5["Cloud Logs<br/>AWS CloudTrail"]
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#030712",
+    "fontSize": "26px",
+    "primaryTextColor": "#ffffff",
+    "lineColor": "#f8fafc"
+  },
+  "flowchart": {
+    "nodeSpacing": 38,
+    "rankSpacing": 48,
+    "curve": "basis"
+  }
+}}%%
 
-    B1 --> C["🛡️ Wazuh SIEM/XDR"]
-    B2 --> C
-    B3 --> C
-    B4 --> C
-    B5 --> C
+flowchart LR
 
-    C --> D["🧠 Threat Intel Enrichment<br/>VirusTotal / AlienVault OTX / MISP"]
-    C --> E["📂 TheHive Case Management"]
-    E --> F["⚙️ Cortex Analyzers / Responders"]
-    C --> G["🤖 n8n + Gemini AI Triage Automation"]
-    C --> H["📊 Wazuh Dashboards"]
+    %% =====================================================
+    %% 1 · TELEMETRY
+    %% =====================================================
+    subgraph TELEMETRY[" "]
+        direction TB
 
-    D --> E
-    F --> E
-    E --> I["🚨 Investigation • Containment • Eradication • Recovery"]
-    I --> J["🔁 MISP Validated IOC Sharing / Reporting / Lessons Learned"]
+        H1["☁️ 1 · TELEMETRY"]
+
+        A["☁️ AWS Lab<br/>Environment"]
+
+        B1["🪟 Windows<br/>Sysmon + Wazuh Agent"]
+
+        B2["🐧 Linux<br/>auditd + Osquery"]
+
+        B3["🔀 Network Sensors<br/>Suricata · Snort · Zeek"]
+
+        B4["🌐 Web Layer<br/>NGINX · ModSecurity<br/>Fail2Ban"]
+
+        B5["🧾 Cloud Logs<br/>AWS CloudTrail"]
+
+        COL["📡 TELEMETRY<br/>COLLECTION"]
+
+        H1 --> A
+
+        A --> B1
+        A --> B2
+        A --> B3
+        A --> B4
+        A --> B5
+
+        B1 --> COL
+        B2 --> COL
+        B3 --> COL
+        B4 --> COL
+        B5 --> COL
+    end
+
+
+    %% =====================================================
+    %% 2 · SIEM / XDR
+    %% =====================================================
+    subgraph SIEM[" "]
+        direction TB
+
+        H2["🛡️ 2 · SIEM / XDR"]
+
+        C["🛡️ Wazuh Manager<br/>Rules + Correlation"]
+
+        C2["🗄️ Wazuh Indexer<br/>OpenSearch"]
+
+        C3["📊 Wazuh Dashboard<br/>Hunting + Evidence"]
+
+        C4["🚨 Security Alert<br/>Validated Detection"]
+
+        H2 --> C --> C2 --> C3 --> C4
+    end
+
+
+    %% =====================================================
+    %% 3 · ENRICHMENT + SOAR
+    %% =====================================================
+    subgraph SOAR[" "]
+        direction TB
+
+        H3["🧠 3 · ENRICHMENT + SOAR"]
+
+        D["🔎 Threat Intelligence<br/>VT · OTX · MISP"]
+
+        E["🐝 TheHive 5<br/>Case Management"]
+
+        F["⚙️ Cortex<br/>Analyzers + Responders"]
+
+        G["🤖 n8n + Gemini<br/>AI Triage"]
+
+        M["🧭 MITRE ATT&CK<br/>Evidence Mapping"]
+
+        H3 --> D --> E --> F --> G --> M
+    end
+
+
+    %% =====================================================
+    %% 4 · RESPONSE + FEEDBACK
+    %% =====================================================
+    subgraph RESPONSE[" "]
+        direction TB
+
+        H4["🚨 4 · RESPONSE + FEEDBACK"]
+
+        I["🔍 Investigation<br/>+ Containment"]
+
+        J["🧹 Eradication<br/>+ Recovery"]
+
+        K["📌 MISP<br/>Validated IOC Sharing"]
+
+        L["📝 Reporting<br/>+ Lessons Learned"]
+
+        FB["♻️ Improve Future<br/>Detections + Triage"]
+
+        H4 --> I --> J --> K --> L --> FB
+    end
+
+
+    %% =====================================================
+    %% KEEP 4 COLUMNS PARALLEL
+    %% =====================================================
+    TELEMETRY ==> SIEM
+    SIEM ==> SOAR
+    SOAR ==> RESPONSE
+
+
+    %% =====================================================
+    %% PREMIUM HEADERS
+    %% =====================================================
+    classDef telemetryHeader fill:#075985,stroke:#67e8f9,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef siemHeader fill:#312e81,stroke:#a78bfa,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef soarHeader fill:#581c87,stroke:#e879f9,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef responseHeader fill:#14532d,stroke:#86efac,stroke-width:6px,color:#ffffff,font-size:29px;
+
+    class H1 telemetryHeader;
+    class H2 siemHeader;
+    class H3 soarHeader;
+    class H4 responseHeader;
+
+
+    %% =====================================================
+    %% TELEMETRY COLORS
+    %% =====================================================
+    classDef aws fill:#7c2d12,stroke:#fb923c,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef windows fill:#172554,stroke:#60a5fa,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef linux fill:#134e4a,stroke:#2dd4bf,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef network fill:#4338ca,stroke:#a5b4fc,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef web fill:#9a3412,stroke:#fdba74,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef cloud fill:#713f12,stroke:#fde047,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef collection fill:#075985,stroke:#67e8f9,stroke-width:6px,color:#ffffff,font-size:26px;
+
+    class A aws;
+    class B1 windows;
+    class B2 linux;
+    class B3 network;
+    class B4 web;
+    class B5 cloud;
+    class COL collection;
+
+
+    %% =====================================================
+    %% SIEM COLORS
+    %% =====================================================
+    classDef wazuh fill:#083344,stroke:#22d3ee,stroke-width:6px,color:#ffffff,font-size:27px;
+    classDef indexer fill:#312e81,stroke:#818cf8,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef dashboard fill:#0c4a6e,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef alert fill:#991b1b,stroke:#fb7185,stroke-width:5px,color:#ffffff,font-size:25px;
+
+    class C wazuh;
+    class C2 indexer;
+    class C3 dashboard;
+    class C4 alert;
+
+
+    %% =====================================================
+    %% SOAR COLORS
+    %% =====================================================
+    classDef intel fill:#4c1d95,stroke:#c084fc,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef hive fill:#854d0e,stroke:#fde047,stroke-width:6px,color:#ffffff,font-size:26px;
+    classDef cortex fill:#7e22ce,stroke:#f0abfc,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef ai fill:#0369a1,stroke:#7dd3fc,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef mitre fill:#9a3412,stroke:#fdba74,stroke-width:5px,color:#ffffff,font-size:25px;
+
+    class D intel;
+    class E hive;
+    class F cortex;
+    class G ai;
+    class M mitre;
+
+
+    %% =====================================================
+    %% RESPONSE COLORS
+    %% =====================================================
+    classDef investigate fill:#991b1b,stroke:#fb7185,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef recover fill:#c2410c,stroke:#fdba74,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef misp fill:#15803d,stroke:#86efac,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef report fill:#0f766e,stroke:#5eead4,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef feedback fill:#166534,stroke:#86efac,stroke-width:6px,color:#ffffff,font-size:26px;
+
+    class I investigate;
+    class J recover;
+    class K misp;
+    class L report;
+    class FB feedback;
+
+
+    %% =====================================================
+    %% COMPACT PREMIUM PANELS
+    %% =====================================================
+    style TELEMETRY fill:#06131d,stroke:#22d3ee,stroke-width:4px
+    style SIEM fill:#0d1022,stroke:#818cf8,stroke-width:4px
+    style SOAR fill:#160b25,stroke:#e879f9,stroke-width:4px
+    style RESPONSE fill:#07140d,stroke:#4ade80,stroke-width:4px
+
+
+    %% =====================================================
+    %% CONNECTORS
+    %% =====================================================
+    linkStyle default stroke:#f8fafc,stroke-width:4px;
 ```
 
 ---
