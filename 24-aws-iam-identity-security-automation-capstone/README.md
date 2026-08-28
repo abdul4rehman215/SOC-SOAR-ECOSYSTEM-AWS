@@ -56,20 +56,167 @@ This is not just a set of imported JSON files. It is a portfolio-grade prototype
 ### Master lifecycle view
 
 ```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#050814",
+    "fontSize": "28px",
+    "primaryTextColor": "#ffffff",
+    "lineColor": "#f8fafc"
+  },
+  "flowchart": {
+    "nodeSpacing": 55,
+    "rankSpacing": 65,
+    "curve": "basis"
+  }
+}}%%
+
 flowchart LR
-    A[Flow A\nAWS identity triage\n+ enrichment] --> B[Flow B\ncontainment\n+ TheHive promotion]
-    C[Flow C\nscheduled IAM hygiene\n+ proactive alerts] --> D[TheHive 5\nalerts + cases]
-    A --> D
-    B --> D
-    D --> E[Flow D\ncase closure sync\nback to tracking]
-    A --> F[Slack analyst notifications]
-    B --> F
-    C --> F
-    E --> F
-    A --> G[DataTable tracking]
-    B --> G
-    C --> G
-    E --> G
+
+    %% =====================================================
+    %% 1 · SECURITY AUTOMATION
+    %% =====================================================
+    subgraph AUTO[" "]
+        direction TB
+
+        H1["⚡ 1 · SECURITY AUTOMATION"]
+
+        A["☁️ Flow A<br/>AWS Identity Triage<br/>+ Enrichment"]
+
+        C["🧹 Flow C<br/>Scheduled IAM Hygiene<br/>+ Proactive Alerts"]
+
+        H1 ==> A
+        H1 ==> C
+    end
+
+
+    %% =====================================================
+    %% 2 · RESPONSE + CASE MANAGEMENT
+    %% =====================================================
+    subgraph CASE[" "]
+        direction TB
+
+        H2["🛡️ 2 · RESPONSE + CASES"]
+
+        B["🚨 Flow B<br/>Containment<br/>+ TheHive Promotion"]
+
+        TH["🐝 TheHive 5<br/>Alerts + Cases"]
+
+        E["✅ Flow D<br/>Case Closure Sync<br/>Back to Tracking"]
+
+        H2 ==> B
+        B ==> TH
+        TH ==> E
+    end
+
+
+    %% =====================================================
+    %% 3 · SHARED OUTPUTS
+    %% =====================================================
+    subgraph OUTPUT[" "]
+        direction TB
+
+        H3["📡 3 · ANALYST + TRACKING OUTPUTS"]
+
+        O["🔀 Shared Output Hub<br/>Automation Events"]
+
+        F["💬 Slack<br/>Analyst Notifications"]
+
+        G["📊 DataTable<br/>Tracking"]
+
+        H3 ==> O
+
+        O ==> F
+        O ==> G
+    end
+
+
+    %% =====================================================
+    %% CORE AUTOMATION LOGIC
+    %% =====================================================
+    A ==> B
+
+    A ==> TH
+    C ==> TH
+
+
+    %% =====================================================
+    %% NOTIFICATION / TRACKING EVENTS
+    %% Replaces repeated crossing arrows
+    %% =====================================================
+    A -.-> O
+    B -.-> O
+    C -.-> O
+    E -.-> O
+
+
+    %% =====================================================
+    %% PREMIUM HEADER STYLES
+    %% =====================================================
+    classDef automationHeader fill:#082f49,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:30px;
+
+    classDef caseHeader fill:#3f0d20,stroke:#fb7185,stroke-width:5px,color:#ffffff,font-size:30px;
+
+    classDef outputHeader fill:#312e81,stroke:#c084fc,stroke-width:5px,color:#ffffff,font-size:30px;
+
+    class H1 automationHeader;
+    class H2 caseHeader;
+    class H3 outputHeader;
+
+
+    %% =====================================================
+    %% SECURITY AUTOMATION COLORS
+    %% =====================================================
+    classDef flowA fill:#0c4a6e,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:28px;
+
+    classDef flowC fill:#4c1d95,stroke:#c084fc,stroke-width:5px,color:#ffffff,font-size:28px;
+
+    class A flowA;
+    class C flowC;
+
+
+    %% =====================================================
+    %% RESPONSE / CASE COLORS
+    %% =====================================================
+    classDef containment fill:#9a3412,stroke:#fb923c,stroke-width:5px,color:#ffffff,font-size:28px;
+
+    classDef thehive fill:#713f12,stroke:#facc15,stroke-width:6px,color:#ffffff,font-size:29px;
+
+    classDef closure fill:#0f766e,stroke:#2dd4bf,stroke-width:5px,color:#ffffff,font-size:28px;
+
+    class B containment;
+    class TH thehive;
+    class E closure;
+
+
+    %% =====================================================
+    %% OUTPUT COLORS
+    %% =====================================================
+    classDef hub fill:#4338ca,stroke:#818cf8,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef slack fill:#7e22ce,stroke:#e879f9,stroke-width:5px,color:#ffffff,font-size:28px;
+
+    classDef tracking fill:#14532d,stroke:#4ade80,stroke-width:5px,color:#ffffff,font-size:28px;
+
+    class O hub;
+    class F slack;
+    class G tracking;
+
+
+    %% =====================================================
+    %% GLOSSY CONTAINERS
+    %% =====================================================
+    style AUTO fill:#071822,stroke:#38bdf8,stroke-width:3px
+
+    style CASE fill:#170810,stroke:#fb7185,stroke-width:3px
+
+    style OUTPUT fill:#120b24,stroke:#c084fc,stroke-width:3px
+
+
+    %% =====================================================
+    %% BRIGHT CONNECTORS
+    %% =====================================================
+    linkStyle default stroke:#f8fafc,stroke-width:5px;
 ```
 
 ### Operational sequence in plain English
