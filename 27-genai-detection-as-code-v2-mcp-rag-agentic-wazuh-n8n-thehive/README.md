@@ -79,55 +79,444 @@ Framework-wise, this project is best described as **OWASP GenAI / OWASP LLM-alig
 
 
 ```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#030712",
+    "fontSize": "26px",
+    "primaryTextColor": "#ffffff",
+    "lineColor": "#f8fafc"
+  },
+  "flowchart": {
+    "nodeSpacing": 42,
+    "rankSpacing": 54,
+    "curve": "basis"
+  }
+}}%%
+
 flowchart LR
-    Dev[Security engineer] --> PR[GitHub PR]
-    PR --> A2[Flow A2<br/>AI Security Content CI]
-    A2 -->|pass labels| Gate[GitHub labels + approval]
-    Gate --> B2[Flow B2<br/>Controlled Wazuh + Policy Deployment]
-    B2 --> Wazuh[Wazuh Manager<br/>Rules + decoders active]
 
-    MCP[MCP action lab] --> Logs[/mcp-events.jsonl/]
-    RAG[RAG/memory lab] --> Logs2[/rag-memory-events.jsonl/]
-    Agent[Agentic-risk lab] --> Logs3[/agentic-events.jsonl/]
-    Logs --> AgentHost[Wazuh Agent localfile]
-    Logs2 --> AgentHost
-    Logs3 --> AgentHost
-    AgentHost --> Wazuh
-    Wazuh -->|custom integration| C2[Flow C2<br/>Runtime MCP/RAG/Agentic SOC Triage]
-    C2 --> Slack[Slack SOC channel]
-    C2 --> Hive[TheHive alerts + cases]
-    C2 --> Tables[n8n DataTables]
+    %% =====================================================
+    %% COLUMN 1 — SECURITY CONTENT CI + DEPLOYMENT
+    %% =====================================================
+    subgraph CI[" "]
+        direction TB
 
-    E[Flow E<br/>MCP Policy Monitor] --> Slack
-    E --> Tables
-    F[Flow F<br/>Red-Team Regression] --> Slack
-    F --> Tables
-    G[Flow G<br/>False Positive Analytics] --> Slack
-    G --> Tables
-    Tables --> Dash[Dashboard Rollup]
-    Dash --> Slack
+        H1["🧪 1 · SECURITY CONTENT CI"]
+
+        Dev["👨‍💻 Security Engineer"]
+
+        PR["🐙 GitHub PR"]
+
+        A2["⚡ Flow A2<br/>AI Security Content CI"]
+
+        PASS["✅ CI PASS<br/>Labels + Approval"]
+
+        B2["🚀 Flow B2<br/>Controlled Wazuh<br/>+ Policy Deployment"]
+
+        H1 --> Dev --> PR --> A2 --> PASS --> B2
+    end
+
+
+    %% =====================================================
+    %% COLUMN 2 — TELEMETRY + WAZUH
+    %% =====================================================
+    subgraph WAZ[" "]
+        direction TB
+
+        H2["🛡️ 2 · TELEMETRY + WAZUH"]
+
+        MCP["🔧 MCP Action Lab"]
+        RAG["🧠 RAG / Memory Lab"]
+        AGT["🤖 Agentic-Risk Lab"]
+
+        LOG1["📄 mcp-events.jsonl"]
+        LOG2["📄 rag-memory-events.jsonl"]
+        LOG3["📄 agentic-events.jsonl"]
+
+        HOST["📥 Wazuh Agent<br/>localfile Ingestion"]
+
+        MAN["🛡️ Wazuh Manager<br/>Rules + Decoders Active"]
+
+        H2 --> MCP --> LOG1
+        H2 --> RAG --> LOG2
+        H2 --> AGT --> LOG3
+
+        LOG1 --> HOST
+        LOG2 --> HOST
+        LOG3 --> HOST
+
+        HOST --> MAN
+    end
+
+
+    %% =====================================================
+    %% COLUMN 3 — SOC AUTOMATION
+    %% =====================================================
+    subgraph AUTO[" "]
+        direction TB
+
+        H3["🧠 3 · SOC AUTOMATION"]
+
+        C2["⚙️ Flow C2<br/>Runtime MCP / RAG / Agentic<br/>SOC Triage"]
+
+        E["🛡️ Flow E<br/>MCP Policy Monitor"]
+
+        F["🧨 Flow F<br/>Red-Team Regression"]
+
+        G["📊 Flow G<br/>False Positive Analytics"]
+
+        ROUTE["🔀 OUTPUT ROUTING<br/>Alert · Case · Audit · Metrics"]
+
+        H3 --> C2
+        H3 --> E
+        H3 --> F
+        H3 --> G
+
+        C2 --> ROUTE
+        E --> ROUTE
+        F --> ROUTE
+        G --> ROUTE
+    end
+
+
+    %% =====================================================
+    %% COLUMN 4 — SOC OUTPUTS
+    %% =====================================================
+    subgraph OUTPUT[" "]
+        direction TB
+
+        H4["📡 4 · SOC OUTPUTS"]
+
+        SLACK["💬 Slack<br/>SOC Channel"]
+
+        HIVE["🐝 TheHive 5<br/>Alerts + Cases"]
+
+        TABLES["📋 n8n DataTables<br/>Alert + Audit + Case State"]
+
+        DASH["📈 Dashboard<br/>Rollup"]
+
+        FINAL["✅ SOC VISIBILITY<br/>Alerts · Cases · Metrics"]
+
+        H4 --> SLACK
+        H4 --> HIVE
+        H4 --> TABLES
+
+        TABLES --> DASH
+        DASH --> FINAL
+    end
+
+
+    %% =====================================================
+    %% KEEP ALL FOUR COLUMNS PARALLEL
+    %% =====================================================
+    CI ==> WAZ
+    WAZ ==> AUTO
+    AUTO ==> OUTPUT
+
+
+    %% =====================================================
+    %% PREMIUM HEADERS
+    %% =====================================================
+    classDef ciHeader fill:#082f49,stroke:#67e8f9,stroke-width:6px,color:#ffffff,font-size:30px;
+    classDef wazHeader fill:#312e81,stroke:#a78bfa,stroke-width:6px,color:#ffffff,font-size:30px;
+    classDef autoHeader fill:#581c87,stroke:#e879f9,stroke-width:6px,color:#ffffff,font-size:30px;
+    classDef outHeader fill:#14532d,stroke:#86efac,stroke-width:6px,color:#ffffff,font-size:30px;
+
+    class H1 ciHeader;
+    class H2 wazHeader;
+    class H3 autoHeader;
+    class H4 outHeader;
+
+
+    %% =====================================================
+    %% CI / DEPLOYMENT COLORS
+    %% =====================================================
+    classDef engineer fill:#172554,stroke:#60a5fa,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef github fill:#1e3a8a,stroke:#818cf8,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef flowA fill:#075985,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef pass fill:#166534,stroke:#86efac,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef deploy fill:#4338ca,stroke:#a5b4fc,stroke-width:5px,color:#ffffff,font-size:26px;
+
+    class Dev engineer;
+    class PR github;
+    class A2 flowA;
+    class PASS pass;
+    class B2 deploy;
+
+
+    %% =====================================================
+    %% TELEMETRY + WAZUH COLORS
+    %% =====================================================
+    classDef lab1 fill:#7c2d12,stroke:#fb923c,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef lab2 fill:#4c1d95,stroke:#c084fc,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef lab3 fill:#0f766e,stroke:#5eead4,stroke-width:5px,color:#ffffff,font-size:25px;
+
+    classDef log fill:#1f2937,stroke:#94a3b8,stroke-width:4px,color:#ffffff,font-size:24px;
+
+    classDef agent fill:#0c4a6e,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef manager fill:#083344,stroke:#22d3ee,stroke-width:6px,color:#ffffff,font-size:27px;
+
+    class MCP lab1;
+    class RAG lab2;
+    class AGT lab3;
+
+    class LOG1,LOG2,LOG3 log;
+    class HOST agent;
+    class MAN manager;
+
+
+    %% =====================================================
+    %% SOC AUTOMATION COLORS
+    %% =====================================================
+    classDef c2 fill:#7e22ce,stroke:#f0abfc,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef monitor fill:#312e81,stroke:#818cf8,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef regression fill:#991b1b,stroke:#fb7185,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef analytics fill:#0f766e,stroke:#5eead4,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef routing fill:#854d0e,stroke:#fde047,stroke-width:5px,color:#ffffff,font-size:26px;
+
+    class C2 c2;
+    class E monitor;
+    class F regression;
+    class G analytics;
+    class ROUTE routing;
+
+
+    %% =====================================================
+    %% SOC OUTPUT COLORS
+    %% =====================================================
+    classDef slack fill:#7e22ce,stroke:#e879f9,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef hive fill:#854d0e,stroke:#fde047,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef tables fill:#0369a1,stroke:#7dd3fc,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef dash fill:#0f766e,stroke:#5eead4,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef final fill:#166534,stroke:#86efac,stroke-width:6px,color:#ffffff,font-size:27px;
+
+    class SLACK slack;
+    class HIVE hive;
+    class TABLES tables;
+    class DASH dash;
+    class FINAL final;
+
+
+    %% =====================================================
+    %% GLOSSY PARALLEL PANELS
+    %% =====================================================
+    style CI fill:#06131d,stroke:#22d3ee,stroke-width:4px
+    style WAZ fill:#0d1022,stroke:#818cf8,stroke-width:4px
+    style AUTO fill:#160b25,stroke:#e879f9,stroke-width:4px
+    style OUTPUT fill:#07140d,stroke:#4ade80,stroke-width:4px
+
+
+    %% =====================================================
+    %% THICK BRIGHT CONNECTORS
+    %% =====================================================
+    linkStyle default stroke:#f8fafc,stroke-width:4px;
 ```
 
 ### Runtime path
 
 ```mermaid
-sequenceDiagram
-    participant Lab as MCP/RAG/Agentic Lab
-    participant Agent as Wazuh Agent
-    participant Manager as Wazuh Manager
-    participant N8N as n8n Flow C2
-    participant Slack as Slack
-    participant Hive as TheHive
-    participant DT as DataTables
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#030712",
+    "fontSize": "27px",
+    "primaryTextColor": "#ffffff",
+    "lineColor": "#f8fafc"
+  },
+  "flowchart": {
+    "nodeSpacing": 46,
+    "rankSpacing": 56,
+    "curve": "basis"
+  }
+}}%%
 
-    Lab->>Agent: Write structured JSONL runtime event
-    Agent->>Manager: Forward log event
-    Manager->>Manager: Match MCP/RAG/agentic Wazuh rules
-    Manager->>N8N: Send Wazuh alert through custom integration webhook
-    N8N->>N8N: Normalize, classify domain, score, enrich, dedupe
-    N8N->>Hive: Create/update alert and promote high-risk cases
-    N8N->>Slack: Send analyst-readable runtime alert
-    N8N->>DT: Upsert MCP, RAG/memory, agentic, audit, and case rows
+flowchart LR
+
+    %% =====================================================
+    %% 1 · RUNTIME SOURCE
+    %% =====================================================
+    subgraph SOURCE[" "]
+        direction TB
+
+        H1["⚡ 1 · RUNTIME SOURCE"]
+
+        A["🧪 MCP / RAG /<br/>Agentic Lab"]
+
+        B["📝 Structured JSONL<br/>Runtime Event"]
+
+        C["📤 Event Written<br/>to Local Log"]
+
+        H1 --> A --> B --> C
+    end
+
+
+    %% =====================================================
+    %% 2 · WAZUH DETECTION
+    %% =====================================================
+    subgraph WAZUH[" "]
+        direction TB
+
+        H2["🛡️ 2 · WAZUH DETECTION"]
+
+        D["📥 Wazuh Agent<br/>Localfile Ingestion"]
+
+        E["🛡️ Wazuh Manager"]
+
+        F["🎯 Rule Matching<br/>MCP · RAG · Agentic"]
+
+        G["🚨 Custom Integration<br/>Alert Webhook"]
+
+        H2 --> D --> E --> F --> G
+    end
+
+
+    %% =====================================================
+    %% 3 · n8n SOC TRIAGE
+    %% =====================================================
+    subgraph TRIAGE[" "]
+        direction TB
+
+        H3["🧠 3 · SOC TRIAGE"]
+
+        I["⚙️ n8n Flow C2<br/>Receive Alert"]
+
+        J["🧹 Normalize<br/>+ Classify Domain"]
+
+        K["📊 Score + Enrich<br/>Security Context"]
+
+        L["🧬 Deduplicate<br/>+ Prepare Output"]
+
+        H3 --> I --> J --> K --> L
+    end
+
+
+    %% =====================================================
+    %% 4 · SOC OUTPUTS
+    %% =====================================================
+    subgraph OUTPUT[" "]
+        direction TB
+
+        H4["📡 4 · SOC OUTPUTS"]
+
+        M["🐝 TheHive 5<br/>Create / Update Alert<br/>Promote High-Risk Case"]
+
+        N["💬 Slack<br/>Analyst-Readable Alert"]
+
+        O["📋 DataTables<br/>MCP · RAG · Agentic<br/>Audit + Case Rows"]
+
+        P["✅ SOC VISIBILITY<br/>Case · Alert · Audit State"]
+
+        H4 --> M
+        H4 --> N
+        H4 --> O
+
+        M --> P
+        N --> P
+        O --> P
+    end
+
+
+    %% =====================================================
+    %% KEEP THE 4 COLUMNS PARALLEL
+    %% =====================================================
+    SOURCE ==> WAZUH
+    WAZUH ==> TRIAGE
+    TRIAGE ==> OUTPUT
+
+
+    %% =====================================================
+    %% PREMIUM GLOSSY HEADERS
+    %% =====================================================
+    classDef sourceHeader fill:#0c4a6e,stroke:#67e8f9,stroke-width:6px,color:#ffffff,font-size:31px;
+    classDef wazuhHeader fill:#312e81,stroke:#a78bfa,stroke-width:6px,color:#ffffff,font-size:31px;
+    classDef triageHeader fill:#581c87,stroke:#e879f9,stroke-width:6px,color:#ffffff,font-size:31px;
+    classDef outputHeader fill:#14532d,stroke:#86efac,stroke-width:6px,color:#ffffff,font-size:31px;
+
+    class H1 sourceHeader;
+    class H2 wazuhHeader;
+    class H3 triageHeader;
+    class H4 outputHeader;
+
+
+    %% =====================================================
+    %% RUNTIME SOURCE
+    %% =====================================================
+    classDef lab fill:#172554,stroke:#60a5fa,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef json fill:#075985,stroke:#22d3ee,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef event fill:#134e4a,stroke:#2dd4bf,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    class A lab;
+    class B json;
+    class C event;
+
+
+    %% =====================================================
+    %% WAZUH
+    %% =====================================================
+    classDef agent fill:#1e3a8a,stroke:#60a5fa,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef manager fill:#083344,stroke:#22d3ee,stroke-width:6px,color:#ffffff,font-size:28px;
+
+    classDef rules fill:#713f12,stroke:#fbbf24,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef webhook fill:#991b1b,stroke:#fb7185,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    class D agent;
+    class E manager;
+    class F rules;
+    class G webhook;
+
+
+    %% =====================================================
+    %% TRIAGE
+    %% =====================================================
+    classDef flow fill:#7e22ce,stroke:#f0abfc,stroke-width:6px,color:#ffffff,font-size:28px;
+
+    classDef normalize fill:#4c1d95,stroke:#c084fc,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef enrich fill:#4338ca,stroke:#a5b4fc,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef dedupe fill:#0f766e,stroke:#5eead4,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    class I flow;
+    class J normalize;
+    class K enrich;
+    class L dedupe;
+
+
+    %% =====================================================
+    %% SOC OUTPUTS
+    %% =====================================================
+    classDef hive fill:#854d0e,stroke:#fde047,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef slack fill:#7e22ce,stroke:#e879f9,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef tables fill:#0369a1,stroke:#7dd3fc,stroke-width:5px,color:#ffffff,font-size:27px;
+
+    classDef final fill:#166534,stroke:#86efac,stroke-width:6px,color:#ffffff,font-size:28px;
+
+    class M hive;
+    class N slack;
+    class O tables;
+    class P final;
+
+
+    %% =====================================================
+    %% GLOSSY PARALLEL PANELS
+    %% =====================================================
+    style SOURCE fill:#06131d,stroke:#22d3ee,stroke-width:4px
+    style WAZUH fill:#0d1022,stroke:#818cf8,stroke-width:4px
+    style TRIAGE fill:#160b25,stroke:#e879f9,stroke-width:4px
+    style OUTPUT fill:#07140d,stroke:#4ade80,stroke-width:4px
+
+
+    %% =====================================================
+    %% BRIGHT CONNECTORS
+    %% =====================================================
+    linkStyle default stroke:#f8fafc,stroke-width:5px;
 ```
 
 ---
