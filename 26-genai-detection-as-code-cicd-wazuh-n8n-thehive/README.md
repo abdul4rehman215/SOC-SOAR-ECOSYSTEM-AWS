@@ -75,63 +75,428 @@ This project demonstrates hands-on ability to design, implement, test, and docum
 ### Master lifecycle view
 
 ```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#030712",
+    "fontSize": "25px",
+    "primaryTextColor": "#ffffff",
+    "lineColor": "#f8fafc"
+  },
+  "flowchart": {
+    "nodeSpacing": 42,
+    "rankSpacing": 54,
+    "curve": "basis"
+  }
+}}%%
+
 flowchart LR
-    GH[GitHub PR
-Detection content change] --> FA[Flow A
-Detection CI validation]
-    FA -->|detection-ci-pass label| FB[Flow B
-Controlled Wazuh deployment]
-    FB -->|rules/decoders active| WZ[Wazuh Manager]
-    APP[AI demo app
-Guardrail JSONL events] --> AG[Wazuh Agent
-localfile JSON ingestion]
-    AG --> WZ
-    WZ -->|rules 100201/100202/100203| INT[custom-n8n-genai
-Wazuh integration]
-    INT --> FC[Flow C
-Runtime GenAI triage]
-    FC --> SL[Slack SOC alerts]
-    FC --> TH[TheHive alerts + cases]
-    FC --> DT[DataTables
-alert/audit/case state]
-    FA --> DASH[SOC dashboard collector]
-    FB --> DASH
-    FC --> DASH
-    ERR[Global error workflow] --> DASH
-    TH --> FD[Flow D
-case closure sync]
-    FD --> SL
-    FD --> DT
-    FD --> DASH
+
+    %% =====================================================
+    %% COLUMN 1 — DETECTION CI
+    %% =====================================================
+    subgraph CI[" "]
+        direction TB
+
+        H1["🧪 1 · DETECTION CI"]
+
+        GH["🐙 GitHub PR<br/>Detection Content Change"]
+
+        FA["⚡ Flow A<br/>Detection CI Validation"]
+
+        PASS["✅ CI PASS<br/>Deployment Approved"]
+
+        H1 --> GH --> FA --> PASS
+    end
+
+
+    %% =====================================================
+    %% COLUMN 2 — WAZUH RUNTIME
+    %% =====================================================
+    subgraph WAZUH[" "]
+        direction TB
+
+        H2["🛡️ 2 · WAZUH RUNTIME"]
+
+        FB["🚀 Flow B<br/>Controlled Wazuh Deployment"]
+
+        APP["🤖 AI Demo App<br/>Guardrail JSONL Events"]
+
+        AG["📥 Wazuh Agent<br/>JSON Ingestion"]
+
+        WZ["🛡️ Wazuh Manager<br/>Rules + Decoders Active"]
+
+        INT["🔗 custom-n8n-genai<br/>Wazuh Integration<br/>Rules 100201–100203"]
+
+        H2 --> FB
+        H2 --> APP
+
+        APP --> AG --> WZ --> INT
+        FB --> WZ
+    end
+
+
+    %% =====================================================
+    %% COLUMN 3 — GENAI TRIAGE
+    %% =====================================================
+    subgraph TRIAGE[" "]
+        direction TB
+
+        H3["🧠 3 · GENAI TRIAGE"]
+
+        FC["⚙️ Flow C<br/>Runtime GenAI Triage"]
+
+        PKG["📦 Alert Package<br/>Context + Evidence"]
+
+        ROUTE["🎯 SOC Routing<br/>Notify · Case · Track"]
+
+        H3 --> FC --> PKG --> ROUTE
+    end
+
+
+    %% =====================================================
+    %% COLUMN 4 — SOC OUTPUTS + CLOSURE
+    %% =====================================================
+    subgraph SOCOUT[" "]
+        direction TB
+
+        H4["📡 4 · SOC OUTPUTS + CLOSURE"]
+
+        HUB["🔀 SOC OUTPUT HUB"]
+
+        SL["💬 Slack<br/>SOC Alerts"]
+
+        TH["🐝 TheHive 5<br/>Alerts + Cases"]
+
+        DT["📊 DataTables<br/>Alert · Audit · Case State"]
+
+        FD["✅ Flow D<br/>Case Closure Sync"]
+
+        DASH["📈 SOC Dashboard<br/>Collector"]
+
+        ERR["🚨 Global Error<br/>Workflow"]
+
+        H4 --> HUB
+
+        HUB --> SL
+        HUB --> TH
+        HUB --> DT
+
+        TH --> FD
+        FD --> SL
+        FD --> DT
+        FD --> DASH
+
+        ERR --> DASH
+        HUB --> DASH
+    end
+
+
+    %% =====================================================
+    %% KEEP THE 4 COLUMNS PARALLEL
+    %% =====================================================
+    CI ==> WAZUH
+    WAZUH ==> TRIAGE
+    TRIAGE ==> SOCOUT
+
+
+    %% =====================================================
+    %% PREMIUM HEADERS
+    %% =====================================================
+    classDef ciHeader fill:#082f49,stroke:#67e8f9,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef wazHeader fill:#312e81,stroke:#a78bfa,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef triageHeader fill:#581c87,stroke:#e879f9,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef socHeader fill:#14532d,stroke:#86efac,stroke-width:6px,color:#ffffff,font-size:29px;
+
+    class H1 ciHeader;
+    class H2 wazHeader;
+    class H3 triageHeader;
+    class H4 socHeader;
+
+
+    %% =====================================================
+    %% DETECTION CI COLORS
+    %% =====================================================
+    classDef github fill:#172554,stroke:#60a5fa,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef flowA fill:#075985,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef pass fill:#166534,stroke:#86efac,stroke-width:5px,color:#ffffff,font-size:25px;
+
+    class GH github;
+    class FA flowA;
+    class PASS pass;
+
+
+    %% =====================================================
+    %% WAZUH COLORS
+    %% =====================================================
+    classDef deploy fill:#4338ca,stroke:#818cf8,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef app fill:#7c2d12,stroke:#fb923c,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef agent fill:#0c4a6e,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef manager fill:#083344,stroke:#22d3ee,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef integration fill:#4c1d95,stroke:#c084fc,stroke-width:5px,color:#ffffff,font-size:25px;
+
+    class FB deploy;
+    class APP app;
+    class AG agent;
+    class WZ manager;
+    class INT integration;
+
+
+    %% =====================================================
+    %% GENAI TRIAGE COLORS
+    %% =====================================================
+    classDef flowC fill:#7e22ce,stroke:#f0abfc,stroke-width:5px,color:#ffffff,font-size:26px;
+    classDef package fill:#312e81,stroke:#a5b4fc,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef routing fill:#9a3412,stroke:#fdba74,stroke-width:5px,color:#ffffff,font-size:25px;
+
+    class FC flowC;
+    class PKG package;
+    class ROUTE routing;
+
+
+    %% =====================================================
+    %% SOC OUTPUT COLORS
+    %% =====================================================
+    classDef hub fill:#065f46,stroke:#4ade80,stroke-width:6px,color:#ffffff,font-size:26px;
+    classDef slack fill:#7e22ce,stroke:#e879f9,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef hive fill:#854d0e,stroke:#fde047,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef table fill:#0369a1,stroke:#7dd3fc,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef closure fill:#0f766e,stroke:#5eead4,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef dashboard fill:#166534,stroke:#86efac,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef error fill:#7f1d1d,stroke:#fb7185,stroke-width:5px,color:#ffffff,font-size:25px;
+
+    class HUB hub;
+    class SL slack;
+    class TH hive;
+    class DT table;
+    class FD closure;
+    class DASH dashboard;
+    class ERR error;
+
+
+    %% =====================================================
+    %% GLOSSY COLUMN PANELS
+    %% =====================================================
+    style CI fill:#06131d,stroke:#22d3ee,stroke-width:4px
+    style WAZUH fill:#0d1022,stroke:#818cf8,stroke-width:4px
+    style TRIAGE fill:#160b25,stroke:#e879f9,stroke-width:4px
+    style SOCOUT fill:#07140d,stroke:#4ade80,stroke-width:4px
+
+
+    %% =====================================================
+    %% BRIGHT CONNECTORS
+    %% =====================================================
+    linkStyle default stroke:#f8fafc,stroke-width:4px;
 ```
 
 ### Runtime sequence
 
 ```mermaid
-sequenceDiagram
-    participant Dev as Detection Engineer
-    participant GH as GitHub PR
-    participant N8N as n8n
-    participant Wazuh as Wazuh Manager
-    participant App as AI Demo App
-    participant Slack as Slack
-    participant Hive as TheHive
-    participant Tables as n8n DataTables
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#030712",
+    "fontSize": "25px",
+    "primaryTextColor": "#ffffff",
+    "lineColor": "#f8fafc"
+  },
+  "flowchart": {
+    "nodeSpacing": 44,
+    "rankSpacing": 54,
+    "curve": "basis"
+  }
+}}%%
 
-    Dev->>GH: Open PR with detection or metadata change
-    GH->>N8N: Flow A pull_request event
-    N8N->>N8N: Validate XML, Sigma, metadata, staging, replay
-    N8N->>GH: Comment CI report + apply detection-ci-pass/fail label
-    Dev->>GH: Add deploy gate labels/comment
-    GH->>N8N: Flow B deployment signal
-    N8N->>Wazuh: Backup, stage, activate, restart, postdeploy test
-    App->>Wazuh: JSONL guardrail telemetry via Wazuh agent
-    Wazuh->>N8N: Send GenAI alert to Flow C webhook
-    N8N->>Hive: Create/update alert, promote high-risk cases
-    N8N->>Slack: Send analyst alert
-    N8N->>Tables: Upsert audit/status rows
-    Hive->>N8N: Flow D polls closed cases
-    N8N->>Slack: Notify closure and update dashboard
+flowchart LR
+
+    %% =====================================================
+    %% 1 · DETECTION CI
+    %% =====================================================
+    subgraph CI[" "]
+        direction TB
+
+        H1["🧪 1 · DETECTION CI"]
+
+        D1["👨‍💻 Detection Engineer<br/>Open Detection / Metadata PR"]
+
+        D2["🐙 GitHub PR<br/>pull_request Event"]
+
+        D3["⚡ Flow A<br/>Validate XML · Sigma<br/>Metadata · Replay"]
+
+        D4["📋 CI Report<br/>PASS / FAIL Label"]
+
+        D5["🚦 Deploy Gate<br/>Label / Comment"]
+
+        H1 --> D1 --> D2 --> D3 --> D4 --> D5
+    end
+
+
+    %% =====================================================
+    %% 2 · DEPLOYMENT + TELEMETRY
+    %% =====================================================
+    subgraph RUNTIME[" "]
+        direction TB
+
+        H2["🛡️ 2 · WAZUH RUNTIME"]
+
+        R1["🚀 Flow B<br/>Controlled Deployment"]
+
+        R2["⚙️ Wazuh Manager<br/>Backup · Stage · Activate<br/>Restart · Post-Deploy Test"]
+
+        R3["🤖 AI Demo App<br/>Guardrail JSONL"]
+
+        R4["📡 Wazuh Agent<br/>Telemetry Ingestion"]
+
+        R5["🚨 GenAI Alert<br/>Rule Match"]
+
+        H2 --> R1 --> R2
+        R3 --> R4 --> R2
+        R2 --> R5
+    end
+
+
+    %% =====================================================
+    %% 3 · GENAI TRIAGE
+    %% =====================================================
+    subgraph TRIAGE[" "]
+        direction TB
+
+        H3["🧠 3 · GENAI TRIAGE"]
+
+        T1["⚡ Flow C<br/>Webhook Receives Alert"]
+
+        T2["🔎 Runtime Triage<br/>Context + Evidence"]
+
+        T3["🐝 TheHive 5<br/>Create / Update Alert<br/>Promote High-Risk Case"]
+
+        T4["📊 DataTables<br/>Audit + Status State"]
+
+        H3 --> T1 --> T2
+        T2 --> T3
+        T2 --> T4
+    end
+
+
+    %% =====================================================
+    %% 4 · SOC + CLOSURE
+    %% =====================================================
+    subgraph SOC[" "]
+        direction TB
+
+        H4["📡 4 · SOC + CLOSURE"]
+
+        S1["💬 Slack<br/>Analyst Alert"]
+
+        S2["🧑‍💻 SOC Analyst<br/>Review + Investigate"]
+
+        S3["✅ Flow D<br/>Poll Closed Cases"]
+
+        S4["🔄 Closure Sync<br/>Status + Audit Update"]
+
+        S5["📈 Dashboard Update<br/>Final Case State"]
+
+        H4 --> S1 --> S2
+        S2 --> S3 --> S4 --> S5
+    end
+
+
+    %% =====================================================
+    %% KEEP THE 4 COLUMNS PARALLEL
+    %% =====================================================
+    CI ==> RUNTIME
+    RUNTIME ==> TRIAGE
+    TRIAGE ==> SOC
+
+
+    %% =====================================================
+    %% PREMIUM HEADERS
+    %% =====================================================
+    classDef ciHeader fill:#082f49,stroke:#67e8f9,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef runtimeHeader fill:#312e81,stroke:#a78bfa,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef triageHeader fill:#581c87,stroke:#e879f9,stroke-width:6px,color:#ffffff,font-size:29px;
+    classDef socHeader fill:#14532d,stroke:#86efac,stroke-width:6px,color:#ffffff,font-size:29px;
+
+    class H1 ciHeader;
+    class H2 runtimeHeader;
+    class H3 triageHeader;
+    class H4 socHeader;
+
+
+    %% =====================================================
+    %% DETECTION CI COLORS
+    %% =====================================================
+    classDef engineer fill:#172554,stroke:#60a5fa,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef github fill:#1e3a8a,stroke:#818cf8,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef flowA fill:#075985,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef report fill:#134e4a,stroke:#2dd4bf,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef gate fill:#166534,stroke:#86efac,stroke-width:5px,color:#ffffff,font-size:24px;
+
+    class D1 engineer;
+    class D2 github;
+    class D3 flowA;
+    class D4 report;
+    class D5 gate;
+
+
+    %% =====================================================
+    %% WAZUH RUNTIME COLORS
+    %% =====================================================
+    classDef flowB fill:#4338ca,stroke:#818cf8,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef wazuh fill:#083344,stroke:#22d3ee,stroke-width:6px,color:#ffffff,font-size:25px;
+    classDef app fill:#7c2d12,stroke:#fb923c,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef agent fill:#0c4a6e,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef alert fill:#991b1b,stroke:#fb7185,stroke-width:5px,color:#ffffff,font-size:24px;
+
+    class R1 flowB;
+    class R2 wazuh;
+    class R3 app;
+    class R4 agent;
+    class R5 alert;
+
+
+    %% =====================================================
+    %% GENAI TRIAGE COLORS
+    %% =====================================================
+    classDef flowC fill:#7e22ce,stroke:#f0abfc,stroke-width:5px,color:#ffffff,font-size:25px;
+    classDef triage fill:#4c1d95,stroke:#c084fc,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef hive fill:#854d0e,stroke:#fde047,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef table fill:#0369a1,stroke:#7dd3fc,stroke-width:5px,color:#ffffff,font-size:24px;
+
+    class T1 flowC;
+    class T2 triage;
+    class T3 hive;
+    class T4 table;
+
+
+    %% =====================================================
+    %% SOC + CLOSURE COLORS
+    %% =====================================================
+    classDef slack fill:#7e22ce,stroke:#e879f9,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef analyst fill:#0369a1,stroke:#38bdf8,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef flowD fill:#0f766e,stroke:#5eead4,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef sync fill:#14532d,stroke:#4ade80,stroke-width:5px,color:#ffffff,font-size:24px;
+    classDef dashboard fill:#166534,stroke:#86efac,stroke-width:5px,color:#ffffff,font-size:24px;
+
+    class S1 slack;
+    class S2 analyst;
+    class S3 flowD;
+    class S4 sync;
+    class S5 dashboard;
+
+
+    %% =====================================================
+    %% GLOSSY PARALLEL PANELS
+    %% =====================================================
+    style CI fill:#06131d,stroke:#22d3ee,stroke-width:4px
+    style RUNTIME fill:#0d1022,stroke:#818cf8,stroke-width:4px
+    style TRIAGE fill:#160b25,stroke:#e879f9,stroke-width:4px
+    style SOC fill:#07140d,stroke:#4ade80,stroke-width:4px
+
+
+    %% =====================================================
+    %% CONNECTORS
+    %% =====================================================
+    linkStyle default stroke:#f8fafc,stroke-width:4px;
 ```
 
 ---
